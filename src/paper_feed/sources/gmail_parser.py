@@ -1,0 +1,341 @@
+"""Gmail HTML email parser for extracting paper items.
+
+Parses HTML email content (Google Scholar alerts, journal TOC emails, etc.)
+to extract academic paper information and convert to PaperItem objects.
+
+Ported from zotero-mcp-rss gmail_fetcher.py, adapted to produce PaperItem
+objects directly without intermediate EmailItem models.
+"""
+
+import logging
+from typing import List, Optional
+
+from bs4 import BeautifulSoup, Tag
+
+from paper_feed.core.models import PaperItem
+from paper_feed.utils.text import DOI_PATTERN, clean_title
+
+logger = logging.getLogger(__name__)
+
+
+class GmailParser:
+    """Parser for extracting paper items from HTML email content.
+
+    Uses three strategies in order of priority:
+    1. Table rows with article links (common in journal TOC emails)
+    2. Div/article/section layouts with headings and links
+    3. Standalone links to known publisher domains
+
+    Each strategy attempts to extract: title, URL, DOI, authors, journal.
+    Results are deduplicated by title.
+    """
+
+    def parse(
+        self,
+        html_content: str,
+        source_name: str,
+        email_id: str = "",
+        email_subject: str = "",
+    ) -> List[PaperItem]:
+        """Parse HTML email content to extract paper items.
+
+        Args:
+            html_content: HTML body content from email.
+            source_name: Source name for the PaperItem (e.g., "Google Scholar").
+            email_id: Gmail message ID for tracking.
+            email_subject: Email subject line for metadata.
+
+        Returns:
+            List of deduplicated PaperItem objects extracted from the email.
+        """
+        if not html_content:
+            return []
+
+        soup = BeautifulSoup(html_content, "html.parser")
+        items: List[PaperItem] = []
+
+        # Strategy 1: Look for table rows with links
+        for table in soup.find_all("table"):
+            rows = table.find_all("tr")
+            for row in rows:
+                item = self._extract_item_from_row(
+                    row, source_name, email_id, email_subject
+                )
+                if item:
+                    items.append(item)
+
+        # Strategy 2: If no tables, look for article-like divs/sections
+        if not items:
+            items = self._extract_items_from_divs(
+                soup, source_name, email_id, email_subject
+            )
+
+        # Strategy 3: Extract from plain links with surrounding text
+        if not items:
+            items = self._extract_items_from_links(
+                soup, source_name, email_id, email_subject
+            )
+
+        # Deduplicate by title
+        seen_titles: set = set()
+        unique_items: List[PaperItem] = []
+        for item in items:
+            title_lower = item.title.lower().strip()
+            if title_lower and title_lower not in seen_titles:
+                seen_titles.add(title_lower)
+                unique_items.append(item)
+
+        logger.info(
+            f"Extracted {len(unique_items)} items from email "
+            f"{email_id[:8] + '...' if email_id else '(no id)'}"
+        )
+        return unique_items
+
+    def _extract_item_from_row(
+        self,
+        row: Tag,
+        source_name: str,
+        email_id: str,
+        email_subject: str,
+    ) -> Optional[PaperItem]:
+        """Extract a paper item from a table row.
+
+        Looks for article title links and supplementary info (authors, journal,
+        DOI) in table cells.
+
+        Args:
+            row: BeautifulSoup Tag for a <tr> element.
+            source_name: Source name for PaperItem.
+            email_id: Gmail message ID.
+            email_subject: Email subject.
+
+        Returns:
+            PaperItem if extraction succeeded, None otherwise.
+        """
+        title = ""
+        link = ""
+
+        # Look for the main link (title link)
+        links = row.find_all("a", href=True)
+        for a in links:
+            href_value = a.get("href", "")
+            href = href_value if isinstance(href_value, str) else ""
+            text = a.get_text(strip=True)
+
+            # Skip navigation/utility links
+            if len(text) < 10 or text.lower() in (
+                "read more",
+                "view",
+                "click here",
+            ):
+                continue
+
+            # Pick the longest text as the likely title
+            if not title or len(text) > len(title):
+                title = text
+                link = href
+
+        if not title:
+            # Try to get title from text content in cells
+            cells = row.find_all(["td", "th"])
+            for cell in cells:
+                text = cell.get_text(strip=True)
+                if 20 < len(text) < 500:
+                    title = text
+                    break
+
+        if not title or len(title) < 10:
+            return None
+
+        # Extract DOI from link or row text
+        doi = None
+        row_text = row.get_text()
+        doi_match = DOI_PATTERN.search(link) or DOI_PATTERN.search(row_text)
+        if doi_match:
+            doi = doi_match.group(0)
+
+        # Try to extract author/journal from other cells
+        authors: List[str] = []
+        journal = None
+        cells = row.find_all(["td", "th"])
+        for cell in cells:
+            text = cell.get_text(strip=True)
+            if text == title:
+                continue
+            # Heuristic: text with commas might be authors
+            if "," in text and len(text) < 200:
+                if not authors:
+                    authors = [a.strip() for a in text.split(",")]
+            elif len(text) < 100 and not journal:
+                journal = text
+
+        return PaperItem(
+            title=clean_title(title),
+            authors=authors,
+            abstract="",
+            published_date=None,
+            doi=doi or "",
+            url=link if link else None,
+            pdf_url=None,
+            source=source_name,
+            source_id=email_id or None,
+            source_type="email",
+            metadata={
+                "email_id": email_id,
+                "email_subject": email_subject,
+            },
+        )
+
+    def _extract_items_from_divs(
+        self,
+        soup: BeautifulSoup,
+        source_name: str,
+        email_id: str,
+        email_subject: str,
+    ) -> List[PaperItem]:
+        """Extract items from div-based layouts.
+
+        Looks for article-like containers (div, article, section) that contain
+        links and headings.
+
+        Args:
+            soup: Parsed BeautifulSoup document.
+            source_name: Source name for PaperItem.
+            email_id: Gmail message ID.
+            email_subject: Email subject.
+
+        Returns:
+            List of PaperItem objects.
+        """
+        items: List[PaperItem] = []
+
+        for container in soup.find_all(["div", "article", "section"]):
+            link_elem = container.find("a", href=True)
+            if not link_elem:
+                continue
+
+            title = link_elem.get_text(strip=True)
+            link_value = link_elem.get("href", "")
+            link = link_value if isinstance(link_value, str) else ""
+
+            if len(title) < 15:
+                # Try to find a heading
+                heading = container.find(["h1", "h2", "h3", "h4"])
+                if heading:
+                    title = heading.get_text(strip=True)
+
+            if len(title) < 15 or len(title) > 500:
+                continue
+
+            # Extract DOI
+            doi = None
+            container_text = container.get_text()
+            doi_match = DOI_PATTERN.search(link) or DOI_PATTERN.search(container_text)
+            if doi_match:
+                doi = doi_match.group(0)
+
+            items.append(
+                PaperItem(
+                    title=clean_title(title),
+                    authors=[],
+                    abstract="",
+                    published_date=None,
+                    doi=doi or "",
+                    url=link if link else None,
+                    pdf_url=None,
+                    source=source_name,
+                    source_id=email_id or None,
+                    source_type="email",
+                    metadata={
+                        "email_id": email_id,
+                        "email_subject": email_subject,
+                    },
+                )
+            )
+
+        return items
+
+    def _extract_items_from_links(
+        self,
+        soup: BeautifulSoup,
+        source_name: str,
+        email_id: str,
+        email_subject: str,
+    ) -> List[PaperItem]:
+        """Extract items from standalone links to publisher domains.
+
+        Falls back to scanning all links and checking if they point to known
+        academic publisher domains (doi.org, nature.com, etc.).
+
+        Args:
+            soup: Parsed BeautifulSoup document.
+            source_name: Source name for PaperItem.
+            email_id: Gmail message ID.
+            email_subject: Email subject.
+
+        Returns:
+            List of PaperItem objects.
+        """
+        items: List[PaperItem] = []
+
+        # Known academic publisher domains
+        _PUBLISHER_DOMAINS = [
+            "doi.org",
+            "nature.com",
+            "science.org",
+            "wiley.com",
+            "springer.com",
+            "acs.org",
+            "rsc.org",
+            "elsevier.com",
+            "cell.com",
+            "pnas.org",
+            "sciencedirect.com",
+            "arxiv.org",
+            "biorxiv.org",
+            "medrxiv.org",
+        ]
+
+        for a in soup.find_all("a", href=True):
+            text = a.get_text(strip=True)
+            href_value = a.get("href", "")
+            href = href_value if isinstance(href_value, str) else ""
+
+            # Filter out non-article links
+            if len(text) < 20 or len(text) > 500:
+                continue
+            if text.lower() in ("unsubscribe", "view in browser", "read more"):
+                continue
+
+            # Check if link looks like an article
+            is_article_link = any(
+                domain in href.lower() for domain in _PUBLISHER_DOMAINS
+            )
+
+            doi = None
+            doi_match = DOI_PATTERN.search(href)
+            if doi_match:
+                doi = doi_match.group(0)
+                is_article_link = True
+
+            if is_article_link:
+                items.append(
+                    PaperItem(
+                        title=clean_title(text),
+                        authors=[],
+                        abstract="",
+                        published_date=None,
+                        doi=doi or "",
+                        url=href if href else None,
+                        pdf_url=None,
+                        source=source_name,
+                        source_id=email_id or None,
+                        source_type="email",
+                        metadata={
+                            "email_id": email_id,
+                            "email_subject": email_subject,
+                        },
+                    )
+                )
+
+        return items
