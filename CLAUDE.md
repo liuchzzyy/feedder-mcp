@@ -151,6 +151,42 @@ uv run paper-feed export -i enriched.json -f json -o final.json
 7. **Optional dependencies MUST have import guards** - raise clear error messages if missing
 8. **Never use `asyncio.run()` inside async functions** - only in sync entry points
 
+## Development Workflow Rules
+
+**CRITICAL**: These workflow rules MUST be followed when working on this project:
+
+1. **Describe your approach before writing any code and wait for approval**
+   - Before implementing any feature or fix, clearly describe your proposed solution
+   - If requirements are unclear, ask clarifying questions BEFORE writing code
+   - Wait for user confirmation before proceeding with implementation
+   - This prevents wasted effort and ensures alignment with project goals
+
+2. **Break down large changes into smaller tasks**
+   - If a task requires modifying more than 3 files, STOP and break it down
+   - Create smaller, focused sub-tasks that can be completed independently
+   - This makes code review easier and reduces the risk of introducing bugs
+   - Each sub-task should have a clear, testable outcome
+
+3. **List potential issues and suggest test cases after writing code**
+   - After implementing any feature, proactively identify potential edge cases
+   - List possible failure scenarios and error conditions
+   - Suggest specific test cases to cover these issues
+   - This helps ensure comprehensive test coverage and prevents regressions
+
+4. **Write a failing test before fixing a bug**
+   - When a bug is discovered, first write a test that reproduces the bug
+   - The test should fail initially (confirming the bug exists)
+   - Then fix the bug until the test passes
+   - This prevents regression and ensures the bug is truly fixed
+   - Keep the test in the test suite to prevent future regressions
+
+5. **Add new rules to CLAUDE.md when corrected**
+   - Every time the user corrects a mistake or provides guidance
+   - Add a new rule to this file (CLAUDE.md) to prevent recurrence
+   - This creates a growing knowledge base of project-specific practices
+   - Future Claude Code instances will benefit from these lessons learned
+   - Update the "Last Updated" date at the bottom of this file
+
 ## Configuration System
 
 Configuration is loaded from environment variables and `.env` files:
