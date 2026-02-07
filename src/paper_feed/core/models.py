@@ -39,7 +39,7 @@ class FilterCriteria(BaseModel):
     """Filter criteria for paper selection.
 
     Attributes:
-        keywords: Required keywords (AND logic)
+        keywords: Required keywords (OR logic)
         exclude_keywords: Keywords to exclude
         min_date: Earliest publication date
         authors: Required author names (OR logic)

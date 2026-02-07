@@ -289,134 +289,187 @@ def _build_parser() -> argparse.ArgumentParser:
         prog="paper-feed",
         description=(
             "Collect, filter, and export academic papers "
-            "from RSS feeds and email alerts."
+            "from RSS feeds and email alerts.\n"
+            "从 RSS 订阅源和邮件提醒中收集、过滤和导出学术论文。"
         ),
     )
-    subparsers = parser.add_subparsers(dest="command", help="Available commands")
+    subparsers = parser.add_subparsers(
+        dest="command", help="Available commands | 可用命令"
+    )
 
     # ---- fetch ----
-    fetch_parser = subparsers.add_parser("fetch", help="Fetch papers from a source")
+    fetch_parser = subparsers.add_parser(
+        "fetch", help="Fetch papers from a source | 从数据源获取论文"
+    )
     fetch_parser.add_argument(
+        "-s",
         "--source",
         choices=["rss", "gmail"],
         default="rss",
-        help="Data source (default: rss)",
+        help="Data source (default: rss) | 数据源（默认：rss）",
     )
     fetch_parser.add_argument(
         "--opml",
-        help="OPML file path (for RSS source)",
+        "--rss-feeds",
+        dest="opml",
+        help="OPML file path (for RSS source) | OPML 文件路径（RSS 源）",
     )
     fetch_parser.add_argument(
+        "-q",
         "--query",
-        help="Gmail search query (for Gmail source)",
+        "--gmail-query",
+        dest="query",
+        help="Gmail search query (for Gmail source) | Gmail 搜索查询（Gmail 源）",
     )
     fetch_parser.add_argument(
+        "-n",
         "--limit",
+        "--max-papers",
+        dest="limit",
         type=int,
-        help="Maximum number of papers to fetch",
+        help="Maximum number of papers to fetch | 最大论文获取数量",
     )
     fetch_parser.add_argument(
         "--since",
-        help="Only fetch papers since date (YYYY-MM-DD)",
+        "--from-date",
+        dest="since",
+        help="Only fetch papers since date (YYYY-MM-DD) | 仅获取此日期之后的论文（YYYY-MM-DD）",
     )
     fetch_parser.add_argument(
+        "-o",
         "--output",
         required=True,
-        help="Output JSON file path",
+        help="Output JSON file path | 输出 JSON 文件路径",
     )
 
     # ---- filter ----
-    filter_parser = subparsers.add_parser("filter", help="Filter papers by criteria")
+    filter_parser = subparsers.add_parser(
+        "filter", help="Filter papers by criteria | 按条件过滤论文"
+    )
     filter_parser.add_argument(
+        "-i",
         "--input",
         required=True,
-        help="Input JSON file with papers",
+        help="Input JSON file with papers | 输入 JSON 文件（包含论文）",
     )
     filter_parser.add_argument(
+        "-o",
         "--output",
         required=True,
-        help="Output JSON file path",
+        help="Output JSON file path | 输出 JSON 文件路径",
     )
     filter_parser.add_argument(
+        "-k",
         "--keywords",
         nargs="+",
-        help="Required keywords (OR logic, first-pass filter)",
+        help="Required keywords (OR logic, first-pass filter) | 关键词（OR 逻辑，一级过滤）",
     )
     filter_parser.add_argument(
+        "-x",
         "--exclude",
+        "--exclude-keywords",
+        dest="exclude",
         nargs="+",
-        help="Exclude keywords (NOT logic)",
+        help="Exclude keywords (NOT logic) | 排除关键词（NOT 逻辑）",
     )
     filter_parser.add_argument(
+        "-a",
         "--authors",
         nargs="+",
-        help="Author filter (OR logic)",
+        help="Author filter (OR logic) | 作者过滤（OR 逻辑）",
     )
     filter_parser.add_argument(
         "--min-date",
-        help="Minimum publication date (YYYY-MM-DD)",
+        "--after",
+        "--from",
+        dest="min_date",
+        help="Minimum publication date (YYYY-MM-DD) | 最早发表日期（YYYY-MM-DD）",
     )
     filter_parser.add_argument(
+        "--pdf",
         "--has-pdf",
+        "--require-pdf",
+        dest="has_pdf",
         action="store_true",
-        help="Require PDF availability",
+        help="Require PDF availability | 要求有 PDF",
     )
     filter_parser.add_argument(
         "--ai",
+        "--semantic",
+        "--use-ai",
+        dest="ai",
         action="store_true",
-        help="Enable AI-powered relevance filtering",
+        help="Enable AI-powered relevance filtering | 启用 AI 语义相关性过滤",
     )
 
     # ---- export ----
-    export_parser = subparsers.add_parser("export", help="Export papers to a format")
-    export_parser.add_argument(
-        "--input",
-        required=True,
-        help="Input JSON file with papers",
+    export_parser = subparsers.add_parser(
+        "export", help="Export papers to a format | 导出论文到指定格式"
     )
     export_parser.add_argument(
+        "-i",
+        "--input",
+        required=True,
+        help="Input JSON file with papers | 输入 JSON 文件（包含论文）",
+    )
+    export_parser.add_argument(
+        "-f",
         "--format",
         choices=["json", "zotero"],
         default="json",
-        help="Export format (default: json)",
+        help="Export format (default: json) | 导出格式（默认：json）",
     )
     export_parser.add_argument(
+        "-o",
         "--output",
         required=True,
-        help="Output file path",
+        help="Output file path | 输出文件路径",
     )
     export_parser.add_argument(
+        "-m",
+        "--metadata",
         "--include-metadata",
+        "--with-metadata",
+        dest="include_metadata",
         action="store_true",
-        help="Include metadata in export",
+        help="Include metadata in export | 导出时包含元数据",
     )
 
     # ---- enrich ----
     enrich_parser = subparsers.add_parser(
         "enrich",
-        help="Enrich papers with CrossRef/OpenAlex metadata",
+        help="Enrich papers with CrossRef/OpenAlex metadata | 使用 CrossRef/OpenAlex 补充论文元数据",
     )
     enrich_parser.add_argument(
+        "-i",
         "--input",
         required=True,
-        help="Input JSON file with papers",
+        help="Input JSON file with papers | 输入 JSON 文件（包含论文）",
     )
     enrich_parser.add_argument(
+        "-o",
         "--output",
         required=True,
-        help="Output JSON file path",
+        help="Output JSON file path | 输出 JSON 文件路径",
     )
     enrich_parser.add_argument(
+        "--api",
         "--source",
+        "--provider",
+        dest="source",
         choices=["crossref", "openalex", "all"],
         default="all",
-        help="Enrichment source (default: all)",
+        help="Enrichment API provider (default: all) | 元数据 API 提供商（默认：all）",
     )
     enrich_parser.add_argument(
+        "-j",
+        "--jobs",
         "--concurrency",
+        "--parallel",
+        dest="concurrency",
         type=int,
         default=5,
-        help="Max concurrent API requests (default: 5)",
+        help="Max concurrent API requests (default: 5) | 最大并发 API 请求数（默认：5）",
     )
 
     return parser
