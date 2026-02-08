@@ -94,7 +94,7 @@ def get_gmail_config() -> Dict[str, Any]:
     Returns:
         Dict with token_json, credentials_json, token_file,
         credentials_file, query, max_results, mark_as_read,
-        processed_label, sender_filter settings.
+        processed_label, sender_filter, sender_map_json settings.
     """
     _ensure_dotenv()
     return {
@@ -119,6 +119,7 @@ def get_gmail_config() -> Dict[str, Any]:
         "verify_trash_limit": int(os.environ.get("GMAIL_VERIFY_TRASH_LIMIT", "50")),
         "processed_label": os.environ.get("GMAIL_PROCESSED_LABEL"),
         "sender_filter": os.environ.get("GMAIL_SENDER_FILTER"),
+        "sender_map_json": os.environ.get("GMAIL_SENDER_MAP_JSON"),
     }
 
 

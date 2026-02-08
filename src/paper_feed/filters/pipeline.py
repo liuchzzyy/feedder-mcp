@@ -57,12 +57,10 @@ class FilterPipeline:
         """
         total_count = len(papers)
         filter_stats: Dict[str, Any] = {}
-        all_messages: List[str] = []
 
         # Stage 1: Keyword-based filtering
         if self.keyword_stage.is_applicable(criteria):
             papers, messages = await self.keyword_stage.filter(papers, criteria)
-            all_messages.extend(messages)
             filter_stats["keyword_filter"] = {
                 "input_count": total_count,
                 "output_count": len(papers),
@@ -78,7 +76,6 @@ class FilterPipeline:
         if self._ai_stage is not None and self._ai_stage.is_applicable(criteria):
             ai_input_count = len(papers)
             papers, messages = await self._ai_stage.filter(papers, criteria)
-            all_messages.extend(messages)
             filter_stats["ai_filter"] = {
                 "input_count": ai_input_count,
                 "output_count": len(papers),

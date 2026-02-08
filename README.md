@@ -93,6 +93,8 @@ Key settings:
 | `GMAIL_TRASH_AFTER_PROCESS` | Move processed threads to Trash (default: `true`) |
 | `GMAIL_VERIFY_TRASH_AFTER_PROCESS` | Verify Trash after processing (default: `true`) |
 | `GMAIL_VERIFY_TRASH_LIMIT` | Max threads checked during Trash verification (default: `50`) |
+| `GMAIL_SENDER_FILTER` | Comma-separated sender allowlist for Gmail filtering |
+| `GMAIL_SENDER_MAP_JSON` | JSON map of sender email to source name |
 | `POLITE_POOL_EMAIL` | Email for CrossRef/OpenAlex polite pool access |
 | `PAPER_FEED_OPML` | Path to OPML file with RSS feeds |
 

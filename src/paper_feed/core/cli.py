@@ -217,55 +217,40 @@ async def _handle_enrich(args: argparse.Namespace) -> None:
 
     semaphore = asyncio.Semaphore(args.concurrency)
 
+    crossref_client = None
+    openalex_client = None
+    if use_crossref:
+        from paper_feed.sources.crossref import CrossrefClient
+
+        crossref_client = CrossrefClient()
+    if use_openalex:
+        from paper_feed.sources.openalex import OpenAlexClient
+
+        openalex_client = OpenAlexClient()
+
     async def _enrich_one(paper: PaperItem) -> PaperItem:
         async with semaphore:
             result = paper
-            enriched = False
 
             if use_crossref:
-                from paper_feed.sources.crossref import (
-                    CrossrefClient,
-                )
-
-                client = CrossrefClient()
-                try:
-                    result = await client.enrich_paper(result)
-                    # Check if enrichment actually added data
-                    if result is not None and (
-                        result.doi != paper.doi
-                        or result.authors != paper.authors
-                        or result.published_date != paper.published_date
-                    ):
-                        enriched = True
-                    result = result
-                finally:
-                    await client.close()
+                assert crossref_client is not None
+                result = await crossref_client.enrich_paper(result)
 
             if use_openalex:
-                from paper_feed.sources.openalex import (
-                    OpenAlexClient,
-                )
-
-                client = OpenAlexClient()
-                try:
-                    result = await client.enrich_paper(result)
-                    # Check if enrichment actually added data
-                    if result is not None and (
-                        result.doi != paper.doi
-                        or result.authors != paper.authors
-                        or result.published_date != paper.published_date
-                    ):
-                        enriched = True
-                    result = result
-                finally:
-                    await client.close()
+                assert openalex_client is not None
+                result = await openalex_client.enrich_paper(result)
 
             # Always return result (enriched or original)
             # 没有 DOI 的论文也会被保留
             return result
-
-    tasks = [_enrich_one(p) for p in papers]
-    results = await asyncio.gather(*tasks)
+    try:
+        tasks = [_enrich_one(p) for p in papers]
+        results = await asyncio.gather(*tasks)
+    finally:
+        if crossref_client is not None:
+            await crossref_client.close()
+        if openalex_client is not None:
+            await openalex_client.close()
 
     # Remove None values (if any enrichment failed completely)
     final_papers = [p for p in results if p is not None]

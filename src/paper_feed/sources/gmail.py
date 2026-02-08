@@ -71,22 +71,40 @@ def _find_html_in_payload(payload: dict) -> str:
     return ""
 
 
-# Known sender → source_name mapping for auto-detection
-_SENDER_SOURCE_MAP: Dict[str, str] = {
-    "scholaralerts-noreply@google.com": "Google Scholar",
-    "scholar-alerts@google.com": "Google Scholar",
-    "noreply@nature.com": "Nature",
-    "alerts@nature.com": "Nature",
-    "noreply@science.org": "Science",
-    "noreply@cell.com": "Cell",
-    "noreply@acs.org": "ACS",
-    "noreply@wiley.com": "Wiley",
-    "noreply@springer.com": "Springer",
-    "noreply@elsevier.com": "Elsevier",
-    "noreply@pnas.org": "PNAS",
-    "noreply@biorxiv.org": "bioRxiv",
-    "noreply@medrxiv.org": "medRxiv",
-}
+def _extract_sender_email(sender: Optional[str]) -> Optional[str]:
+    """Extract email address from a sender string."""
+    if not sender or not isinstance(sender, str):
+        return None
+    match = re.search(r"<([^>]+)>", sender)
+    email_addr = match.group(1).lower() if match else sender.lower().strip()
+    return email_addr or None
+
+
+def _parse_sender_filter(raw: Optional[str]) -> List[str]:
+    """Parse comma/semicolon-separated sender list."""
+    if not raw:
+        return []
+    parts = re.split(r"[;,]", raw)
+    return [p.strip().lower() for p in parts if p.strip()]
+
+
+def _parse_sender_map(raw: Optional[str]) -> Dict[str, str]:
+    """Parse JSON mapping of sender email -> source name."""
+    if not raw:
+        return {}
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError:
+        logger.warning("GMAIL_SENDER_MAP_JSON is invalid JSON; ignoring.")
+        return {}
+    if not isinstance(data, dict):
+        logger.warning("GMAIL_SENDER_MAP_JSON must be a JSON object; ignoring.")
+        return {}
+    cleaned: Dict[str, str] = {}
+    for k, v in data.items():
+        if isinstance(k, str) and isinstance(v, str) and k.strip() and v.strip():
+            cleaned[k.strip().lower()] = v.strip()
+    return cleaned
 
 
 class GmailSource(PaperSource):
@@ -131,7 +149,7 @@ class GmailSource(PaperSource):
                 - "subject:new articles"
                 - "in:inbox from:scholar"
                 Defaults to GMAIL_QUERY env var or an inbox-focused
-                query built from known alert senders.
+                query built from configured sender filters.
             source_name: Source name for PaperItem objects.
             max_results: Maximum email threads to process.
                 Defaults to GMAIL_MAX_RESULTS env var or 50.
@@ -139,7 +157,7 @@ class GmailSource(PaperSource):
                 Defaults to GMAIL_MARK_AS_READ env var or False.
             auto_detect_source: Whether to auto-detect source_name from
                 the sender's email address (overrides source_name per-message
-                when a known sender is detected).
+                when a configured sender is detected).
             processed_label: Optional Gmail label name to apply to processed
                 threads (e.g. "paper-feed/processed"). None = no labelling.
                 Defaults to GMAIL_PROCESSED_LABEL env var or None.
@@ -176,6 +194,8 @@ class GmailSource(PaperSource):
                 f"Expected credentials file at: {self.credentials_file}"
             )
 
+        self.sender_filter = _parse_sender_filter(config.get("sender_filter"))
+        self.sender_map = _parse_sender_map(config.get("sender_map_json"))
         self.query = query or config.get("query") or self._default_query()
         self.source_name = source_name
         self.max_results = (
@@ -316,10 +336,9 @@ class GmailSource(PaperSource):
 
         return json.dumps(normalized, ensure_ascii=False)
 
-    @staticmethod
-    def _default_query() -> str:
+    def _default_query(self) -> str:
         """Build default Gmail query for inbox alerts and TOC emails."""
-        senders = sorted(_SENDER_SOURCE_MAP.keys())
+        senders = self.sender_filter or sorted(self.sender_map.keys())
         if not senders:
             return "in:inbox"
         sender_query = " OR ".join(f"from:{addr}" for addr in senders)
@@ -332,8 +351,7 @@ class GmailSource(PaperSource):
 
         Searches Gmail for matching emails, extracts HTML bodies, and
         parses them to find paper items. Falls back to plain-text body
-        when no HTML is available. Also extracts attachment info for
-        PDF discovery.
+        when no HTML is available.
 
         Args:
             limit: Maximum number of papers to return (None = no limit).
@@ -382,6 +400,14 @@ class GmailSource(PaperSource):
                             if isinstance(msg_date, datetime):
                                 msg_date = msg_date.date()
                             if msg_date < since:
+                                continue
+
+                        # Sender filter (if configured)
+                        if self.sender_filter:
+                            sender_email = _extract_sender_email(
+                                getattr(message, "sender", None)
+                            )
+                            if not sender_email or sender_email not in self.sender_filter:
                                 continue
 
                         # Auto-detect source name from sender
@@ -509,11 +535,10 @@ class GmailSource(PaperSource):
             return query.replace("in:inbox", "in:trash")
         return f"in:trash {query}".strip()
 
-    @staticmethod
-    def _detect_source_from_sender(message: object) -> Optional[str]:
+    def _detect_source_from_sender(self, message: object) -> Optional[str]:
         """Detect source name from the message sender address.
 
-        Checks the sender against a map of known academic alert senders.
+        Uses config-provided sender map when available.
 
         Args:
             message: EZGmail message object.
@@ -522,52 +547,19 @@ class GmailSource(PaperSource):
             Detected source name, or None if sender is unknown.
         """
         sender = getattr(message, "sender", None)
-        if not sender or not isinstance(sender, str):
+        email_addr = _extract_sender_email(sender)
+        if not email_addr:
             return None
 
-        # Extract email address from "Name <email>" format
-        match = re.search(r"<([^>]+)>", sender)
-        email_addr = match.group(1).lower() if match else sender.lower().strip()
+        if email_addr in self.sender_map:
+            return self.sender_map[email_addr]
 
-        return _SENDER_SOURCE_MAP.get(email_addr)
+        if email_addr in self.sender_filter:
+            local = email_addr.split("@")[0].replace("-", " ").replace("_", " ")
+            return local.title() if local else None
 
-    @staticmethod
-    def _extract_attachment_info(message: object) -> List[str]:
-        """Extract PDF attachment filenames from a message.
+        return None
 
-        Uses ezgmail's ``_attachmentsInfo`` to discover PDF attachments
-        without downloading them. Returns filenames that can serve as
-        indicators that a PDF is available.
-
-        Args:
-            message: EZGmail message object.
-
-        Returns:
-            List of PDF attachment filename strings.
-        """
-        pdf_names: List[str] = []
-
-        # Try _attachmentsInfo (list of dicts with 'filename', 'id', 'size')
-        attachments_info = getattr(message, "_attachmentsInfo", None)
-        if attachments_info and isinstance(attachments_info, list):
-            for att in attachments_info:
-                filename = ""
-                if isinstance(att, dict):
-                    filename = att.get("filename", "")
-                elif hasattr(att, "filename"):
-                    filename = getattr(att, "filename", "")
-                if filename and filename.lower().endswith(".pdf"):
-                    pdf_names.append(filename)
-
-        # Fallback: try attachments property (list of filename strings)
-        if not pdf_names:
-            attachments = getattr(message, "attachments", None)
-            if attachments and isinstance(attachments, list):
-                for att in attachments:
-                    if isinstance(att, str) and att.lower().endswith(".pdf"):
-                        pdf_names.append(att)
-
-        return pdf_names
 
     def _extract_from_plain_text(
         self, message: object, source_name: str

@@ -157,17 +157,19 @@ class RSSSource(PaperSource):
         """
         semaphore = asyncio.Semaphore(self.max_concurrent)
 
-        async def _fetch_one(feed: Dict[str, str]) -> List[PaperItem]:
-            async with semaphore:
-                return await self._fetch_single_feed(
-                    feed_url=feed["url"],
-                    source_name=feed.get("title")
-                    or self._detect_source_name(feed["url"]),
-                    since=since,
-                )
+        async with httpx.AsyncClient(timeout=self.timeout) as client:
+            async def _fetch_one(feed: Dict[str, str]) -> List[PaperItem]:
+                async with semaphore:
+                    return await self._fetch_single_feed(
+                        client=client,
+                        feed_url=feed["url"],
+                        source_name=feed.get("title")
+                        or self._detect_source_name(feed["url"]),
+                        since=since,
+                    )
 
-        tasks = [_fetch_one(f) for f in self._feeds]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+            tasks = [_fetch_one(f) for f in self._feeds]
+            results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Aggregate, skipping failed feeds
         all_papers: List[PaperItem] = []
@@ -203,6 +205,7 @@ class RSSSource(PaperSource):
 
     async def _fetch_single_feed(
         self,
+        client: httpx.AsyncClient,
         feed_url: str,
         source_name: str,
         since: Optional[date] = None,
@@ -220,14 +223,13 @@ class RSSSource(PaperSource):
         papers: List[PaperItem] = []
 
         try:
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                response = await client.get(
-                    feed_url,
-                    headers={"User-Agent": self.user_agent},
-                    follow_redirects=True,
-                )
-                response.raise_for_status()
-                feed_content = response.text
+            response = await client.get(
+                feed_url,
+                headers={"User-Agent": self.user_agent},
+                follow_redirects=True,
+            )
+            response.raise_for_status()
+            feed_content = response.text
 
             feed = await asyncio.to_thread(feedparser.parse, feed_content)
 

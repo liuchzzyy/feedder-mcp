@@ -21,6 +21,8 @@ def set_gmail_env_vars(monkeypatch):
         "GMAIL_CREDENTIALS_JSON",
         '{"installed": {"client_id": "test_id", "project_id": "test_project", "auth_uri": "https://accounts.google.com/o/oauth2/auth", "token_uri": "https://oauth2.googleapis.com/token", "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", "client_secret": "test_secret", "redirect_uris": ["http://localhost"]}}',
     )
+    monkeypatch.setenv("GMAIL_SENDER_FILTER", "")
+    monkeypatch.setenv("GMAIL_SENDER_MAP_JSON", "{}")
     yield
     # Cleanup is handled by monkeypatch automatically
 
@@ -365,65 +367,40 @@ async def test_gmail_source_deduplication():
 class TestDetectSourceFromSender:
     """Tests for GmailSource._detect_source_from_sender()."""
 
-    def test_detect_known_sender_plain_email(self):
+    def test_detect_known_sender_plain_email(self, monkeypatch):
         """Known plain email address maps to correct source."""
+        monkeypatch.setenv(
+            "GMAIL_SENDER_MAP_JSON",
+            '{"scholaralerts-noreply@google.com": "Google Scholar"}',
+        )
+        source = GmailSource(query="test")
         msg = MagicMock()
         msg.sender = "scholaralerts-noreply@google.com"
-        assert GmailSource._detect_source_from_sender(msg) == "Google Scholar"
+        assert source._detect_source_from_sender(msg) == "Google Scholar"
 
-    def test_detect_known_sender_name_format(self):
+    def test_detect_known_sender_name_format(self, monkeypatch):
         """Known sender in 'Name <email>' format is detected."""
+        monkeypatch.setenv(
+            "GMAIL_SENDER_MAP_JSON",
+            '{"noreply@nature.com": "Nature"}',
+        )
+        source = GmailSource(query="test")
         msg = MagicMock()
         msg.sender = "Nature Alerts <noreply@nature.com>"
-        assert GmailSource._detect_source_from_sender(msg) == "Nature"
+        assert source._detect_source_from_sender(msg) == "Nature"
 
     def test_detect_unknown_sender(self):
         """Unknown sender returns None."""
+        source = GmailSource(query="test")
         msg = MagicMock()
         msg.sender = "random@example.com"
-        assert GmailSource._detect_source_from_sender(msg) is None
+        assert source._detect_source_from_sender(msg) is None
 
     def test_detect_no_sender_attribute(self):
         """Message without sender attribute returns None."""
+        source = GmailSource(query="test")
         msg = MagicMock(spec=[])
-        assert GmailSource._detect_source_from_sender(msg) is None
-
-
-# ── _extract_attachment_info tests ──────────────────────────────────
-
-
-class TestExtractAttachmentInfo:
-    """Tests for GmailSource._extract_attachment_info()."""
-
-    def test_extract_pdf_from_attachments_info(self):
-        """Finds PDF filename from _attachmentsInfo dict list."""
-        msg = MagicMock(spec=[])
-        msg._attachmentsInfo = [
-            {"filename": "paper.pdf", "id": "att1", "size": 12345},
-        ]
-        result = GmailSource._extract_attachment_info(msg)
-        assert result == ["paper.pdf"]
-
-    def test_extract_pdf_from_attachments_list(self):
-        """Falls back to attachments list when _attachmentsInfo is None."""
-        msg = MagicMock(spec=[])
-        msg._attachmentsInfo = None
-        msg.attachments = ["paper.pdf", "data.csv"]
-        result = GmailSource._extract_attachment_info(msg)
-        assert result == ["paper.pdf"]
-
-    def test_no_pdf_attachments(self):
-        """Returns empty list when no PDFs in attachments."""
-        msg = MagicMock(spec=[])
-        msg._attachmentsInfo = [{"filename": "image.png"}]
-        result = GmailSource._extract_attachment_info(msg)
-        assert result == []
-
-    def test_no_attachments_at_all(self):
-        """Returns empty list when message has no attachment attributes."""
-        msg = MagicMock(spec=[])
-        result = GmailSource._extract_attachment_info(msg)
-        assert result == []
+        assert source._detect_source_from_sender(msg) is None
 
 
 # ── _extract_from_plain_text tests ──────────────────────────────────
@@ -523,8 +500,12 @@ class TestGmailSourceInitNewParams:
 
 
 @pytest.mark.asyncio
-async def test_fetch_papers_auto_detect_source():
+async def test_fetch_papers_auto_detect_source(monkeypatch):
     """Auto-detect overrides source_name when known sender is found."""
+    monkeypatch.setenv(
+        "GMAIL_SENDER_MAP_JSON",
+        '{"noreply@nature.com": "Nature"}',
+    )
     source = GmailSource(
         query="test",
         source_name="Gmail",

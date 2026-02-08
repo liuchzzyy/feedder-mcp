@@ -47,13 +47,7 @@ class JSONAdapter(ExportAdapter):
             # Convert papers to list of dicts with JSON-serializable values
             papers_data = []
             for paper in papers:
-                paper_dict = paper.model_dump()
-
-                # Convert date objects to ISO format strings
-                if paper_dict.get("published_date"):
-                    paper_dict["published_date"] = paper_dict[
-                        "published_date"
-                    ].isoformat()
+                paper_dict = paper.model_dump(mode="json")
 
                 # Optionally exclude raw metadata
                 if not include_metadata:

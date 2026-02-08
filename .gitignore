@@ -41,6 +41,8 @@ output/
 # OAuth2 tokens (sensitive)
 token.json
 credentials.json
+feeds/token.json
+feeds/credentials.json
 
 # Lock file
 uv.lock
