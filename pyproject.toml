@@ -1,6 +1,6 @@
 [project]
 name = "paper-feed"
-version = "1.0.0"
+version = "1.1.1"
 description = "Academic paper collection from RSS and Gmail alerts"
 readme = "README.md"
 requires-python = ">=3.10"
