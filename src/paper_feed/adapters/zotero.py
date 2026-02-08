@@ -122,6 +122,8 @@ class ZoteroAdapter(ExportAdapter):
     def _paper_to_zotero_item(self, paper: PaperItem) -> Dict[str, Any]:
         """Convert PaperItem to Zotero item format.
 
+        Maps all PaperItem fields to Zotero journalArticle schema fields.
+
         Args:
             paper: PaperItem to convert
 
@@ -133,25 +135,55 @@ class ZoteroAdapter(ExportAdapter):
             {"creatorType": "author", "name": author} for author in paper.authors
         ]
 
-        # Format date (ISO format)
+        # Format dates (ISO format)
         date_str = None
         if paper.published_date:
             date_str = paper.published_date.isoformat()
 
-        # Build Zotero item
-        zotero_item = {
-            "itemType": "journalArticle",
+        access_date_str = None
+        if paper.access_date:
+            access_date_str = paper.access_date.isoformat()
+        else:
+            access_date_str = datetime.now().strftime("%Y-%m-%d")
+
+        # Build Zotero item with all mapped fields
+        zotero_item: Dict[str, Any] = {
+            "itemType": paper.item_type or "journalArticle",
             "title": paper.title,
             "creators": creators,
-            "abstractNote": paper.abstract,
-            "url": paper.url,
+            "abstractNote": paper.abstract or None,
+            "publicationTitle": paper.publication_title,
+            "journalAbbreviation": paper.journal_abbreviation,
+            "publisher": paper.publisher,
+            "place": paper.place,
+            "volume": paper.volume,
+            "issue": paper.issue,
+            "pages": paper.pages,
+            "section": paper.section,
+            "partNumber": paper.part_number,
+            "partTitle": paper.part_title,
+            "series": paper.series,
+            "seriesTitle": paper.series_title,
+            "seriesText": paper.series_text,
             "DOI": paper.doi,
+            "citationKey": paper.citation_key,
+            "url": paper.url,
+            "accessDate": access_date_str,
+            "PMID": paper.pmid,
+            "PMCID": paper.pmcid,
+            "ISSN": paper.issn,
+            "archive": paper.archive,
+            "archiveLocation": paper.archive_location,
+            "shortTitle": paper.short_title,
+            "language": paper.language,
+            "libraryCatalog": paper.library_catalog,
+            "callNumber": paper.call_number,
+            "rights": paper.rights,
             "date": date_str,
             "tags": [],
-            "accessDate": datetime.now().strftime("%Y-%m-%d"),
         }
 
-        # Remove None values
+        # Remove None/empty values
         zotero_item = {k: v for k, v in zotero_item.items() if v is not None}
 
         return zotero_item

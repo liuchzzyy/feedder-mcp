@@ -180,7 +180,7 @@ class GmailParser:
             source=source_name,
             source_id=email_id or None,
             source_type="email",
-            metadata={
+            extra={
                 "email_id": email_id,
                 "email_subject": email_subject,
             },
@@ -246,7 +246,7 @@ class GmailParser:
                     source=source_name,
                     source_id=email_id or None,
                     source_type="email",
-                    metadata={
+                    extra={
                         "email_id": email_id,
                         "email_subject": email_subject,
                     },
@@ -331,7 +331,7 @@ class GmailParser:
                         source=source_name,
                         source_id=email_id or None,
                         source_type="email",
-                        metadata={
+                        extra={
                             "email_id": email_id,
                             "email_subject": email_subject,
                         },

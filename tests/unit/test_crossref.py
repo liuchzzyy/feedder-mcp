@@ -683,36 +683,30 @@ class TestCrossrefClientEnrichPaper:
 
     @pytest.mark.asyncio
     @patch("paper_feed.sources.crossref.get_crossref_config")
-    async def test_enrich_paper_does_not_overwrite_existing(
+    async def test_enrich_paper_overwrites_existing_fields(
         self, mock_config, sample_crossref_response
     ):
-        """Test that enrichment doesn't overwrite existing fields."""
+        """Test that CrossRef enrichment overwrites existing fields (most authoritative)."""
         mock_config.return_value = {"email": None}
 
         client = CrossrefClient()
-        original_abstract = "My original abstract"
-        original_authors = ["My Author"]
         paper = PaperItem(
             title="Test Paper",
             source="Test",
             source_type="rss",
-            abstract=original_abstract,
-            authors=original_authors,
+            abstract="My original abstract",
+            authors=["My Author"],
         )
 
-        mock_response = MagicMock()
-        mock_response.json.return_value = {"message": sample_crossref_response}
-        mock_response.raise_for_status.return_value = None
+        mock_work = CrossrefWork.from_api_response(sample_crossref_response)
 
-        mock_client = AsyncMock()
-        mock_client.get.return_value = mock_response
-
-        with patch.object(client, "_get_client", return_value=mock_client):
+        with patch.object(client, "find_best_match", return_value=mock_work):
             enriched = await client.enrich_paper(paper)
 
-        # Should not overwrite existing fields
-        assert enriched.abstract == original_abstract
-        assert enriched.authors == original_authors
+        # CrossRef should overwrite existing fields
+        assert enriched.abstract != "My original abstract"
+        assert enriched.authors != ["My Author"]
+        assert len(enriched.authors) == 3  # From sample response
 
     @pytest.mark.asyncio
     @patch("paper_feed.sources.crossref.get_crossref_config")
@@ -730,16 +724,19 @@ class TestCrossrefClientEnrichPaper:
         with patch.object(client, "find_best_match", return_value=mock_work):
             enriched = await client.enrich_paper(minimal_paper_item)
 
-        # Should have crossref metadata stored
-        assert "crossref" in enriched.metadata
-        crossref_data = enriched.metadata["crossref"]
-        assert "journal" in crossref_data
-        assert "publisher" in crossref_data
-        assert "volume" in crossref_data
-        assert "issue" in crossref_data
-        assert "pages" in crossref_data
+        # Should have crossref metadata stored in extra
+        assert "crossref" in enriched.extra
+        crossref_data = enriched.extra["crossref"]
         assert "funders" in crossref_data
         assert "subjects" in crossref_data
+        assert "citation_count" in crossref_data
+
+        # journal/publisher/volume/issue/pages are now mapped directly
+        assert enriched.publication_title == "Nature Reviews Machine Learning"
+        assert enriched.publisher == "Nature Publishing Group"
+        assert enriched.volume == "5"
+        assert enriched.issue == "3"
+        assert enriched.pages == "123-145"
 
     @pytest.mark.asyncio
     @patch("paper_feed.sources.crossref.get_crossref_config")

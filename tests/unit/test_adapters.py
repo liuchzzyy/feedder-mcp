@@ -24,7 +24,7 @@ def sample_papers():
             source="Test Source",
             source_id="test-001",
             source_type="rss",
-            metadata={"raw_data": "sample"},
+            extra={"raw_data": "sample"},
         ),
         PaperItem(
             title="Test Paper 2",
@@ -65,7 +65,7 @@ class TestJSONAdapter:
         assert len(data) == 2
         assert data[0]["title"] == "Test Paper 1"
         assert data[1]["title"] == "Test Paper 2"
-        assert "metadata" not in data[0]  # Should be excluded
+        assert "extra" not in data[0]  # Should be excluded
 
     @pytest.mark.asyncio
     async def test_json_adapter_with_metadata(self, sample_papers, tmp_path):
@@ -88,8 +88,8 @@ class TestJSONAdapter:
             data = json.load(f)
 
         assert len(data) == 2
-        assert "metadata" in data[0]
-        assert data[0]["metadata"]["raw_data"] == "sample"
+        assert "extra" in data[0]
+        assert data[0]["extra"]["raw_data"] == "sample"
 
     @pytest.mark.asyncio
     async def test_json_adapter_empty_list(self, tmp_path):

@@ -73,7 +73,7 @@ class RSSParser:
             source=source_name,
             source_id=source_id if source_id else None,
             source_type="rss",
-            metadata=metadata,
+            extra=metadata,
         )
 
     def _get_field(self, entry: Any, key: str, default: Any = None) -> Any:
@@ -315,7 +315,7 @@ class RSSParser:
 
         Extracts publisher, rights/license, content type details, and
         feed-level metadata (title, language, version) when available.
-        All data is stored in ``PaperItem.metadata`` without changing
+        All data is stored in ``PaperItem.extra`` without changing
         the PaperItem schema.
 
         Args:

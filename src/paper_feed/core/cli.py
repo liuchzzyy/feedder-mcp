@@ -241,7 +241,7 @@ async def _handle_enrich(args: argparse.Namespace) -> None:
                 finally:
                     await client.close()
 
-            if use_openalex and not enriched:
+            if use_openalex:
                 from paper_feed.sources.openalex import (
                     OpenAlexClient,
                 )

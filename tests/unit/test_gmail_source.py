@@ -445,7 +445,7 @@ class TestExtractFromPlainText:
         for item in items:
             assert item.source_type == "email"
             assert item.source == "TestSource"
-            assert item.metadata["extracted_from"] == "plain_text"
+            assert item.extra["extracted_from"] == "plain_text"
 
     def test_plain_text_deduplicates_dois(self):
         """Duplicate DOIs in text produce only one PaperItem."""

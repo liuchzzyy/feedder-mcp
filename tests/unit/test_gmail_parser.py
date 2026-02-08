@@ -79,8 +79,8 @@ def test_parse_table_metadata(parser):
         email_id="msg123",
         email_subject="New articles",
     )
-    assert items[0].metadata["email_id"] == "msg123"
-    assert items[0].metadata["email_subject"] == "New articles"
+    assert items[0].extra["email_id"] == "msg123"
+    assert items[0].extra["email_subject"] == "New articles"
 
 
 def test_parse_table_skips_short_links(parser):

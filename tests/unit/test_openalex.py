@@ -803,10 +803,14 @@ class TestOpenAlexClientEnrichPaper:
 
                 enriched = await client.enrich_paper(paper)
 
-                assert "openalex" in enriched.metadata
-                assert enriched.metadata["openalex"]["journal"] == "Nature"
-                assert enriched.metadata["openalex"]["cited_by_count"] == 42
-                assert enriched.metadata["openalex"]["volume"] == "1"
+                assert "openalex" in enriched.extra
+                assert enriched.extra["openalex"]["cited_by_count"] == 42
+                assert enriched.extra["openalex"]["concepts"] == ["AI"]
+                # journal/volume/issue/pages are now mapped directly
+                assert enriched.publication_title == "Nature"
+                assert enriched.volume == "1"
+                assert enriched.issue == "2"
+                assert enriched.pages == "10-20"
 
     @pytest.mark.asyncio
     async def test_enrich_paper_no_match(self):

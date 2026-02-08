@@ -458,7 +458,7 @@ class TestRSSParserMetadata:
             "publisher": "Nature Publishing Group",
         }
         paper = rss_parser.parse(entry, "TestSource")
-        assert paper.metadata.get("publisher") == "Nature Publishing Group"
+        assert paper.extra.get("publisher") == "Nature Publishing Group"
 
     def test_rights_in_metadata(self, rss_parser):
         """entry.rights appears in metadata."""
@@ -468,7 +468,7 @@ class TestRSSParserMetadata:
             "rights": "CC BY 4.0",
         }
         paper = rss_parser.parse(entry, "TestSource")
-        assert paper.metadata.get("rights") == "CC BY 4.0"
+        assert paper.extra.get("rights") == "CC BY 4.0"
 
     def test_summary_detail_in_metadata(self, rss_parser):
         """entry.summary_detail type info stored in metadata."""
@@ -484,7 +484,7 @@ class TestRSSParserMetadata:
             },
         }
         paper = rss_parser.parse(entry, "TestSource")
-        sd = paper.metadata.get("summary_detail", {})
+        sd = paper.extra.get("summary_detail", {})
         assert sd.get("type") == "text/html"
         assert sd.get("language") == "en"
 
@@ -500,8 +500,8 @@ class TestRSSParserMetadata:
             "version": "rss20",
         }
         paper = rss_parser.parse(entry, "TestSource", feed_meta=feed_meta)
-        assert paper.metadata.get("feed", {}).get("title") == "Nature Chemistry"
-        assert paper.metadata.get("feed", {}).get("version") == "rss20"
+        assert paper.extra.get("feed", {}).get("title") == "Nature Chemistry"
+        assert paper.extra.get("feed", {}).get("version") == "rss20"
 
     def test_empty_metadata_when_no_extras(self, rss_parser):
         """Metadata is empty dict when no extra fields present."""
@@ -510,7 +510,7 @@ class TestRSSParserMetadata:
             "link": "https://example.com/14",
         }
         paper = rss_parser.parse(entry, "TestSource")
-        assert paper.metadata == {}
+        assert paper.extra == {}
 
     def test_original_source_in_metadata(self, rss_parser):
         """entry.source (aggregated feed origin) stored in metadata."""
@@ -520,7 +520,7 @@ class TestRSSParserMetadata:
             "source": {"title": "Original Feed", "href": "https://orig.com/rss"},
         }
         paper = rss_parser.parse(entry, "TestSource")
-        src = paper.metadata.get("original_source", {})
+        src = paper.extra.get("original_source", {})
         assert src.get("title") == "Original Feed"
 
 

@@ -7,6 +7,7 @@ the results into a single list of PaperItem objects.
 
 import asyncio
 import logging
+import re
 from datetime import date
 from typing import Any, Dict, List, Optional
 from urllib.parse import urlparse
@@ -21,6 +22,42 @@ from paper_feed.sources.opml import OPMLParser
 from paper_feed.sources.rss_parser import RSSParser
 
 logger = logging.getLogger(__name__)
+
+# Patterns to strip from titles during dedup normalisation
+_TITLE_NOISE = re.compile(
+    r"\b(ASAP|Just Accepted|Early Access|Ahead of Print|In Press)\b",
+    re.IGNORECASE,
+)
+
+
+def _normalize_title(title: str) -> str:
+    """Normalise a title for deduplication.
+
+    Lowercases, removes punctuation, collapses whitespace, and strips
+    noise phrases like "ASAP" or "Just Accepted".
+    """
+    t = title.lower().strip()
+    t = _TITLE_NOISE.sub("", t)
+    t = re.sub(r"[^\w\s]", "", t)
+    t = re.sub(r"\s+", " ", t).strip()
+    return t
+
+
+def _dedup_key(paper: PaperItem) -> tuple[str, str] | None:
+    """Build a deduplication key for a paper.
+
+    Priority: DOI (case-insensitive) > URL > normalised title.
+    Returns ``None`` if no key can be constructed.
+    """
+    if paper.doi:
+        return ("doi", paper.doi.lower().strip())
+    if paper.url:
+        return ("url", paper.url.strip())
+    if paper.title:
+        nt = _normalize_title(paper.title)
+        if nt:
+            return ("title", nt)
+    return None
 
 
 class RSSSource(PaperSource):
@@ -134,7 +171,7 @@ class RSSSource(PaperSource):
 
         # Aggregate, skipping failed feeds
         all_papers: List[PaperItem] = []
-        seen_urls: set[str] = set()
+        seen_keys: set[tuple[str, str]] = set()
 
         for i, result in enumerate(results):
             if isinstance(result, BaseException):
@@ -145,10 +182,10 @@ class RSSSource(PaperSource):
                 continue
 
             for paper in result:
-                # Deduplicate by URL
-                key = paper.url or paper.title
-                if key and key not in seen_urls:
-                    seen_urls.add(key)
+                # Deduplicate: DOI > URL > normalized title
+                key = _dedup_key(paper)
+                if key is not None and key not in seen_keys:
+                    seen_keys.add(key)
                     all_papers.append(paper)
 
         # Apply global limit after aggregation
@@ -242,7 +279,7 @@ class RSSSource(PaperSource):
 
         Captures the feed's title, subtitle, language, version, and
         encoding when available. This metadata is passed to the parser
-        so it can be stored in ``PaperItem.metadata``.
+        so it can be stored in ``PaperItem.extra``.
 
         Args:
             feed: Parsed feedparser feed object.

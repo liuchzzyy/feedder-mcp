@@ -414,8 +414,8 @@ class CrossrefClient:
     async def enrich_paper(self, paper: PaperItem) -> PaperItem:
         """Enrich a PaperItem with CrossRef metadata.
 
-        Tries DOI lookup first, then title search. Fills only
-        missing fields; does not overwrite existing data.
+        CrossRef is the most authoritative source. All fields returned
+        by CrossRef **overwrite** existing values on the paper.
 
         Args:
             paper: PaperItem to enrich.
@@ -441,47 +441,74 @@ class CrossrefClient:
                 )
                 return paper
 
-            # Build update dict — only fill missing fields
+            # Build update dict — CrossRef overwrites all fields
             updates: Dict[str, Any] = {}
 
-            if not paper.abstract and work.abstract:
+            if work.abstract:
                 updates["abstract"] = work.abstract
-
-            if not paper.authors and work.authors:
+            if work.authors:
                 updates["authors"] = work.authors
-
-            if not paper.doi and work.doi:
+            if work.doi:
                 updates["doi"] = work.doi
-
-            if not paper.url and work.url:
+            if work.url:
                 updates["url"] = work.url
-
-            if not paper.pdf_url and work.pdf_url:
+            if work.pdf_url:
                 updates["pdf_url"] = work.pdf_url
-
-            if not paper.published_date and work.year:
+            if work.year:
                 updates["published_date"] = date(work.year, 1, 1)
 
-            # Store CrossRef metadata
-            metadata = dict(paper.metadata)
-            metadata["crossref"] = {
-                "journal": work.journal,
-                "publisher": work.publisher,
-                "volume": work.volume,
-                "issue": work.issue,
-                "pages": work.pages,
+            # Map new Zotero-aligned fields directly onto PaperItem
+            if work.journal:
+                updates["publication_title"] = work.journal
+            if work.publisher:
+                updates["publisher"] = work.publisher
+            if work.volume:
+                updates["volume"] = work.volume
+            if work.issue:
+                updates["issue"] = work.issue
+            if work.pages:
+                updates["pages"] = work.pages
+            if work.item_type:
+                updates["item_type"] = work.item_type
+
+            # Extract ISSN from raw_data
+            issn_list = work.raw_data.get("ISSN", [])
+            if issn_list and isinstance(issn_list, list):
+                updates["issn"] = issn_list[0]
+
+            # Extract language from raw_data
+            lang = work.raw_data.get("language")
+            if lang:
+                updates["language"] = lang
+
+            # Store CrossRef-specific data + unmapped raw fields in extra
+            extra = dict(paper.extra)
+            extra["crossref"] = {
                 "funders": work.funders,
                 "citation_count": work.citation_count,
                 "subjects": work.subjects,
-                "item_type": work.item_type,
             }
-            updates["metadata"] = metadata
+            # Store unmapped raw_data fields
+            _mapped_keys = {
+                "DOI", "title", "author", "container-title",
+                "published", "published-print", "published-online",
+                "volume", "issue", "page", "abstract", "URL",
+                "publisher", "type", "subject", "funder",
+                "reference", "link", "ISSN", "language",
+            }
+            crossref_extra = {
+                k: v for k, v in work.raw_data.items()
+                if k not in _mapped_keys
+            }
+            if crossref_extra:
+                extra["crossref_extra"] = crossref_extra
+            updates["extra"] = extra
 
             enriched = paper.model_copy(update=updates)
             logger.info(
                 "Enriched '%s' with CrossRef data (updated %d fields)",
                 paper.title[:50],
-                len(updates) - 1,  # exclude metadata
+                len(updates) - 1,  # exclude extra
             )
             return enriched
 

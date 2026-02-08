@@ -408,8 +408,8 @@ class OpenAlexClient:
     async def enrich_paper(self, paper: PaperItem) -> PaperItem:
         """Enrich a PaperItem with OpenAlex metadata.
 
-        Tries DOI lookup first, then title search. Fills only
-        missing fields; does not overwrite existing data.
+        Tries DOI lookup first, then title search. Only fills
+        **missing** fields; does not overwrite existing data.
 
         Args:
             paper: PaperItem to enrich.
@@ -440,37 +440,54 @@ class OpenAlexClient:
 
             if not paper.abstract and work.abstract:
                 updates["abstract"] = work.abstract
-
             if not paper.authors and work.authors:
                 updates["authors"] = work.authors
-
             if not paper.doi and work.doi:
                 updates["doi"] = work.doi
-
             if not paper.url and work.url:
                 updates["url"] = work.url
-
             if not paper.published_date and work.year:
                 updates["published_date"] = date(work.year, 1, 1)
 
-            # Store OpenAlex metadata
-            metadata = dict(paper.metadata)
-            metadata["openalex"] = {
-                "journal": work.journal,
+            # Map new Zotero-aligned fields (only if missing)
+            if not paper.publication_title and work.journal:
+                updates["publication_title"] = work.journal
+            if not paper.volume and work.volume:
+                updates["volume"] = work.volume
+            if not paper.issue and work.issue:
+                updates["issue"] = work.issue
+            if not paper.pages and work.pages:
+                updates["pages"] = work.pages
+            if not paper.item_type or paper.item_type == "journalArticle":
+                if work.item_type and work.item_type != "journalArticle":
+                    updates["item_type"] = work.item_type
+
+            # Store OpenAlex-specific data in extra
+            extra = dict(paper.extra)
+            extra["openalex"] = {
                 "cited_by_count": work.cited_by_count,
                 "concepts": work.concepts,
-                "volume": work.volume,
-                "issue": work.issue,
-                "pages": work.pages,
-                "item_type": work.item_type,
             }
-            updates["metadata"] = metadata
+            # Store unmapped raw_data fields
+            _mapped_keys = {
+                "doi", "title", "display_name", "authorships",
+                "primary_location", "publication_year", "biblio",
+                "abstract_inverted_index", "type", "cited_by_count",
+                "concepts", "id",
+            }
+            openalex_extra = {
+                k: v for k, v in work.raw_data.items()
+                if k not in _mapped_keys
+            }
+            if openalex_extra:
+                extra["openalex_extra"] = openalex_extra
+            updates["extra"] = extra
 
             enriched = paper.model_copy(update=updates)
             logger.info(
                 "Enriched '%s' with OpenAlex data (updated %d fields)",
                 paper.title[:50],
-                len(updates) - 1,  # exclude metadata
+                len(updates) - 1,  # exclude extra
             )
             return enriched
 

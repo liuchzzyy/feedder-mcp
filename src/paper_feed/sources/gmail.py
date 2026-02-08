@@ -323,8 +323,8 @@ class GmailSource(PaperSource):
                                 if not item.pdf_url and attachment_urls:
                                     item.pdf_url = attachment_urls[0]
                                 # Store all attachment info in metadata
-                                if "attachments" not in item.metadata:
-                                    item.metadata["attachments"] = attachment_urls
+                                if "attachments" not in item.extra:
+                                    item.extra["attachments"] = attachment_urls
 
                         papers.extend(items)
 
@@ -498,7 +498,7 @@ class GmailSource(PaperSource):
                     source=source_name,
                     source_id=email_id or None,
                     source_type="email",
-                    metadata={
+                    extra={
                         "email_id": email_id,
                         "email_subject": email_subject,
                         "extracted_from": "plain_text",

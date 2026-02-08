@@ -57,7 +57,7 @@ class JSONAdapter(ExportAdapter):
 
                 # Optionally exclude raw metadata
                 if not include_metadata:
-                    paper_dict.pop("metadata", None)
+                    paper_dict.pop("extra", None)
 
                 papers_data.append(paper_dict)
 

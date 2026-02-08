@@ -38,7 +38,7 @@ def sample_papers():
             source="arXiv",
             source_id="test-001",
             source_type="rss",
-            metadata={"raw_data": "sample1"},
+            extra={"raw_data": "sample1"},
         ),
         PaperItem(
             title="Test Paper 2",
@@ -50,7 +50,7 @@ def sample_papers():
             source="Nature",
             source_id="test-002",
             source_type="email",
-            metadata={"raw_data": "sample2"},
+            extra={"raw_data": "sample2"},
         ),
     ]
 
@@ -832,7 +832,7 @@ class TestHandleEnrich:
             mock_client = AsyncMock()
             # Return modified paper to show enrichment
             mock_paper = sample_papers[0].model_copy()
-            mock_paper.metadata["enriched"] = True
+            mock_paper.extra["enriched"] = True
             mock_client.enrich_paper.return_value = mock_paper
             mock_client_class.return_value = mock_client
 
