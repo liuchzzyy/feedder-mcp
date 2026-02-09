@@ -11,7 +11,7 @@ import httpx
 
 from src.config.settings import get_crossref_config
 from src.models.responses import PaperItem
-from src.utils.text import clean_abstract
+from src.utils.text import DOI_PATTERN, clean_abstract
 
 logger = logging.getLogger(__name__)
 
@@ -31,6 +31,15 @@ def _clean_doi(doi: str) -> str:
     elif doi.startswith("doi:"):
         return doi[4:]
     return doi.strip()
+
+
+def _extract_doi_from_text(value: Optional[str]) -> Optional[str]:
+    if not value:
+        return None
+    match = DOI_PATTERN.search(value)
+    if match:
+        return match.group(0)
+    return None
 
 
 @dataclass
@@ -304,15 +313,25 @@ class CrossrefClient:
         work: Optional[CrossrefWork] = None
 
         try:
-            if paper.doi:
-                work = await self.get_by_doi(paper.doi)
+            doi_candidate = paper.doi or _extract_doi_from_text(paper.url)
+            if doi_candidate:
+                work = await self.get_by_doi(doi_candidate)
 
             if work is None and paper.title:
                 work = await self.find_best_match(paper.title)
 
+            if work is None and paper.url:
+                work = await self.find_best_match(paper.url)
+
             if work is None:
                 logger.debug("No CrossRef match for '%s'", paper.title[:60])
-                return paper
+                extra = dict(paper.extra)
+                extra["crossref_unmatched"] = {
+                    "doi": paper.doi or _extract_doi_from_text(paper.url),
+                    "title": paper.title,
+                    "url": paper.url,
+                }
+                return paper.model_copy(update={"extra": extra})
 
             updates: Dict[str, Any] = {}
 

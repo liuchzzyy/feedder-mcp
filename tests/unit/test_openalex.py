@@ -832,8 +832,9 @@ class TestOpenAlexClientEnrichPaper:
 
                 enriched = await client.enrich_paper(paper)
 
-                # Should return the original paper unchanged
-                assert enriched == paper
+                # Should return paper with unmatched info recorded
+                assert enriched.title == paper.title
+                assert enriched.extra.get("openalex_unmatched") is not None
 
     @pytest.mark.asyncio
     async def test_enrich_paper_published_date_from_year(self):

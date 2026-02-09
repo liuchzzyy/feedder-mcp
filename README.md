@@ -7,7 +7,7 @@ An MCP (Model Context Protocol) server for collecting, filtering, enriching, and
 - MCP server with tools for fetch, filter, enrich, export, and keyword generation
 - RSS feed ingestion with OPML support, concurrency, and deduplication
 - Gmail alert ingestion via EZGmail (optional)
-- Two-stage filtering: keyword pass + optional AI semantic pass
+- Two-stage filtering: AI-generated keywords + AI semantic pass (default on)
 - Metadata enrichment via CrossRef and OpenAlex
 - Export adapters for JSON and Zotero (via local `zotero-mcp` repo)
 - CLI utilities for direct operations
@@ -92,9 +92,10 @@ paper-feedder-mcp delete
 ```
 
 Notes:
-- `paper-feedder-mcp export --format zotero` will automatically delete `output/` and common intermediate files after a successful export.
+- Use `paper-feedder-mcp delete` to clean `output/` and common intermediate files when needed.
 - Use `--no-ai` to disable AI filtering; use `--no-metadata` to omit extra fields in export.
 - If `--keywords` is omitted, keywords will be auto-generated from `RESEARCH_PROMPT` using the AI keyword generator.
+- If OpenAlex returns `429`, set `OPENALEX_API_KEY` and lower `OPENALEX_MAX_REQUESTS_PER_SECOND`.
 
 ### Python API
 
@@ -144,6 +145,8 @@ Key settings:
 | `POLITE_POOL_EMAIL` | Email for CrossRef/OpenAlex polite pool access |
 | `PAPER_FEEDDER_MCP_OPML` | Path to OPML file with RSS feeds |
 | `PAPER_FEEDDER_MCP_USER_AGENT` | Shared User-Agent for RSS/CrossRef/OpenAlex |
+| `OPENALEX_API_KEY` | OpenAlex API key (recommended to avoid rate limits) |
+| `OPENALEX_MAX_REQUESTS_PER_SECOND` | Client-side throttle for OpenAlex requests |
 | `ZOTERO_MCP_PATH` | Path to `zotero-mcp/src` (if not at default location) |
 
 See `.env.example` for all available options.

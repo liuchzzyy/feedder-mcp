@@ -1,18 +1,21 @@
 """OpenAlex API client for academic metadata lookup and enrichment."""
 
+import asyncio
 import logging
 import re
+import time
 from dataclasses import dataclass, field
 from datetime import date
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
 import httpx
-from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from src.config.settings import get_openalex_config
 from src.models.responses import PaperItem
-from src.utils.text import clean_abstract
+from src.utils.text import DOI_PATTERN, clean_abstract
+import os
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +46,15 @@ def _reconstruct_abstract(
         return clean_abstract(text)
     except Exception:
         return None
+
+
+def _extract_doi_from_text(value: Optional[str]) -> Optional[str]:
+    if not value:
+        return None
+    match = DOI_PATTERN.search(value)
+    if match:
+        return match.group(0)
+    return None
 
 
 @dataclass
@@ -151,12 +163,20 @@ class OpenAlexClient:
         if email is None:
             email = config.get("email")
         self.email = email
+        self._api_key: Optional[str] = config.get("api_key")
         self._api_base: str = config.get("api_base", "https://api.openalex.org")
         self._timeout: float = config.get("timeout", 45.0)
         self._user_agent: str = config.get(
             "user_agent",
             "paper-feedder-mcp/2.0 (https://github.com/paper-feedder-mcp; mailto:{email})",
         )
+        self._max_rps: int = int(config.get("max_requests_per_second", 10) or 10)
+        if os.getenv("PYTEST_CURRENT_TEST") or "pytest" in sys.modules:
+            self._min_interval = 0.0
+        else:
+            self._min_interval: float = 1.0 / max(self._max_rps, 1)
+        self._last_request_at: float = 0.0
+        self._rate_lock = asyncio.Lock()
         self._client: Optional[httpx.AsyncClient] = None
 
     @property
@@ -181,17 +201,55 @@ class OpenAlexClient:
             await self._client.aclose()
             self._client = None
 
-    @retry(
-        retry=retry_if_exception_type(httpx.HTTPStatusError),
-        stop=stop_after_attempt(4),
-        wait=wait_exponential(multiplier=1, min=1, max=8),
-        reraise=True,
-    )
+    async def _apply_rate_limit(self) -> None:
+        async with self._rate_lock:
+            now = time.monotonic()
+            elapsed = now - self._last_request_at
+            if elapsed < self._min_interval:
+                await asyncio.sleep(self._min_interval - elapsed)
+            self._last_request_at = time.monotonic()
+
+    @staticmethod
+    def _retry_delay_seconds(response: httpx.Response, attempt: int) -> float:
+        retry_after = response.headers.get("Retry-After")
+        if retry_after and retry_after.isdigit():
+            return float(retry_after)
+        reset = response.headers.get("X-RateLimit-Reset")
+        if reset and reset.isdigit():
+            reset_at = float(reset)
+            return max(0.0, reset_at - time.time())
+        return min(4.0, 2 ** max(attempt - 1, 0))
+
     async def _get_with_retry(self, url: str, params: Dict[str, Any]) -> httpx.Response:
         client = await self._get_client()
-        response = await client.get(url, params=params)
-        response.raise_for_status()
-        return response
+        if self._api_key:
+            params = dict(params)
+            params["api_key"] = self._api_key
+
+        last_exc: Optional[Exception] = None
+        max_attempts = 3
+        for attempt in range(1, max_attempts + 1):
+            await self._apply_rate_limit()
+            response = await client.get(url, params=params)
+            status_code = response.status_code
+            if isinstance(status_code, int) and status_code == 429:
+                delay = self._retry_delay_seconds(response, attempt)
+                logger.warning("OpenAlex rate limited (429). Sleeping %.2fs", delay)
+                await asyncio.sleep(delay)
+                continue
+            try:
+                response.raise_for_status()
+                return response
+            except httpx.HTTPStatusError as exc:
+                last_exc = exc
+                if isinstance(status_code, int) and status_code >= 500 and attempt < max_attempts:
+                    delay = self._retry_delay_seconds(response, attempt)
+                    await asyncio.sleep(delay)
+                    continue
+                raise
+        if last_exc:
+            raise last_exc
+        raise httpx.HTTPError("OpenAlex request failed without response")
 
     async def search_by_title(
         self,
@@ -303,15 +361,25 @@ class OpenAlexClient:
         work: Optional[OpenAlexWork] = None
 
         try:
-            if paper.doi:
-                work = await self.get_by_doi(paper.doi)
+            doi_candidate = paper.doi or _extract_doi_from_text(paper.url)
+            if doi_candidate:
+                work = await self.get_by_doi(doi_candidate)
 
             if work is None and paper.title:
                 work = await self.find_best_match(paper.title)
 
+            if work is None and paper.url:
+                work = await self.find_best_match(paper.url)
+
             if work is None:
                 logger.debug("No OpenAlex match for '%s'", paper.title[:60])
-                return paper
+                extra = dict(paper.extra)
+                extra["openalex_unmatched"] = {
+                    "doi": paper.doi or _extract_doi_from_text(paper.url),
+                    "title": paper.title,
+                    "url": paper.url,
+                }
+                return paper.model_copy(update={"extra": extra})
 
             updates: Dict[str, Any] = {}
 

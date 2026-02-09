@@ -172,7 +172,6 @@ async def _handle_export(args: argparse.Namespace) -> None:
             library_type=zotero_config.get("library_type", "user"),
         )
         await adapter.export(papers)
-        _delete_output_dir()
     else:
         print(
             f"Error: unknown format: {args.format}",
@@ -489,6 +488,11 @@ def main() -> None:
 
     if not args.command or args.command == "serve":
         try:
+            print(
+                "提示：已启动 MCP stdio 服务器。"
+                "请通过 MCP 客户端连接，或按 Ctrl+C 退出。",
+                file=sys.stderr,
+            )
             asyncio.run(serve())
         except KeyboardInterrupt:
             print("\nInterrupted.", file=sys.stderr)

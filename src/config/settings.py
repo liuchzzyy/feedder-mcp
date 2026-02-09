@@ -91,9 +91,11 @@ class PaperFeedSettings(BaseSettings):
 
     # ---- OpenAlex ----
     openalex_email: Optional[str] = None
+    openalex_api_key: Optional[str] = None
     openalex_api_base: str = "https://api.openalex.org"
     openalex_timeout: Optional[float] = None
     openalex_user_agent: Optional[str] = None
+    openalex_max_requests_per_second: int = 10
 
     # ---- Zotero ----
     zotero_library_id: str = ""
@@ -145,9 +147,11 @@ class PaperFeedSettings(BaseSettings):
     def get_openalex_config(self) -> dict:
         return {
             "email": self.openalex_email or self.polite_pool_email,
+            "api_key": self.openalex_api_key,
             "api_base": self.openalex_api_base,
             "timeout": self.openalex_timeout or self.api_timeout,
             "user_agent": self.openalex_user_agent or self.api_user_agent,
+            "max_requests_per_second": self.openalex_max_requests_per_second,
         }
 
     def get_zotero_config(self) -> dict:

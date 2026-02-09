@@ -751,8 +751,9 @@ class TestCrossrefClientEnrichPaper:
             with patch.object(client, "find_best_match", return_value=None):
                 enriched = await client.enrich_paper(minimal_paper_item)
 
-        # Should return unchanged paper
-        assert enriched == minimal_paper_item
+        # Should return paper with unmatched info recorded
+        assert enriched.title == minimal_paper_item.title
+        assert enriched.extra.get("crossref_unmatched") is not None
 
     @pytest.mark.asyncio
     @patch("src.sources.crossref.get_crossref_config")
