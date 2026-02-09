@@ -1,6 +1,5 @@
 """paper-feedder-mcp: MCP server for academic paper collection."""
 
-__version__ = "2.0.0"
 
 
 def main() -> None:

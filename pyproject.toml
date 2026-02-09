@@ -1,6 +1,6 @@
 [project]
 name = "paper-feedder-mcp"
-version = "2.1.0"
+version = "2.1.1"
 description = "MCP server for academic paper collection, filtering, and enrichment from RSS feeds and Gmail alerts"
 readme = "README.md"
 requires-python = ">=3.12"
