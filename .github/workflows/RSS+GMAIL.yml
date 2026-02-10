@@ -14,7 +14,12 @@ jobs:
       OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
       OPENAI_MODEL: ${{ secrets.OPENAI_MODEL }}
       RESEARCH_PROMPT: ${{ secrets.RESEARCH_PROMPT }}
+      OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
       POLITE_POOL_EMAIL: ${{ secrets.POLITE_POOL_EMAIL }}
+      PAPER_FEEDDER_MCP_OPML: feeds/RSS_official.opml
+      PAPER_FEEDDER_MCP_USER_AGENT: paper-feedder-mcp/2.0
+      RSS_TIMEOUT: "30"
+      RSS_MAX_CONCURRENT: "10"
       GMAIL_TOKEN_JSON: ${{ secrets.GMAIL_TOKEN_JSON }}
       GMAIL_CREDENTIALS_JSON: ${{ secrets.GMAIL_CREDENTIALS_JSON }}
       GMAIL_SENDER_FILTER: ${{ secrets.GMAIL_SENDER_FILTER }}
@@ -24,6 +29,9 @@ jobs:
       GMAIL_VERIFY_TRASH_LIMIT: "50"
       GMAIL_TOKEN_FILE: feeds/token.json
       GMAIL_CREDENTIALS_FILE: feeds/credentials.json
+      ZOTERO_LIBRARY_ID: ${{ secrets.ZOTERO_LIBRARY_ID }}
+      ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
+      ZOTERO_LIBRARY_TYPE: user
 
     steps:
       - name: Checkout
@@ -40,32 +48,17 @@ jobs:
         with:
           # Pin to avoid intermittent failures when "latest" is unavailable.
           version: "0.5.21"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
 
       - name: Install dependencies
-        run: uv sync
+        run: uv sync --locked --no-dev
 
       - name: Compute dates
         shell: bash
         run: |
           echo "RUN_DATE=$(TZ=Asia/Shanghai date +%Y_%m_%d)" >> $GITHUB_ENV
           echo "SINCE_DATE=$(TZ=Asia/Shanghai date -d '15 days ago' +%Y-%m-%d)" >> $GITHUB_ENV
-
-      - name: Generate keywords from RESEARCH_PROMPT
-        shell: bash
-        run: |
-          KEYWORDS=$(uv run python - <<'PY'
-          import asyncio
-          from src.ai.keyword_generator import KeywordGenerator
-
-          async def main():
-              kg = KeywordGenerator()
-              keywords = await kg.extract_keywords()
-              print(" ".join(keywords))
-
-          asyncio.run(main())
-          PY
-          )
-          echo "KEYWORDS=$KEYWORDS" >> $GITHUB_ENV
 
       - name: Prepare output dir
         run: mkdir -p output
@@ -74,22 +67,20 @@ jobs:
         shell: bash
         run: |
           uv run paper-feedder-mcp fetch --source rss --since "$SINCE_DATE" --output output/rss_raw.json
-          uv run paper-feedder-mcp filter --input output/rss_raw.json --output output/rss_filtered.json --keywords $KEYWORDS
+          uv run paper-feedder-mcp filter --input output/rss_raw.json --output output/rss_filtered.json
           uv run paper-feedder-mcp filter --input output/rss_filtered.json --output output/rss_ai_filtered.json --ai
           uv run paper-feedder-mcp enrich --input output/rss_ai_filtered.json --output output/rss_enriched.json --source all --concurrency 5
-          uv run paper-feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS.json" --format json --include-metadata
+          uv run paper-feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS_ZOTERO.json" --format zotero
 
       - name: Gmail pipeline (15 days)
         shell: bash
         run: |
           uv run paper-feedder-mcp fetch --source gmail --since "$SINCE_DATE" --output output/gmail_raw.json
-          uv run paper-feedder-mcp filter --input output/gmail_raw.json --output output/gmail_filtered.json --keywords $KEYWORDS
+          uv run paper-feedder-mcp filter --input output/gmail_raw.json --output output/gmail_filtered.json
           uv run paper-feedder-mcp filter --input output/gmail_filtered.json --output output/gmail_ai_filtered.json --ai
           uv run paper-feedder-mcp enrich --input output/gmail_ai_filtered.json --output output/gmail_enriched.json --source all --concurrency 5
-          uv run paper-feedder-mcp export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL.json" --format json --include-metadata
+          uv run paper-feedder-mcp export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL_ZOTERO.json" --format zotero
 
-      - name: Upload outputs
-        uses: actions/upload-artifact@v4
-        with:
-          name: paper-feed-${{ env.RUN_DATE }}
-          path: output/*.json
+      - name: Clean output
+        if: always()
+        run: uv run paper-feedder-mcp delete --output-dir output

@@ -232,11 +232,11 @@ async def _handle_enrich(args: argparse.Namespace) -> None:
     print(f"Enriched {enriched_count}/{len(papers)} papers -> {args.output}")
 
 
-def _delete_output_dir() -> None:
-    output_dir = Path("output")
+def _delete_output_dir(output_dir: str) -> None:
+    output_dir_path = Path(output_dir)
     removed_any = False
-    if output_dir.exists() and output_dir.is_dir():
-        shutil.rmtree(output_dir)
+    if output_dir_path.exists() and output_dir_path.is_dir():
+        shutil.rmtree(output_dir_path)
         removed_any = True
 
     # Clean up common intermediate files in cwd (if they exist outside output/)
@@ -255,13 +255,13 @@ def _delete_output_dir() -> None:
             removed_any = True
 
     if removed_any:
-        print("Deleted output/ directory and intermediate files.")
+        print(f"Deleted {output_dir_path} and intermediate files.")
     else:
-        print("No output/ directory or intermediate files to delete.")
+        print("No output directory or intermediate files to delete.")
 
 
-async def _handle_delete(_args: argparse.Namespace) -> None:
-    _delete_output_dir()
+async def _handle_delete(args: argparse.Namespace) -> None:
+    _delete_output_dir(args.output_dir)
 
 
 # -------------------- CLI Setup --------------------
@@ -469,9 +469,14 @@ def _build_parser() -> argparse.ArgumentParser:
         help="最大并发数（默认：5）",
     )
 
-    subparsers.add_parser(
+    delete_parser = subparsers.add_parser(
         "delete",
-        help="删除 output/ 目录及中间文件",
+        help="删除输出目录及中间文件",
+    )
+    delete_parser.add_argument(
+        "--output-dir",
+        default="output",
+        help="要删除的输出目录（默认：output）",
     )
 
     return parser
