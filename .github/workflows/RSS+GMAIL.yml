@@ -32,10 +32,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: Install uv
+        id: setup_uv
         uses: astral-sh/setup-uv@v3
+        with:
+          # Pin to avoid intermittent failures when "latest" is unavailable.
+          version: "0.5.21"
 
       - name: Install dependencies
         run: uv sync
@@ -51,7 +55,7 @@ jobs:
         run: |
           KEYWORDS=$(uv run python - <<'PY'
           import asyncio
-          from paper_feed.ai.keyword_generator import KeywordGenerator
+          from src.ai.keyword_generator import KeywordGenerator
 
           async def main():
               kg = KeywordGenerator()
@@ -69,20 +73,20 @@ jobs:
       - name: RSS pipeline (15 days)
         shell: bash
         run: |
-          uv run paper-feed fetch --source rss --since "$SINCE_DATE" --output output/rss_raw.json
-          uv run paper-feed filter --input output/rss_raw.json --output output/rss_filtered.json --keywords $KEYWORDS
-          uv run paper-feed filter --input output/rss_filtered.json --output output/rss_ai_filtered.json --ai
-          uv run paper-feed enrich --input output/rss_ai_filtered.json --output output/rss_enriched.json --source all --concurrency 5
-          uv run paper-feed export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS.json" --format json --include-metadata
+          uv run paper-feedder-mcp fetch --source rss --since "$SINCE_DATE" --output output/rss_raw.json
+          uv run paper-feedder-mcp filter --input output/rss_raw.json --output output/rss_filtered.json --keywords $KEYWORDS
+          uv run paper-feedder-mcp filter --input output/rss_filtered.json --output output/rss_ai_filtered.json --ai
+          uv run paper-feedder-mcp enrich --input output/rss_ai_filtered.json --output output/rss_enriched.json --source all --concurrency 5
+          uv run paper-feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS.json" --format json --include-metadata
 
       - name: Gmail pipeline (15 days)
         shell: bash
         run: |
-          uv run paper-feed fetch --source gmail --since "$SINCE_DATE" --output output/gmail_raw.json
-          uv run paper-feed filter --input output/gmail_raw.json --output output/gmail_filtered.json --keywords $KEYWORDS
-          uv run paper-feed filter --input output/gmail_filtered.json --output output/gmail_ai_filtered.json --ai
-          uv run paper-feed enrich --input output/gmail_ai_filtered.json --output output/gmail_enriched.json --source all --concurrency 5
-          uv run paper-feed export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL.json" --format json --include-metadata
+          uv run paper-feedder-mcp fetch --source gmail --since "$SINCE_DATE" --output output/gmail_raw.json
+          uv run paper-feedder-mcp filter --input output/gmail_raw.json --output output/gmail_filtered.json --keywords $KEYWORDS
+          uv run paper-feedder-mcp filter --input output/gmail_filtered.json --output output/gmail_ai_filtered.json --ai
+          uv run paper-feedder-mcp enrich --input output/gmail_ai_filtered.json --output output/gmail_enriched.json --source all --concurrency 5
+          uv run paper-feedder-mcp export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL.json" --format json --include-metadata
 
       - name: Upload outputs
         uses: actions/upload-artifact@v4
