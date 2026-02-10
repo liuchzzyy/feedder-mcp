@@ -9,6 +9,7 @@ on:
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       OPENAI_BASE_URL: ${{ secrets.OPENAI_BASE_URL }}
@@ -43,12 +44,11 @@ jobs:
           python-version: "3.12"
 
       - name: Install uv
-        id: setup_uv
         uses: astral-sh/setup-uv@v3
         with:
           # Pin to avoid intermittent failures when "latest" is unavailable.
           version: "0.5.21"
-          enable-cache: true
+          enable-cache: false
 
       - name: Install dependencies
         run: uv sync
@@ -72,6 +72,7 @@ jobs:
           uv run paper-feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS_ZOTERO.json" --format zotero
 
       - name: Gmail pipeline (15 days)
+        if: ${{ !cancelled() }}
         shell: bash
         run: |
           uv run paper-feedder-mcp fetch --source gmail --since "$SINCE_DATE" --output output/gmail_raw.json
