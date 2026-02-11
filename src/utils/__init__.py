@@ -1,4 +1,4 @@
-"""Utility functions for paper-feedder-mcp."""
+"""Utility functions for feedder-mcp."""
 
 from src.utils.text import DOI_PATTERN, clean_abstract, clean_html, clean_title
 

@@ -139,7 +139,7 @@ def test_rss_source_env_variable(monkeypatch):
     if not os.path.exists(opml_path):
         pytest.skip(f"OPML file not found: {opml_path}")
 
-    monkeypatch.setenv("PAPER_FEEDDER_MCP_OPML", opml_path)
+    monkeypatch.setenv("FEEDDER_MCP_OPML", opml_path)
 
     # No explicit path — should use env var
     source = RSSSource()
@@ -155,7 +155,7 @@ def test_rss_source_default_path(monkeypatch):
     if not os.path.exists(opml_path):
         pytest.skip(f"OPML file not found: {opml_path}")
 
-    monkeypatch.delenv("PAPER_FEEDDER_MCP_OPML", raising=False)
+    monkeypatch.delenv("FEEDDER_MCP_OPML", raising=False)
 
     source = RSSSource()
 

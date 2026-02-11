@@ -1,8 +1,8 @@
-"""Custom exceptions and error formatting for paper-feedder-mcp."""
+"""Custom exceptions and error formatting for feedder-mcp."""
 
 
 class PaperFeedError(Exception):
-    """Base exception for paper-feedder-mcp."""
+    """Base exception for feedder-mcp."""
 
 
 class SourceError(PaperFeedError):

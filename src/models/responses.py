@@ -1,4 +1,4 @@
-"""Core data models for paper-feedder-mcp.
+"""Core data models for feedder-mcp.
 
 Contains PaperItem, FilterCriteria, FilterResult, and abstract base classes.
 """

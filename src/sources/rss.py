@@ -62,7 +62,7 @@ class RSSSource(PaperSource):
             opml_path = config.get("opml_path", "feeds/RSS_official.opml")
 
         self.opml_path = opml_path
-        self.user_agent = user_agent or config.get("user_agent", "paper-feedder-mcp/2.0")
+        self.user_agent = user_agent or config.get("user_agent", "feedder-mcp/2.0")
         self.timeout = timeout if timeout is not None else config.get("timeout", 30)
         self.max_concurrent = (
             max_concurrent

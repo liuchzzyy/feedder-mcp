@@ -1,4 +1,4 @@
-"""Zotero export adapter for paper-feedder-mcp."""
+"""Zotero export adapter for feedder-mcp."""
 
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-"""paper-feedder-mcp: MCP server for academic paper collection."""
+"""feedder-mcp: MCP server for academic paper collection."""
 
 
 

@@ -996,14 +996,14 @@ class TestMain:
 
     def test_main_no_args_runs_server(self):
         """Test main with no arguments runs server."""
-        with patch("sys.argv", ["paper-feedder-mcp"]):
+        with patch("sys.argv", ["feedder-mcp"]):
             with patch("asyncio.run", side_effect=self._close_coro) as mock_run:
                 main()
                 mock_run.assert_called_once()
 
     def test_main_help_flag(self, capsys):
         """Test main with --help flag."""
-        with patch("sys.argv", ["paper-feedder-mcp", "--help"]):
+        with patch("sys.argv", ["feedder-mcp", "--help"]):
             with pytest.raises(SystemExit) as exc_info:
                 main()
 
@@ -1014,7 +1014,7 @@ class TestMain:
 
     def test_main_unknown_command_exits(self, capsys):
         """Test main with unknown command exits."""
-        with patch("sys.argv", ["paper-feedder-mcp", "unknown"]):
+        with patch("sys.argv", ["feedder-mcp", "unknown"]):
             with pytest.raises(SystemExit) as exc_info:
                 main()
 
@@ -1023,7 +1023,7 @@ class TestMain:
 
     def test_main_calls_handler_for_valid_command(self):
         """Test main dispatches to correct handler."""
-        with patch("sys.argv", ["paper-feedder-mcp", "fetch", "--output", "out.json"]):
+        with patch("sys.argv", ["feedder-mcp", "fetch", "--output", "out.json"]):
             with patch("src.client.cli._handle_fetch") as mock_handler:
                 mock_handler.return_value = None
 
@@ -1035,7 +1035,7 @@ class TestMain:
 
     def test_main_keyboard_interrupt_exits(self, capsys):
         """Test main handles KeyboardInterrupt."""
-        with patch("sys.argv", ["paper-feedder-mcp", "fetch", "--output", "out.json"]):
+        with patch("sys.argv", ["feedder-mcp", "fetch", "--output", "out.json"]):
             def _raise_interrupt(coro):
                 self._close_coro(coro)
                 raise KeyboardInterrupt()
@@ -1051,7 +1051,7 @@ class TestMain:
 
     def test_main_generic_exception_exits(self, capsys):
         """Test main handles generic exceptions."""
-        with patch("sys.argv", ["paper-feedder-mcp", "fetch", "--output", "out.json"]):
+        with patch("sys.argv", ["feedder-mcp", "fetch", "--output", "out.json"]):
             def _raise_error(coro):
                 self._close_coro(coro)
                 raise ValueError("Test error")

@@ -1,4 +1,4 @@
-"""Command-line interface for paper-feedder-mcp."""
+"""Command-line interface for feedder-mcp."""
 
 import argparse
 import asyncio
@@ -270,7 +270,7 @@ async def _handle_delete(args: argparse.Namespace) -> None:
 def _build_parser() -> argparse.ArgumentParser:
     default_since = (date.today() - timedelta(days=15)).isoformat()
     parser = argparse.ArgumentParser(
-        prog="paper-feedder-mcp",
+        prog="feedder-mcp",
         description="收集、过滤、补充并导出论文（MCP）。",
     )
     subparsers = parser.add_subparsers(

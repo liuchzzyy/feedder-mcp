@@ -17,8 +17,8 @@ jobs:
       RESEARCH_PROMPT: ${{ secrets.RESEARCH_PROMPT }}
       OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
       POLITE_POOL_EMAIL: ${{ secrets.POLITE_POOL_EMAIL }}
-      PAPER_FEEDDER_MCP_OPML: feeds/RSS_official.opml
-      PAPER_FEEDDER_MCP_USER_AGENT: paper-feedder-mcp/2.0
+      FEEDDER_MCP_OPML: feeds/RSS_official.opml
+      FEEDDER_MCP_USER_AGENT: feedder-mcp/2.0
       RSS_TIMEOUT: "30"
       RSS_MAX_CONCURRENT: "10"
       GMAIL_TOKEN_JSON: ${{ secrets.GMAIL_TOKEN_JSON }}
@@ -74,22 +74,22 @@ jobs:
       - name: RSS pipeline (15 days)
         shell: bash
         run: |
-          uv run paper-feedder-mcp fetch --source rss --since "$SINCE_DATE" --output output/rss_raw.json
-          uv run paper-feedder-mcp filter --input output/rss_raw.json --output output/rss_filtered.json
-          uv run paper-feedder-mcp filter --input output/rss_filtered.json --output output/rss_ai_filtered.json --ai
-          uv run paper-feedder-mcp enrich --input output/rss_ai_filtered.json --output output/rss_enriched.json --source all --concurrency 5
-          uv run paper-feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS_ZOTERO.json" --format zotero
+          uv run feedder-mcp fetch --source rss --since "$SINCE_DATE" --output output/rss_raw.json
+          uv run feedder-mcp filter --input output/rss_raw.json --output output/rss_filtered.json
+          uv run feedder-mcp filter --input output/rss_filtered.json --output output/rss_ai_filtered.json --ai
+          uv run feedder-mcp enrich --input output/rss_ai_filtered.json --output output/rss_enriched.json --source all --concurrency 5
+          uv run feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS_ZOTERO.json" --format zotero
 
       - name: Gmail pipeline (15 days)
         if: ${{ !cancelled() }}
         shell: bash
         run: |
-          uv run paper-feedder-mcp fetch --source gmail --since "$SINCE_DATE" --output output/gmail_raw.json
-          uv run paper-feedder-mcp filter --input output/gmail_raw.json --output output/gmail_filtered.json
-          uv run paper-feedder-mcp filter --input output/gmail_filtered.json --output output/gmail_ai_filtered.json --ai
-          uv run paper-feedder-mcp enrich --input output/gmail_ai_filtered.json --output output/gmail_enriched.json --source all --concurrency 5
-          uv run paper-feedder-mcp export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL_ZOTERO.json" --format zotero
+          uv run feedder-mcp fetch --source gmail --since "$SINCE_DATE" --output output/gmail_raw.json
+          uv run feedder-mcp filter --input output/gmail_raw.json --output output/gmail_filtered.json
+          uv run feedder-mcp filter --input output/gmail_filtered.json --output output/gmail_ai_filtered.json --ai
+          uv run feedder-mcp enrich --input output/gmail_ai_filtered.json --output output/gmail_enriched.json --source all --concurrency 5
+          uv run feedder-mcp export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL_ZOTERO.json" --format zotero
 
       - name: Clean output
         if: always()
-        run: uv run paper-feedder-mcp delete --output-dir output
+        run: uv run feedder-mcp delete --output-dir output

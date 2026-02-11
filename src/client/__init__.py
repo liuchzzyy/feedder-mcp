@@ -1,1 +1,1 @@
-"""CLI client for paper-feedder-mcp."""
+"""CLI client for feedder-mcp."""

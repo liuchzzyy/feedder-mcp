@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 
 class FetchRSSInput(BaseModel):
-    """Input for paper-feedder-mcp_fetch_rss tool."""
+    """Input for feedder-mcp_fetch_rss tool."""
 
     opml_path: Optional[str] = Field(
         None, description="Path to OPML file with RSS feeds"
@@ -19,7 +19,7 @@ class FetchRSSInput(BaseModel):
 
 
 class FetchGmailInput(BaseModel):
-    """Input for paper-feedder-mcp_fetch_gmail tool."""
+    """Input for feedder-mcp_fetch_gmail tool."""
 
     query: Optional[str] = Field(None, description="Gmail search query")
     limit: Optional[int] = Field(None, description="Maximum number of papers to fetch")
@@ -29,7 +29,7 @@ class FetchGmailInput(BaseModel):
 
 
 class FilterKeywordsInput(BaseModel):
-    """Input for paper-feedder-mcp_filter_keywords tool."""
+    """Input for feedder-mcp_filter_keywords tool."""
 
     papers_json: str = Field(
         ..., description="JSON string of papers array to filter"
@@ -50,7 +50,7 @@ class FilterKeywordsInput(BaseModel):
 
 
 class FilterAIInput(BaseModel):
-    """Input for paper-feedder-mcp_filter_ai tool."""
+    """Input for feedder-mcp_filter_ai tool."""
 
     papers_json: str = Field(
         ..., description="JSON string of papers array to filter"
@@ -61,7 +61,7 @@ class FilterAIInput(BaseModel):
 
 
 class EnrichInput(BaseModel):
-    """Input for paper-feedder-mcp_enrich tool."""
+    """Input for feedder-mcp_enrich tool."""
 
     papers_json: str = Field(
         ..., description="JSON string of papers array to enrich"
@@ -73,7 +73,7 @@ class EnrichInput(BaseModel):
 
 
 class ExportJSONInput(BaseModel):
-    """Input for paper-feedder-mcp_export_json tool."""
+    """Input for feedder-mcp_export_json tool."""
 
     papers_json: str = Field(
         ..., description="JSON string of papers array to export"
@@ -87,7 +87,7 @@ class ExportJSONInput(BaseModel):
 
 
 class GenerateKeywordsInput(BaseModel):
-    """Input for paper-feedder-mcp_generate_keywords tool."""
+    """Input for feedder-mcp_generate_keywords tool."""
 
     research_prompt: Optional[str] = Field(
         None,
@@ -96,12 +96,12 @@ class GenerateKeywordsInput(BaseModel):
 
 
 class SearchCrossrefInput(BaseModel):
-    """Input for paper-feedder-mcp_search_crossref tool."""
+    """Input for feedder-mcp_search_crossref tool."""
 
     title: str = Field(..., description="Paper title to search for")
 
 
 class SearchOpenalexInput(BaseModel):
-    """Input for paper-feedder-mcp_search_openalex tool."""
+    """Input for feedder-mcp_search_openalex tool."""
 
     title: str = Field(..., description="Paper title to search for")

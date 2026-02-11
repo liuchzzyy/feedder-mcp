@@ -43,8 +43,8 @@ def reset_dotenv_flag(monkeypatch):
         "ZOTERO_LIBRARY_ID",
         "ZOTERO_API_KEY",
         "ZOTERO_LIBRARY_TYPE",
-        "PAPER_FEEDDER_MCP_OPML",
-        "PAPER_FEEDDER_MCP_USER_AGENT",
+        "FEEDDER_MCP_OPML",
+        "FEEDDER_MCP_USER_AGENT",
         "CROSSREF_EMAIL",
         "OPENALEX_EMAIL",
     ]:
@@ -252,8 +252,8 @@ class TestGetRssConfig:
     def test_get_rss_config_full_config(self):
         """Test getting RSS config with all env vars set."""
         env_vars = {
-            "PAPER_FEEDDER_MCP_OPML": "/custom/path/feeds.opml",
-            "PAPER_FEEDDER_MCP_USER_AGENT": "custom-agent/2.0",
+            "FEEDDER_MCP_OPML": "/custom/path/feeds.opml",
+            "FEEDDER_MCP_USER_AGENT": "custom-agent/2.0",
         }
         with mock.patch.dict(os.environ, env_vars):
             with mock.patch("src.config.settings.load_dotenv"):
@@ -267,7 +267,7 @@ class TestGetRssConfig:
             with mock.patch("src.config.settings.load_dotenv"):
                 config = get_rss_config()
                 assert config["opml_path"] == "feeds/RSS_official.opml"
-                assert config["user_agent"] == "paper-feedder-mcp/2.0"
+                assert config["user_agent"] == "feedder-mcp/2.0"
 
 
 class TestGetCrossrefConfig:

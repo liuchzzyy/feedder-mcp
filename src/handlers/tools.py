@@ -1,4 +1,4 @@
-"""MCP tool handler for paper-feedder-mcp."""
+"""MCP tool handler for feedder-mcp."""
 
 import json
 from typing import Any, Dict, List, Optional

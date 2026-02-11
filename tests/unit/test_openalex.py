@@ -389,7 +389,7 @@ class TestOpenAlexClientHeaders:
         headers = client._headers
 
         assert "User-Agent" in headers
-        assert "paper-feedder-mcp" in headers["User-Agent"]
+        assert "feedder-mcp" in headers["User-Agent"]
         assert "user@example.com" in headers["User-Agent"]
         assert "mailto" in headers
         assert headers["mailto"] == "user@example.com"

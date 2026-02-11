@@ -1,4 +1,4 @@
-"""JSON export adapter for paper-feedder-mcp."""
+"""JSON export adapter for feedder-mcp."""
 
 import json
 from pathlib import Path

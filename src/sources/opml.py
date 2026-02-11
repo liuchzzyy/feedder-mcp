@@ -67,7 +67,7 @@ class OPMLParser:
         return feeds
 
     @classmethod
-    def from_env(cls, env_var: str = "PAPER_FEEDDER_MCP_OPML") -> "OPMLParser":
+    def from_env(cls, env_var: str = "FEEDDER_MCP_OPML") -> "OPMLParser":
         opml_path = os.environ.get(env_var)
         if not opml_path:
             raise ValueError(
@@ -80,7 +80,7 @@ class OPMLParser:
     def from_default_location(
         cls, default_path: str = "feeds/RSS_official.opml"
     ) -> "OPMLParser":
-        env_path = os.environ.get("PAPER_FEEDDER_MCP_OPML")
+        env_path = os.environ.get("FEEDDER_MCP_OPML")
         if env_path:
             return cls(env_path)
         return cls(default_path)

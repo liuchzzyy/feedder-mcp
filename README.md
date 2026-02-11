@@ -1,8 +1,8 @@
-# paper-feedder-mcp
+# feedder-mcp
 
 An MCP (Model Context Protocol) server for collecting, filtering, enriching, and exporting academic papers from RSS feeds and Gmail alerts.
 
-Version: 2.1.1 (2026-02-09)
+Version: 2.2.0 (2026-02-11)
 
 ## Features
 
@@ -22,7 +22,7 @@ Version: 2.1.1 (2026-02-09)
 ## Installation
 
 ```bash
-cd paper-feedder-mcp
+cd feedder-mcp
 uv sync
 
 # With development tools (pytest, ruff, ty)
@@ -35,10 +35,10 @@ uv sync --group dev
 
 ```bash
 # Default: serve over stdio
-paper-feedder-mcp
+feedder-mcp
 
 # Explicit serve
-paper-feedder-mcp serve
+feedder-mcp serve
 
 # Or via module
 python -m src
@@ -73,28 +73,28 @@ On errors:
 
 ```bash
 # 1. Fetch papers from RSS feeds (default --since: last 15 days)
-paper-feedder-mcp fetch --source rss --limit 200 --output output/raw.json
+feedder-mcp fetch --source rss --limit 200 --output output/raw.json
 
 # 2. Keyword filter (OR logic)
-paper-feedder-mcp filter --input output/raw.json --output output/filtered.json \
+feedder-mcp filter --input output/raw.json --output output/filtered.json \
     --keywords battery zinc electrolyte operando
 
 # 3. AI semantic filter (default enabled; requires OPENAI_API_KEY in .env)
-paper-feedder-mcp filter --input output/filtered.json --output output/ai_filtered.json \
+feedder-mcp filter --input output/filtered.json --output output/ai_filtered.json \
     --keywords battery zinc
 
 # 4. Enrich with CrossRef + OpenAlex metadata
-paper-feedder-mcp enrich --input output/ai_filtered.json --output output/enriched.json --api all --concurrency 5
+feedder-mcp enrich --input output/ai_filtered.json --output output/enriched.json --api all --concurrency 5
 
 # 5. Export (metadata included by default)
-paper-feedder-mcp export --input output/enriched.json --output output/final.json --format json
+feedder-mcp export --input output/enriched.json --output output/final.json --format json
 
 # 6. Optional cleanup
-paper-feedder-mcp delete
+feedder-mcp delete
 ```
 
 Notes:
-- Use `paper-feedder-mcp delete` to clean `output/` and common intermediate files when needed.
+- Use `feedder-mcp delete` to clean `output/` and common intermediate files when needed.
 - Use `--no-ai` to disable AI filtering; use `--no-metadata` to omit extra fields in export.
 - If `--keywords` is omitted, keywords will be auto-generated from `RESEARCH_PROMPT` using the AI keyword generator.
 - If OpenAlex returns `429`, set `OPENALEX_API_KEY`, lower `OPENALEX_MAX_REQUESTS_PER_SECOND`, and consider reducing `--concurrency`.
@@ -145,8 +145,8 @@ Key settings:
 | `GMAIL_SENDER_FILTER` | Comma-separated sender allowlist for Gmail filtering |
 | `GMAIL_SENDER_MAP_JSON` | JSON map of sender email to source name |
 | `POLITE_POOL_EMAIL` | Email for CrossRef/OpenAlex polite pool access |
-| `PAPER_FEEDDER_MCP_OPML` | Path to OPML file with RSS feeds |
-| `PAPER_FEEDDER_MCP_USER_AGENT` | Shared User-Agent for RSS/CrossRef/OpenAlex |
+| `FEEDDER_MCP_OPML` | Path to OPML file with RSS feeds |
+| `FEEDDER_MCP_USER_AGENT` | Shared User-Agent for RSS/CrossRef/OpenAlex |
 | `OPENALEX_API_KEY` | OpenAlex API key (recommended to avoid rate limits) |
 | `OPENALEX_MAX_REQUESTS_PER_SECOND` | Client-side throttle for OpenAlex requests |
 | `ZOTERO_MCP_PATH` | Path to `zotero-mcp/src` (if not at default location) |
@@ -156,7 +156,7 @@ See `.env.example` for all available options.
 ## Project Structure
 
 ```
-paper-feedder-mcp/
+feedder-mcp/
 ├── src/
 │   ├── server.py           # MCP server
 │   ├── client/cli.py       # CLI entry

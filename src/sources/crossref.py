@@ -172,7 +172,7 @@ class CrossrefClient:
         self._timeout: float = config.get("timeout", 45.0)
         self._user_agent: str = config.get(
             "user_agent",
-            "paper-feedder-mcp/2.0 (https://github.com/paper-feedder-mcp; mailto:{email})",
+            "feedder-mcp/2.0 (https://github.com/feedder-mcp; mailto:{email})",
         )
         self._client: Optional[httpx.AsyncClient] = None
 

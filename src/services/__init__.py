@@ -1,4 +1,4 @@
-"""Service layer for paper-feedder-mcp."""
+"""Service layer for feedder-mcp."""
 
 from src.services.enrich import EnrichService
 from src.services.export import ExportService
