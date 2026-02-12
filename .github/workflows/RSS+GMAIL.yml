@@ -6,6 +6,10 @@ on:
     - cron: "0 16 * * *"
   workflow_dispatch: {}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
@@ -51,11 +55,9 @@ jobs:
           python-version: "3.12"
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v4
         with:
-          # Pin to avoid intermittent failures when "latest" is unavailable.
-          version: "0.5.21"
-          enable-cache: false
+          enable-cache: true
 
       - name: Install dependencies
         run: |
@@ -72,24 +74,85 @@ jobs:
         run: mkdir -p output
 
       - name: RSS pipeline (15 days)
+        id: rss
         shell: bash
         run: |
+          START_TIME=$(date +%s)
           uv run paper-feedder-mcp fetch --source rss --since "$SINCE_DATE" --output output/rss_raw.json
           uv run paper-feedder-mcp filter --input output/rss_raw.json --output output/rss_filtered.json
           uv run paper-feedder-mcp filter --input output/rss_filtered.json --output output/rss_ai_filtered.json --ai
           uv run paper-feedder-mcp enrich --input output/rss_ai_filtered.json --output output/rss_enriched.json --source all --concurrency 5
           uv run paper-feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS_ZOTERO.json" --format zotero
+          END_TIME=$(date +%s)
+
+          # Extract counts from output files
+          RSS_RAW=$(python3 -c "import json; print(len(json.load(open('output/rss_raw.json'))))" 2>/dev/null || echo "0")
+          RSS_FILTERED=$(python3 -c "import json; print(len(json.load(open('output/rss_ai_filtered.json'))))" 2>/dev/null || echo "0")
+          RSS_ENRICHED=$(python3 -c "import json; print(len(json.load(open('output/rss_enriched.json'))))" 2>/dev/null || echo "0")
+
+          echo "duration=$((END_TIME - START_TIME))" >> $GITHUB_OUTPUT
+          echo "raw=$RSS_RAW" >> $GITHUB_OUTPUT
+          echo "filtered=$RSS_FILTERED" >> $GITHUB_OUTPUT
+          echo "enriched=$RSS_ENRICHED" >> $GITHUB_OUTPUT
 
       - name: Gmail pipeline (15 days)
+        id: gmail
         if: ${{ !cancelled() }}
         shell: bash
         run: |
+          START_TIME=$(date +%s)
           uv run paper-feedder-mcp fetch --source gmail --since "$SINCE_DATE" --output output/gmail_raw.json
           uv run paper-feedder-mcp filter --input output/gmail_raw.json --output output/gmail_filtered.json
           uv run paper-feedder-mcp filter --input output/gmail_filtered.json --output output/gmail_ai_filtered.json --ai
           uv run paper-feedder-mcp enrich --input output/gmail_ai_filtered.json --output output/gmail_enriched.json --source all --concurrency 5
           uv run paper-feedder-mcp export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL_ZOTERO.json" --format zotero
+          END_TIME=$(date +%s)
+
+          # Extract counts from output files
+          GMAIL_RAW=$(python3 -c "import json; print(len(json.load(open('output/gmail_raw.json'))))" 2>/dev/null || echo "0")
+          GMAIL_FILTERED=$(python3 -c "import json; print(len(json.load(open('output/gmail_ai_filtered.json'))))" 2>/dev/null || echo "0")
+          GMAIL_ENRICHED=$(python3 -c "import json; print(len(json.load(open('output/gmail_enriched.json'))))" 2>/dev/null || echo "0")
+
+          echo "duration=$((END_TIME - START_TIME))" >> $GITHUB_OUTPUT
+          echo "raw=$GMAIL_RAW" >> $GITHUB_OUTPUT
+          echo "filtered=$GMAIL_FILTERED" >> $GITHUB_OUTPUT
+          echo "enriched=$GMAIL_ENRICHED" >> $GITHUB_OUTPUT
+
+      - name: Generate Summary
+        if: always()
+        shell: bash
+        run: |
+          echo "## RSS+GMAIL Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Parameter | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Run | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Date | ${RUN_DATE} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Since | ${SINCE_DATE} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### RSS Pipeline" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Fetched | ${{ steps.rss.outputs.raw || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| After filter | ${{ steps.rss.outputs.filtered || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Enriched | ${{ steps.rss.outputs.enriched || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Duration | ${{ steps.rss.outputs.duration || '—' }}s |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          echo "### Gmail Pipeline" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Fetched | ${{ steps.gmail.outputs.raw || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| After filter | ${{ steps.gmail.outputs.filtered || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Enriched | ${{ steps.gmail.outputs.enriched || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Duration | ${{ steps.gmail.outputs.duration || '—' }}s |" >> $GITHUB_STEP_SUMMARY
 
       - name: Clean output
         if: always()
         run: uv run paper-feedder-mcp delete --output-dir output
+
+      - name: Notify on failure
+        if: failure() && github.event_name == 'schedule'
+        run: |
+          echo "::warning::RSS+GMAIL workflow failed. Check the logs for details."
