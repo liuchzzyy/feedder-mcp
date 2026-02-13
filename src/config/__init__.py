@@ -1,3 +1,4 @@
-"""Configuration package for paper-feedder-mcp."""
+"""Configuration package for feedder-mcp."""
 
 __all__ = []
+

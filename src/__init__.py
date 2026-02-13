@@ -1,4 +1,4 @@
-"""paper-feedder-mcp: MCP server for academic paper collection."""
+"""feedder-mcp: MCP server for academic paper collection."""
 
 
 
@@ -7,3 +7,4 @@ def main() -> None:
     from src.client.cli import main as cli_main
 
     cli_main()
+

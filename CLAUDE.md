@@ -1,10 +1,10 @@
-# CLAUDE.md - Developer Guide for paper-feedder-mcp
+# CLAUDE.md - Developer Guide for feedder-mcp
 
-This file provides guidance for contributors working in the `paper-feedder-mcp` repository.
+This file provides guidance for contributors working in the `feedder-mcp` repository.
 
 ## Project Overview
 
-**paper-feedder-mcp** is an MCP server and CLI for collecting, filtering, enriching, and exporting academic papers from RSS feeds and Gmail alerts.
+**feedder-mcp** is an MCP server and CLI for collecting, filtering, enriching, and exporting academic papers from RSS feeds and Gmail alerts.
 
 - **Language**: Python 3.12+
 - **Package Manager**: `uv`
@@ -56,7 +56,7 @@ uv run ty check
 3. All I/O is async; use `asyncio.to_thread()` for sync libraries.
 4. Optional dependencies must be guarded with `try/except ImportError`.
 5. MCP tools should return JSON-serializable outputs.
-6. Use `paper-feedder-mcp delete` to clean `output/` and common intermediate files when needed.
+6. Use `feedder-mcp delete` to clean `output/` and common intermediate files when needed.
 
 ## Configuration (selected)
 
@@ -75,10 +75,11 @@ uv run ty check
 
 - Do not commit sensitive files (tokens/credentials).
 - Keep documentation (`README.md`, `doc/中文指南.md`) in sync with code changes.
-- Use `paper-feedder-mcp delete` to clean pipeline outputs when needed.
+- Use `feedder-mcp delete` to clean pipeline outputs when needed.
 - `enrich` accepts `--api/--source/--provider` and `--jobs/--concurrency/--parallel`.
 
 ---
 
 **Version**: 2.5.0
 **Last Updated**: 2026-02-12
+

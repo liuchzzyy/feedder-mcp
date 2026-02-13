@@ -21,7 +21,7 @@ _dotenv_loaded = False
 
 
 class PaperFeedSettings(BaseSettings):
-    """Paper-feedder-mcp configuration loaded from env vars / .env file."""
+    """feedder-mcp configuration loaded from env vars / .env file."""
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -30,7 +30,7 @@ class PaperFeedSettings(BaseSettings):
     )
 
     # ---- Server ----
-    server_name: str = "paper-feedder-mcp"
+    server_name: str = "feedder-mcp"
 
     # ---- RSS ----
     paper_feed_opml: str = Field(
@@ -38,7 +38,7 @@ class PaperFeedSettings(BaseSettings):
         validation_alias="PAPER_FEEDDER_MCP_OPML",
     )
     paper_feed_user_agent: str = Field(
-        default="paper-feedder-mcp/2.0",
+        default="feedder-mcp/2.0",
         validation_alias="PAPER_FEEDDER_MCP_USER_AGENT",
     )
     rss_timeout: int = 30
@@ -80,7 +80,7 @@ class PaperFeedSettings(BaseSettings):
     polite_pool_email: Optional[str] = None
     api_timeout: float = 45.0
     api_user_agent: str = (
-        "paper-feedder-mcp/2.0 (https://github.com/paper-feedder-mcp; mailto:{email})"
+        "feedder-mcp/2.0 (https://github.com/feedder-mcp; mailto:{email})"
     )
 
     # ---- CrossRef ----
@@ -264,3 +264,4 @@ def get_ai_filter_config() -> dict:
 
 def get_keyword_generator_config() -> dict:
     return _fresh_settings().get_keyword_generator_config()
+

@@ -168,7 +168,7 @@ class OpenAlexClient:
         self._timeout: float = config.get("timeout", 45.0)
         self._user_agent: str = config.get(
             "user_agent",
-            "paper-feedder-mcp/2.0 (https://github.com/paper-feedder-mcp; mailto:{email})",
+            "feedder-mcp/2.0 (https://github.com/feedder-mcp; mailto:{email})",
         )
         self._max_rps: int = int(config.get("max_requests_per_second", 10) or 10)
         if self._api_key:
@@ -467,3 +467,4 @@ class OpenAlexClient:
                 e,
             )
             return paper
+

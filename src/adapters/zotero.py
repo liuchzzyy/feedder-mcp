@@ -1,4 +1,4 @@
-"""Zotero export adapter for paper-feedder-mcp."""
+"""Zotero export adapter for feedder-mcp."""
 
 from __future__ import annotations
 
@@ -313,3 +313,4 @@ class ZoteroAdapter(ExportAdapter):
                     break
 
         return created_n, skipped_n, failed_n
+

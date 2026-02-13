@@ -1,8 +1,8 @@
-"""Custom exceptions and error formatting for paper-feedder-mcp."""
+"""Custom exceptions and error formatting for feedder-mcp."""
 
 
 class PaperFeedError(Exception):
-    """Base exception for paper-feedder-mcp."""
+    """Base exception for feedder-mcp."""
 
 
 class SourceError(PaperFeedError):
@@ -36,3 +36,4 @@ def format_error(error: Exception) -> str:
     """
     error_type = type(error).__name__
     return f"{error_type}: {error}"
+

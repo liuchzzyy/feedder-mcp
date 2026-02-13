@@ -1,4 +1,4 @@
-"""MCP server entry point for paper-feedder-mcp."""
+"""MCP server entry point for feedder-mcp."""
 
 from __future__ import annotations
 
@@ -123,3 +123,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+

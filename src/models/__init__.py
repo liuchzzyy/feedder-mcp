@@ -1,1 +1,2 @@
-"""Data models for paper-feedder-mcp."""
+"""Data models for feedder-mcp."""
+

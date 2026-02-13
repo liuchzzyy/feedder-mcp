@@ -271,7 +271,7 @@ class TestGetRssConfig:
             with mock.patch("src.config.settings.load_dotenv"):
                 config = get_rss_config()
                 assert config["opml_path"] == "feeds/RSS_official.opml"
-                assert config["user_agent"] == "paper-feedder-mcp/2.0"
+                assert config["user_agent"] == "feedder-mcp/2.0"
 
 
 class TestGetCrossrefConfig:
@@ -459,3 +459,4 @@ class TestConfigIntegration:
 
                 # reload_config should trigger another load
                 assert final_call_count > initial_call_count
+

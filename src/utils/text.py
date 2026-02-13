@@ -1,4 +1,4 @@
-"""Text cleaning utilities for paper-feedder-mcp.
+"""Text cleaning utilities for feedder-mcp.
 
 Provides functions for cleaning titles, HTML content, and abstracts
 commonly found in RSS feeds and email alerts.
@@ -80,3 +80,4 @@ def clean_abstract(abstract: Optional[str]) -> Optional[str]:
     abstract = abstract.strip()
 
     return abstract if abstract else None
+

@@ -156,7 +156,7 @@ class GmailSource(PaperSource):
         except ImportError:
             raise ImportError(
                 "EZGmail is required for GmailSource. "
-                "Install it with: pip install paper-feedder-mcp[gmail]"
+                "Install it with: pip install feedder-mcp[gmail]"
             )
 
         self._write_json_configs()
@@ -214,7 +214,7 @@ class GmailSource(PaperSource):
             "refresh_token": data.get("refresh_token"),
             "token_expiry": token_expiry,
             "token_uri": data.get("token_uri"),
-            "user_agent": "paper-feedder-mcp/2.0",
+            "user_agent": "feedder-mcp/2.0",
             "revoke_uri": data.get("revoke_uri"),
             "id_token": data.get("id_token"),
             "token_response": data.get("token_response"),
@@ -477,3 +477,4 @@ class GmailSource(PaperSource):
     def _deduplicate(papers: List[PaperItem]) -> List[PaperItem]:
         unique, _ = deduplicate_papers(papers)
         return unique
+

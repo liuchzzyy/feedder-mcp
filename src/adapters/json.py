@@ -1,4 +1,4 @@
-"""JSON export adapter for paper-feedder-mcp."""
+"""JSON export adapter for feedder-mcp."""
 
 import json
 from pathlib import Path
@@ -43,3 +43,4 @@ class JSONAdapter(ExportAdapter):
 
         except (IOError, OSError) as e:
             raise IOError(f"Failed to write JSON file: {e}") from e
+

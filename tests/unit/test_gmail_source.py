@@ -484,13 +484,13 @@ class TestGmailSourceInitNewParams:
         source = GmailSource(
             query="test",
             auto_detect_source=False,
-            processed_label="paper-feedder-mcp/done",
+            processed_label="feedder-mcp/done",
             trash_after_process=False,
             verify_trash_after_process=False,
             verify_trash_limit=10,
         )
         assert source.auto_detect_source is False
-        assert source.processed_label == "paper-feedder-mcp/done"
+        assert source.processed_label == "feedder-mcp/done"
         assert source.trash_after_process is False
         assert source.verify_trash_after_process is False
         assert source.verify_trash_limit == 10
@@ -549,7 +549,7 @@ async def test_fetch_papers_applies_processed_label():
     source = GmailSource(
         query="test",
         source_name="Test",
-        processed_label="paper-feedder-mcp/done",
+        processed_label="feedder-mcp/done",
     )
     source._initialized = True
 
@@ -578,7 +578,7 @@ async def test_fetch_papers_applies_processed_label():
     with patch.dict(sys.modules, {"ezgmail": mock_ezgmail}):
         await source.fetch_papers()
 
-    mock_message.addLabel.assert_called_once_with("paper-feedder-mcp/done")
+    mock_message.addLabel.assert_called_once_with("feedder-mcp/done")
 
 
 # ── GmailSource error recovery tests ───────────────────────────────
@@ -609,3 +609,4 @@ async def test_fetch_papers_marks_unread_on_error():
     # Should recover gracefully and return empty
     assert papers == []
     mock_thread.markAsUnread.assert_called()
+

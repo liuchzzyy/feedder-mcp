@@ -1,4 +1,4 @@
-"""Utility functions for paper-feedder-mcp."""
+"""Utility functions for feedder-mcp."""
 
 from src.utils.dedup import (
     deduplicate_papers,
@@ -24,3 +24,4 @@ __all__ = [
     "paper_export_identity_key",
     "zotero_data_identity_keys",
 ]
+

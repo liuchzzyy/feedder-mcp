@@ -1,4 +1,4 @@
-"""Export adapters for paper-feedder-mcp."""
+"""Export adapters for feedder-mcp."""
 
 from src.adapters.json import JSONAdapter
 
@@ -11,3 +11,4 @@ except ImportError:
     _zotero_available = False
 
 __all__ = ["JSONAdapter", "ZoteroAdapter"]
+

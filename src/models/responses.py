@@ -1,4 +1,4 @@
-"""Core data models for paper-feedder-mcp.
+"""Core data models for feedder-mcp.
 
 Contains PaperItem, FilterCriteria, FilterResult, and abstract base classes.
 """
@@ -128,3 +128,4 @@ def format_papers_text(papers: List[PaperItem], max_papers: int = 50) -> str:
         lines.append(f"... and {len(papers) - max_papers} more papers.")
 
     return "\n".join(lines)
+

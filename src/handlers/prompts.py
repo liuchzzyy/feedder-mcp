@@ -1,4 +1,4 @@
-"""MCP prompt handler for paper-feedder-mcp."""
+"""MCP prompt handler for feedder-mcp."""
 
 from typing import Any, Dict, List, Optional
 
@@ -9,7 +9,7 @@ class PromptHandler:
     def get_prompts(self) -> List[Any]:
         prompts: List[Dict[str, Any]] = [
             {
-                "name": "paper-feedder-mcp_research_prompt",
+                "name": "feedder-mcp_research_prompt",
                 "description": "Template for providing research interests.",
                 "arguments": [
                     {
@@ -39,7 +39,7 @@ class PromptHandler:
 
     def render_prompt(self, name: str, arguments: Optional[Dict[str, Any]]) -> List[Any]:
         args = arguments or {}
-        if name != "paper-feedder-mcp_research_prompt":
+        if name != "feedder-mcp_research_prompt":
             raise ValueError(f"Unknown prompt: {name}")
 
         topic = str(args.get("topic", "")).strip()
@@ -62,3 +62,4 @@ class PromptHandler:
             ]
         except Exception:
             return [{"role": "user", "content": message}]
+
