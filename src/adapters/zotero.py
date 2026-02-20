@@ -256,18 +256,142 @@ class ZoteroAdapter(ExportAdapter):
 
     @staticmethod
     def _normalize_item_list_result(result: Any) -> Optional[List[Dict[str, Any]]]:
+        def _normalize_list(values: List[Any]) -> List[Dict[str, Any]]:
+            normalized: List[Dict[str, Any]] = []
+            for value in values:
+                item = ZoteroAdapter._coerce_item_to_dict(value)
+                if item is not None:
+                    normalized.append(item)
+            return normalized
+
         if isinstance(result, list):
-            return [item for item in result if isinstance(item, dict)]
+            return _normalize_list(result)
         if isinstance(result, dict):
             for key in ("items", "results", "data"):
                 value = result.get(key)
                 if isinstance(value, list):
-                    return [item for item in value if isinstance(item, dict)]
+                    return _normalize_list(value)
                 if isinstance(value, dict):
                     nested_items = value.get("items")
                     if isinstance(nested_items, list):
-                        return [item for item in nested_items if isinstance(item, dict)]
+                        return _normalize_list(nested_items)
+            normalized = ZoteroAdapter._coerce_item_to_dict(result)
+            if normalized is not None:
+                return [normalized]
         return None
+
+    @staticmethod
+    def _coerce_item_to_dict(item: Any) -> Optional[Dict[str, Any]]:
+        if isinstance(item, dict):
+            return ZoteroAdapter._coerce_flat_item_dict(item)
+
+        dumped: Any = None
+        model_dump = getattr(item, "model_dump", None)
+        if callable(model_dump):
+            dumped = model_dump()
+        else:
+            dict_method = getattr(item, "dict", None)
+            if callable(dict_method):
+                dumped = dict_method()
+
+        if isinstance(dumped, dict):
+            return ZoteroAdapter._coerce_flat_item_dict(dumped)
+
+        attrs: Dict[str, Any] = {}
+        for key in (
+            "raw_data",
+            "DOI",
+            "doi",
+            "title",
+            "date",
+            "year",
+            "creators",
+            "authors",
+            "url",
+        ):
+            value = getattr(item, key, None)
+            if value is not None:
+                attrs[key] = value
+
+        if attrs:
+            return ZoteroAdapter._coerce_flat_item_dict(attrs)
+        return None
+
+    @staticmethod
+    def _coerce_flat_item_dict(item: Dict[str, Any]) -> Dict[str, Any]:
+        data = item.get("data")
+        if isinstance(data, dict):
+            return item
+
+        raw_data = item.get("raw_data")
+        mapped: Dict[str, Any] = {}
+
+        if isinstance(raw_data, dict):
+            nested = raw_data.get("data")
+            if isinstance(nested, dict):
+                return raw_data
+            mapped.update(raw_data)
+
+        title = item.get("title")
+        if title and "title" not in mapped:
+            mapped["title"] = title
+
+        doi = item.get("DOI") or item.get("doi")
+        if doi and "DOI" not in mapped:
+            mapped["DOI"] = doi
+
+        date_value = item.get("date")
+        if not date_value:
+            year = item.get("year")
+            if year is not None and str(year).strip():
+                date_value = str(year)
+        if date_value and "date" not in mapped:
+            mapped["date"] = str(date_value)
+
+        creators_value = item.get("creators")
+        if not creators_value:
+            creators_value = item.get("authors")
+        creators = ZoteroAdapter._coerce_creators(creators_value)
+        if creators and "creators" not in mapped:
+            mapped["creators"] = creators
+
+        url = item.get("url")
+        if url and "url" not in mapped:
+            mapped["url"] = url
+
+        if mapped:
+            return {"data": mapped}
+        return item
+
+    @staticmethod
+    def _coerce_creators(value: Any) -> List[Dict[str, Any]]:
+        if isinstance(value, list):
+            creators: List[Dict[str, Any]] = []
+            for entry in value:
+                if isinstance(entry, dict):
+                    name = (
+                        entry.get("name")
+                        or entry.get("lastName")
+                        or entry.get("firstName")
+                    )
+                    if name:
+                        creators.append(entry)
+                elif isinstance(entry, str):
+                    name = entry.strip()
+                    if name:
+                        creators.append({"creatorType": "author", "name": name})
+            return creators
+
+        if isinstance(value, str):
+            authors: List[Dict[str, Any]] = []
+            normalized = value.replace(" and ", ";")
+            for chunk in normalized.split(";"):
+                name = chunk.strip()
+                if name:
+                    authors.append({"creatorType": "author", "name": name})
+            return authors
+
+        return []
 
     @staticmethod
     def _extract_create_result_counts(result: Any) -> tuple[int, int, int]:

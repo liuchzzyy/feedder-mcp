@@ -359,3 +359,67 @@ class TestZoteroAdapter:
         assert result["success_count"] == 0
         assert result["skipped_count"] == 1
         assert result["skipped_by_key"]["doi"] == 1
+
+    def test_normalize_item_list_result_supports_model_dump_items(self):
+        """Adapter should normalize SearchResult-like objects from newer zotero-mcp."""
+
+        class _FakeSearchResult:
+            def model_dump(self):
+                return {
+                    "title": "A New Framework for Batteries",
+                    "doi": "10.1234/test-doi",
+                    "year": 2025,
+                    "authors": "Wang",
+                }
+
+        normalized = ZoteroAdapter._normalize_item_list_result([_FakeSearchResult()])
+        assert isinstance(normalized, list)
+        assert len(normalized) == 1
+        data = normalized[0]["data"]
+        assert data["DOI"] == "10.1234/test-doi"
+        assert data["title"] == "A New Framework for Batteries"
+        assert data["date"] == "2025"
+        assert data["creators"][0]["name"] == "Wang"
+
+    @pytest.mark.asyncio
+    async def test_zotero_export_skips_existing_from_get_all_items_models(
+        self, monkeypatch
+    ):
+        """Export pre-check should work when get_all_items returns model-like results."""
+        monkeypatch.setattr(zotero_module, "zotero_available", True)
+
+        class _FakeSearchResult:
+            def model_dump(self):
+                return {
+                    "title": "Existing Paper",
+                    "doi": "10.1234/existing",
+                    "year": 2024,
+                    "authors": "Author One",
+                }
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._item_service = AsyncMock()
+        adapter._api_client = AsyncMock()
+        adapter._item_service.list_items = None
+        adapter._item_service.get_items = None
+        adapter._item_service.get_all_items = AsyncMock(
+            return_value=[_FakeSearchResult()]
+        )
+        adapter._item_service.create_item = AsyncMock()
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+
+        papers = [
+            PaperItem(
+                title="Existing Paper with Variant Title",
+                doi="https://doi.org/10.1234/EXISTING",
+                source="Test",
+                source_type="rss",
+            )
+        ]
+
+        result = await adapter.export(papers)
+
+        assert result["success_count"] == 0
+        assert result["skipped_count"] == 1
+        assert result["skipped_by_key"]["doi"] == 1
+        adapter._item_service.create_item.assert_not_awaited()

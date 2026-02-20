@@ -4,7 +4,20 @@ on:
   schedule:
     # Beijing 00:00 = UTC 16:00 (previous day)
     - cron: "0 16 * * *"
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      since_days:
+        description: "Lookback window in days"
+        required: false
+        default: "15"
+      zotero_mcp_repo:
+        description: "zotero-mcp repository (owner/repo)"
+        required: false
+        default: "liuchzzyy/zotero-mcp"
+      zotero_mcp_ref:
+        description: "zotero-mcp branch/tag/SHA"
+        required: false
+        default: "main"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -46,7 +59,8 @@ jobs:
       - name: Checkout zotero-mcp
         uses: actions/checkout@v4
         with:
-          repository: liuchzzyy/zotero-mcp
+          repository: ${{ github.event.inputs.zotero_mcp_repo || vars.ZOTERO_MCP_REPO || 'liuchzzyy/zotero-mcp' }}
+          ref: ${{ github.event.inputs.zotero_mcp_ref || vars.ZOTERO_MCP_REF || 'main' }}
           path: zotero-mcp
 
       - name: Set up Python
@@ -67,8 +81,10 @@ jobs:
       - name: Compute dates
         shell: bash
         run: |
+          SINCE_DAYS="${{ github.event.inputs.since_days || vars.SINCE_DAYS || '15' }}"
           echo "RUN_DATE=$(TZ=Asia/Shanghai date +%Y_%m_%d)" >> $GITHUB_ENV
-          echo "SINCE_DATE=$(TZ=Asia/Shanghai date -d '15 days ago' +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "SINCE_DAYS=${SINCE_DAYS}" >> $GITHUB_ENV
+          echo "SINCE_DATE=$(TZ=Asia/Shanghai date -d \"${SINCE_DAYS} days ago\" +%Y-%m-%d)" >> $GITHUB_ENV
 
       - name: Prepare output dir
         run: mkdir -p output
@@ -116,6 +132,7 @@ jobs:
           echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Run | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Date | ${RUN_DATE} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Since days | ${SINCE_DAYS} |" >> $GITHUB_STEP_SUMMARY
           echo "| Since | ${SINCE_DATE} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
@@ -170,7 +187,8 @@ jobs:
       - name: Checkout zotero-mcp
         uses: actions/checkout@v4
         with:
-          repository: liuchzzyy/zotero-mcp
+          repository: ${{ github.event.inputs.zotero_mcp_repo || vars.ZOTERO_MCP_REPO || 'liuchzzyy/zotero-mcp' }}
+          ref: ${{ github.event.inputs.zotero_mcp_ref || vars.ZOTERO_MCP_REF || 'main' }}
           path: zotero-mcp
 
       - name: Set up Python
@@ -191,8 +209,10 @@ jobs:
       - name: Compute dates
         shell: bash
         run: |
+          SINCE_DAYS="${{ github.event.inputs.since_days || vars.SINCE_DAYS || '15' }}"
           echo "RUN_DATE=$(TZ=Asia/Shanghai date +%Y_%m_%d)" >> $GITHUB_ENV
-          echo "SINCE_DATE=$(TZ=Asia/Shanghai date -d '15 days ago' +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "SINCE_DAYS=${SINCE_DAYS}" >> $GITHUB_ENV
+          echo "SINCE_DATE=$(TZ=Asia/Shanghai date -d \"${SINCE_DAYS} days ago\" +%Y-%m-%d)" >> $GITHUB_ENV
 
       - name: Prepare output dir
         run: mkdir -p output
@@ -239,6 +259,7 @@ jobs:
           echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Run | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Date | ${RUN_DATE} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Since days | ${SINCE_DAYS} |" >> $GITHUB_STEP_SUMMARY
           echo "| Since | ${SINCE_DATE} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Metric | Count |" >> $GITHUB_STEP_SUMMARY
