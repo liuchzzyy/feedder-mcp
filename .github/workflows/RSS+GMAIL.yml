@@ -82,9 +82,14 @@ jobs:
         shell: bash
         run: |
           SINCE_DAYS="${{ github.event.inputs.since_days || vars.SINCE_DAYS || '15' }}"
+          if ! [[ "${SINCE_DAYS}" =~ ^[0-9]+$ ]]; then
+            echo "Invalid SINCE_DAYS: ${SINCE_DAYS}" >&2
+            exit 1
+          fi
+          SINCE_DATE="$(TZ=Asia/Shanghai date -d "${SINCE_DAYS} days ago" +%Y-%m-%d)"
           echo "RUN_DATE=$(TZ=Asia/Shanghai date +%Y_%m_%d)" >> $GITHUB_ENV
           echo "SINCE_DAYS=${SINCE_DAYS}" >> $GITHUB_ENV
-          echo "SINCE_DATE=$(TZ=Asia/Shanghai date -d \"${SINCE_DAYS} days ago\" +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "SINCE_DATE=${SINCE_DATE}" >> $GITHUB_ENV
 
       - name: Prepare output dir
         run: mkdir -p output
@@ -98,8 +103,7 @@ jobs:
           RSS_RAW=$(python3 -c "import json; print(len(json.load(open('output/rss_raw.json'))))" 2>/dev/null || echo "0")
 
           if [ "$RSS_RAW" -gt 0 ]; then
-            uv run feedder-mcp filter --input output/rss_raw.json --output output/rss_filtered.json --no-ai
-            uv run feedder-mcp filter --input output/rss_filtered.json --output output/rss_ai_filtered.json --ai
+            uv run feedder-mcp filter --input output/rss_raw.json --output output/rss_ai_filtered.json --ai
             uv run feedder-mcp enrich --input output/rss_ai_filtered.json --output output/rss_enriched.json --source all --concurrency 5
             if [ -n "${TARGET_COLLECTION}" ]; then
               uv run feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS_ZOTERO.json" --format zotero --collection "${TARGET_COLLECTION}"
@@ -210,9 +214,14 @@ jobs:
         shell: bash
         run: |
           SINCE_DAYS="${{ github.event.inputs.since_days || vars.SINCE_DAYS || '15' }}"
+          if ! [[ "${SINCE_DAYS}" =~ ^[0-9]+$ ]]; then
+            echo "Invalid SINCE_DAYS: ${SINCE_DAYS}" >&2
+            exit 1
+          fi
+          SINCE_DATE="$(TZ=Asia/Shanghai date -d "${SINCE_DAYS} days ago" +%Y-%m-%d)"
           echo "RUN_DATE=$(TZ=Asia/Shanghai date +%Y_%m_%d)" >> $GITHUB_ENV
           echo "SINCE_DAYS=${SINCE_DAYS}" >> $GITHUB_ENV
-          echo "SINCE_DATE=$(TZ=Asia/Shanghai date -d \"${SINCE_DAYS} days ago\" +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "SINCE_DATE=${SINCE_DATE}" >> $GITHUB_ENV
 
       - name: Prepare output dir
         run: mkdir -p output
@@ -226,8 +235,7 @@ jobs:
           GMAIL_RAW=$(python3 -c "import json; print(len(json.load(open('output/gmail_raw.json'))))" 2>/dev/null || echo "0")
 
           if [ "$GMAIL_RAW" -gt 0 ]; then
-            uv run feedder-mcp filter --input output/gmail_raw.json --output output/gmail_filtered.json --no-ai
-            uv run feedder-mcp filter --input output/gmail_filtered.json --output output/gmail_ai_filtered.json --ai
+            uv run feedder-mcp filter --input output/gmail_raw.json --output output/gmail_ai_filtered.json --ai
             uv run feedder-mcp enrich --input output/gmail_ai_filtered.json --output output/gmail_enriched.json --source all --concurrency 5
             if [ -n "${TARGET_COLLECTION}" ]; then
               uv run feedder-mcp export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL_ZOTERO.json" --format zotero --collection "${TARGET_COLLECTION}"
