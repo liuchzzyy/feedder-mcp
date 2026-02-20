@@ -94,7 +94,7 @@ jobs:
       - name: Prepare output dir
         run: mkdir -p output
 
-      - name: RSS pipeline (15 days)
+      - name: RSS pipeline (${{ github.event.inputs.since_days || vars.SINCE_DAYS || '15' }} days)
         id: rss
         shell: bash
         run: |
@@ -226,7 +226,7 @@ jobs:
       - name: Prepare output dir
         run: mkdir -p output
 
-      - name: Gmail pipeline (15 days)
+      - name: Gmail pipeline (${{ github.event.inputs.since_days || vars.SINCE_DAYS || '15' }} days)
         id: gmail
         shell: bash
         run: |
