@@ -5,6 +5,7 @@ import asyncio
 import json
 import pytest
 from datetime import date
+from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
 from src.client.cli import (
@@ -102,12 +103,12 @@ class TestBuildParser:
         assert args.command == "enrich"
 
     def test_fetch_parser_has_required_args(self):
-        """Test fetch subcommand has required arguments."""
+        """Test fetch subcommand defaults."""
         parser = _build_parser()
-        args = parser.parse_args(["fetch", "--output", "out.json"])
+        args = parser.parse_args(["fetch"])
 
         assert hasattr(args, "output")
-        assert args.output == "out.json"
+        assert Path(args.output) == Path("output") / date.today().isoformat() / "raw.json"
         assert args.source == "rss"  # default
         assert args.since is not None
 
@@ -136,20 +137,18 @@ class TestBuildParser:
         assert args.since == "2024-01-01"
 
     def test_filter_parser_has_required_args(self):
-        """Test filter subcommand requires input and output."""
+        """Test filter subcommand requires input and has default output."""
         parser = _build_parser()
         args = parser.parse_args(
             [
                 "filter",
                 "--input",
                 "in.json",
-                "--output",
-                "out.json",
             ]
         )
 
         assert args.input == "in.json"
-        assert args.output == "out.json"
+        assert Path(args.output) == Path("output") / date.today().isoformat() / "filtered.json"
 
     def test_filter_parser_accepts_filter_args(self):
         """Test filter parser accepts keyword filters."""
@@ -182,8 +181,8 @@ class TestBuildParser:
         assert args.has_pdf is True
         assert args.ai is False
 
-    def test_export_parser_has_required_args(self):
-        """Test export subcommand requires input and output."""
+    def test_export_parser_has_expected_defaults(self):
+        """Test export subcommand defaults."""
         parser = _build_parser()
         args = parser.parse_args(
             [
@@ -200,6 +199,22 @@ class TestBuildParser:
         assert args.format == "json"  # default
         assert args.include_metadata is True
         assert args.collection is None
+
+    def test_export_parser_allows_missing_output_for_zotero(self):
+        """Test Zotero export can omit --output."""
+        parser = _build_parser()
+        args = parser.parse_args(
+            [
+                "export",
+                "--input",
+                "in.json",
+                "--format",
+                "zotero",
+            ]
+        )
+
+        assert Path(args.output) == Path("output") / date.today().isoformat() / "export.json"
+        assert args.format == "zotero"
 
     def test_export_parser_accepts_format_options(self):
         """Test export parser accepts different formats."""
@@ -226,20 +241,18 @@ class TestBuildParser:
             assert args.collection == "ABCD1234"
 
     def test_enrich_parser_has_required_args(self):
-        """Test enrich subcommand requires input and output."""
+        """Test enrich subcommand requires input and has default output."""
         parser = _build_parser()
         args = parser.parse_args(
             [
                 "enrich",
                 "--input",
                 "in.json",
-                "--output",
-                "out.json",
             ]
         )
 
         assert args.input == "in.json"
-        assert args.output == "out.json"
+        assert Path(args.output) == Path("output") / date.today().isoformat() / "enriched.json"
         assert args.source == "all"  # default
         assert args.concurrency == 5  # default
 
@@ -805,10 +818,11 @@ class TestHandleExport:
         self, sample_papers_json, tmp_path, capsys
     ):
         """Test export handler with Zotero format."""
+        output_file = tmp_path / "zotero_export_stats.json"
         args = argparse.Namespace(
             input=str(sample_papers_json),
             format="zotero",
-            output="unused",  # Zotero doesn't use output path
+            output=str(output_file),
             include_metadata=False,
             collection="ABCD1234",
         )
@@ -837,17 +851,19 @@ class TestHandleExport:
                 assert len(call_args[0][0]) == 2  # 2 papers
                 assert call_args.kwargs.get("collection_id") == "ABCD1234"
 
+        assert output_file.exists()
         captured = capsys.readouterr()
         assert "Exported 2 papers (zotero)" in captured.out
 
     @pytest.mark.asyncio
     async def test_handle_export_zotero_uses_default_collection_from_config(
-        self, sample_papers_json
+        self, sample_papers_json, tmp_path
     ):
+        output_file = tmp_path / "zotero_export_stats.json"
         args = argparse.Namespace(
             input=str(sample_papers_json),
             format="zotero",
-            output="unused",
+            output=str(output_file),
             include_metadata=False,
             collection=None,
         )
@@ -872,6 +888,7 @@ class TestHandleExport:
 
                 call_args = mock_adapter.export.call_args
                 assert call_args.kwargs.get("collection_id") == "CFG12345"
+        assert output_file.exists()
 
     @pytest.mark.asyncio
     async def test_handle_export_json_with_metadata(self, sample_papers_json, tmp_path):

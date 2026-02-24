@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import inspect
 import logging
+import re
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
@@ -74,8 +75,17 @@ class ZoteroAdapter(ExportAdapter):
         failures = []
         skipped_count = 0
         skipped_by_key = {"doi": 0, "title_year_author": 0}
-        collection_keys = [collection_id] if collection_id else None
-        existing_key_set = await self._load_existing_identity_keys()
+        resolved_collection_id = await self._resolve_collection_key(collection_id)
+        collection_keys = [resolved_collection_id] if resolved_collection_id else None
+        try:
+            existing_key_set = await self._load_existing_identity_keys()
+        except Exception as exc:
+            self._logger.warning(
+                "Failed to preload Zotero items for deduplication; "
+                "continuing export without pre-check: %s",
+                exc,
+            )
+            existing_key_set = set()
 
         for paper in papers:
             try:
@@ -95,10 +105,6 @@ class ZoteroAdapter(ExportAdapter):
                     create_result
                 )
 
-                # Backward compatibility for APIs that return no structured summary.
-                if created_n == 0 and skipped_n == 0 and failed_n == 0:
-                    created_n = 1
-
                 success_count += created_n
                 skipped_count += skipped_n
                 if skipped_n > 0 and identity_key:
@@ -114,7 +120,9 @@ class ZoteroAdapter(ExportAdapter):
                     failures.append(
                         {
                             "title": paper.title,
-                            "error": f"create_item reported {failed_n} failed item(s)",
+                            "error": self._summarize_create_failures(
+                                create_result, failed_n
+                            ),
                         }
                     )
             except Exception as e:
@@ -136,9 +144,80 @@ class ZoteroAdapter(ExportAdapter):
             "failures": failures,
         }
 
+    async def _resolve_collection_key(
+        self, collection_id: Optional[str]
+    ) -> Optional[str]:
+        if not collection_id:
+            return None
+
+        value = str(collection_id).strip()
+        if not value:
+            return None
+
+        if self._looks_like_collection_key(value):
+            return value
+
+        get_collections = getattr(self._api_client, "get_collections", None)
+        if not callable(get_collections):
+            self._logger.warning(
+                "Collection identifier '%s' does not look like a key; "
+                "collection name resolution is unavailable.",
+                value,
+            )
+            return value
+
+        try:
+            raw_collections = await self._invoke_method(get_collections)
+        except Exception as exc:
+            self._logger.warning(
+                "Failed to resolve collection name '%s'; using as-is: %s",
+                value,
+                exc,
+            )
+            return value
+
+        if not isinstance(raw_collections, list):
+            return value
+
+        exact_match_key = None
+        casefold_match_key = None
+        for item in raw_collections:
+            if not isinstance(item, dict):
+                continue
+            data = item.get("data") if isinstance(item.get("data"), dict) else item
+            name = data.get("name")
+            key = item.get("key") or data.get("key")
+            if not isinstance(name, str) or not isinstance(key, str):
+                continue
+            if name == value:
+                exact_match_key = key
+                break
+            if casefold_match_key is None and name.casefold() == value.casefold():
+                casefold_match_key = key
+
+        resolved_key = exact_match_key or casefold_match_key
+        if resolved_key:
+            self._logger.info(
+                "Resolved collection '%s' -> key '%s'",
+                value,
+                resolved_key,
+            )
+            return resolved_key
+
+        self._logger.warning(
+            "Collection '%s' was not found by name; using as-is.",
+            value,
+        )
+        return value
+
+    @staticmethod
+    def _looks_like_collection_key(value: str) -> bool:
+        return re.fullmatch(r"[A-Za-z0-9]{8}", value) is not None
+
     def _paper_to_zotero_item(
         self, paper: PaperItem, collection_keys: Optional[List[str]] = None
     ) -> Dict[str, Any]:
+        item_type = paper.item_type or "journalArticle"
         creators = [
             {"creatorType": "author", "name": author} for author in paper.authors
         ]
@@ -154,7 +233,7 @@ class ZoteroAdapter(ExportAdapter):
             access_date_str = datetime.now().strftime("%Y-%m-%d")
 
         zotero_item: Dict[str, Any] = {
-            "itemType": paper.item_type or "journalArticle",
+            "itemType": item_type,
             "title": paper.title,
             "creators": creators,
             "abstractNote": paper.abstract or None,
@@ -191,9 +270,44 @@ class ZoteroAdapter(ExportAdapter):
         if collection_keys:
             zotero_item["collections"] = collection_keys
 
+        zotero_item = self._normalize_item_for_type(zotero_item, item_type)
         zotero_item = {k: v for k, v in zotero_item.items() if v is not None}
 
         return zotero_item
+
+    @staticmethod
+    def _normalize_item_for_type(
+        zotero_item: Dict[str, Any], item_type: str
+    ) -> Dict[str, Any]:
+        normalized_type = (item_type or "").strip().lower()
+        if normalized_type != "preprint":
+            return zotero_item
+
+        publication_title = zotero_item.get("publicationTitle")
+        if publication_title and not zotero_item.get("repository"):
+            zotero_item["repository"] = publication_title
+
+        # Keep a conservative field subset for preprint to avoid invalid-field failures.
+        allowed_fields = {
+            "itemType",
+            "title",
+            "creators",
+            "abstractNote",
+            "repository",
+            "archive",
+            "archiveLocation",
+            "DOI",
+            "citationKey",
+            "url",
+            "accessDate",
+            "date",
+            "shortTitle",
+            "language",
+            "rights",
+            "collections",
+            "extra",
+        }
+        return {k: v for k, v in zotero_item.items() if k in allowed_fields}
 
     async def _load_existing_identity_keys(self) -> set[tuple[str, str]]:
         items = await self._list_existing_items()
@@ -215,8 +329,7 @@ class ZoteroAdapter(ExportAdapter):
                 if not callable(method):
                     continue
                 try:
-                    result = await self._invoke_method(method, limit=100000)
-                    items = self._normalize_item_list_result(result)
+                    items = await self._collect_items(method)
                     if items is not None:
                         return items
                 except TypeError:
@@ -235,6 +348,44 @@ class ZoteroAdapter(ExportAdapter):
             "Unable to list existing Zotero items for deduplication. "
             "No compatible list/get method found on zotero-mcp client."
         )
+
+    async def _collect_items(self, method: Any) -> Optional[List[Dict[str, Any]]]:
+        page_size = 1000
+        page_cursor_key = None
+        if self._method_accepts_param(method, "start"):
+            page_cursor_key = "start"
+        elif self._method_accepts_param(method, "offset"):
+            page_cursor_key = "offset"
+
+        if not page_cursor_key:
+            result = await self._invoke_method(method, limit=100000)
+            return self._normalize_item_list_result(result)
+
+        all_items: List[Dict[str, Any]] = []
+        cursor = 0
+        max_pages = 200
+        for _ in range(max_pages):
+            kwargs: Dict[str, Any] = {"limit": page_size, page_cursor_key: cursor}
+            result = await self._invoke_method(method, **kwargs)
+            batch = self._normalize_item_list_result(result)
+            if batch is None:
+                return None
+            all_items.extend(batch)
+            if len(batch) < page_size:
+                break
+            cursor += len(batch)
+        else:
+            self._logger.warning(
+                "Zotero item preload reached max pages (%d); list may be truncated.",
+                max_pages,
+            )
+
+        return all_items
+
+    @staticmethod
+    def _method_accepts_param(method: Any, param_name: str) -> bool:
+        signature = inspect.signature(method)
+        return param_name in signature.parameters
 
     @staticmethod
     async def _invoke_method(method: Any, **kwargs: Any) -> Any:
@@ -437,4 +588,39 @@ class ZoteroAdapter(ExportAdapter):
                     break
 
         return created_n, skipped_n, failed_n
+
+    @staticmethod
+    def _summarize_create_failures(result: Any, failed_n: int) -> str:
+        if isinstance(result, dict):
+            failed = result.get("failed")
+            if isinstance(failed, dict) and failed:
+                messages: List[str] = []
+                for detail in failed.values():
+                    if isinstance(detail, dict):
+                        msg = detail.get("message") or detail.get("error")
+                        if msg:
+                            messages.append(str(msg))
+                        else:
+                            messages.append(str(detail))
+                    else:
+                        messages.append(str(detail))
+                if messages:
+                    deduped = list(dict.fromkeys(messages))
+                    return "; ".join(deduped)
+
+            failures = result.get("failures")
+            if isinstance(failures, list) and failures:
+                messages = []
+                for detail in failures:
+                    if isinstance(detail, dict):
+                        msg = detail.get("message") or detail.get("error")
+                        if msg:
+                            messages.append(str(msg))
+                    elif detail:
+                        messages.append(str(detail))
+                if messages:
+                    deduped = list(dict.fromkeys(messages))
+                    return "; ".join(deduped)
+
+        return f"create_item reported {failed_n} failed item(s)"
 

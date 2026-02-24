@@ -87,44 +87,59 @@ jobs:
             exit 1
           fi
           SINCE_DATE="$(TZ=Asia/Shanghai date -d "${SINCE_DAYS} days ago" +%Y-%m-%d)"
-          echo "RUN_DATE=$(TZ=Asia/Shanghai date +%Y_%m_%d)" >> $GITHUB_ENV
+          echo "RUN_DATE=$(TZ=Asia/Shanghai date +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "RUN_DIR=output/$(TZ=Asia/Shanghai date +%Y-%m-%d)" >> $GITHUB_ENV
           echo "SINCE_DAYS=${SINCE_DAYS}" >> $GITHUB_ENV
           echo "SINCE_DATE=${SINCE_DATE}" >> $GITHUB_ENV
 
       - name: Prepare output dir
-        run: mkdir -p output
+        run: mkdir -p "$RUN_DIR"
 
       - name: RSS pipeline (${{ github.event.inputs.since_days || vars.SINCE_DAYS || '15' }} days)
         id: rss
         shell: bash
         run: |
           START_TIME=$(date +%s)
-          uv run feedder-mcp fetch --source rss --since "$SINCE_DATE" --output output/rss_raw.json
-          RSS_RAW=$(python3 -c "import json; print(len(json.load(open('output/rss_raw.json'))))" 2>/dev/null || echo "0")
+          RAW_PATH="$RUN_DIR/rss_raw.json"
+          AI_FILTERED_PATH="$RUN_DIR/rss_ai_filtered.json"
+          ENRICHED_PATH="$RUN_DIR/rss_enriched.json"
+          FINAL_JSON_PATH="$RUN_DIR/rss_final.json"
+          ZOTERO_PATH="$RUN_DIR/rss_zotero.json"
+
+          uv run feedder-mcp fetch --source rss --since "$SINCE_DATE" --output "$RAW_PATH"
+          RSS_RAW=$(python3 -c "import json; print(len(json.load(open('$RAW_PATH'))))" 2>/dev/null || echo "0")
 
           if [ "$RSS_RAW" -gt 0 ]; then
-            uv run feedder-mcp filter --input output/rss_raw.json --output output/rss_ai_filtered.json --ai
-            uv run feedder-mcp enrich --input output/rss_ai_filtered.json --output output/rss_enriched.json --source all --concurrency 5
+            uv run feedder-mcp filter --input "$RAW_PATH" --output "$AI_FILTERED_PATH" --ai
+            uv run feedder-mcp enrich --input "$AI_FILTERED_PATH" --output "$ENRICHED_PATH" --source all --concurrency 5
+            uv run feedder-mcp export --input "$ENRICHED_PATH" --output "$FINAL_JSON_PATH" --format json
             if [ -n "${TARGET_COLLECTION}" ]; then
-              uv run feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS_ZOTERO.json" --format zotero --collection "${TARGET_COLLECTION}"
+              uv run feedder-mcp export --input "$ENRICHED_PATH" --output "$ZOTERO_PATH" --format zotero --collection "${TARGET_COLLECTION}"
             else
-              uv run feedder-mcp export --input output/rss_enriched.json --output "output/${RUN_DATE}_RSS_ZOTERO.json" --format zotero
+              uv run feedder-mcp export --input "$ENRICHED_PATH" --output "$ZOTERO_PATH" --format zotero
             fi
           else
             echo "No RSS papers fetched. Skipping filter/enrich/export."
-            echo "[]" > output/rss_ai_filtered.json
-            echo "[]" > output/rss_enriched.json
+            echo "[]" > "$AI_FILTERED_PATH"
+            echo "[]" > "$ENRICHED_PATH"
+            echo "[]" > "$FINAL_JSON_PATH"
           fi
           END_TIME=$(date +%s)
 
           # Extract counts from output files
-          RSS_FILTERED=$(python3 -c "import json; print(len(json.load(open('output/rss_ai_filtered.json'))))" 2>/dev/null || echo "0")
-          RSS_ENRICHED=$(python3 -c "import json; print(len(json.load(open('output/rss_enriched.json'))))" 2>/dev/null || echo "0")
+          RSS_FILTERED=$(python3 -c "import json; print(len(json.load(open('$AI_FILTERED_PATH'))))" 2>/dev/null || echo "0")
+          RSS_ENRICHED=$(python3 -c "import json; print(len(json.load(open('$ENRICHED_PATH'))))" 2>/dev/null || echo "0")
+          RSS_ZOTERO_CREATED=$(python3 -c "import json; print(json.load(open('$ZOTERO_PATH')).get('success_count',0))" 2>/dev/null || echo "0")
+          RSS_ZOTERO_SKIPPED=$(python3 -c "import json; print(json.load(open('$ZOTERO_PATH')).get('skipped_count',0))" 2>/dev/null || echo "0")
+          RSS_ZOTERO_FAILED=$(python3 -c "import json; print(len(json.load(open('$ZOTERO_PATH')).get('failures',[])))" 2>/dev/null || echo "0")
 
           echo "duration=$((END_TIME - START_TIME))" >> $GITHUB_OUTPUT
           echo "raw=$RSS_RAW" >> $GITHUB_OUTPUT
           echo "filtered=$RSS_FILTERED" >> $GITHUB_OUTPUT
           echo "enriched=$RSS_ENRICHED" >> $GITHUB_OUTPUT
+          echo "zotero_created=$RSS_ZOTERO_CREATED" >> $GITHUB_OUTPUT
+          echo "zotero_skipped=$RSS_ZOTERO_SKIPPED" >> $GITHUB_OUTPUT
+          echo "zotero_failed=$RSS_ZOTERO_FAILED" >> $GITHUB_OUTPUT
 
       - name: RSS Summary
         if: always()
@@ -136,6 +151,7 @@ jobs:
           echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Run | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Date | ${RUN_DATE} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Output dir | ${RUN_DIR} |" >> $GITHUB_STEP_SUMMARY
           echo "| Since days | ${SINCE_DAYS} |" >> $GITHUB_STEP_SUMMARY
           echo "| Since | ${SINCE_DATE} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -145,11 +161,19 @@ jobs:
           echo "| Fetched | ${{ steps.rss.outputs.raw || '—' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| After filter | ${{ steps.rss.outputs.filtered || '—' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Enriched | ${{ steps.rss.outputs.enriched || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Zotero created | ${{ steps.rss.outputs.zotero_created || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Zotero skipped | ${{ steps.rss.outputs.zotero_skipped || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Zotero failed | ${{ steps.rss.outputs.zotero_failed || '—' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Duration | ${{ steps.rss.outputs.duration || '—' }}s |" >> $GITHUB_STEP_SUMMARY
 
-      - name: Clean output
+      - name: Upload RSS artifacts
         if: always()
-        run: uv run feedder-mcp delete --output-dir output
+        uses: actions/upload-artifact@v4
+        with:
+          name: rss-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.RUN_DIR }}
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Notify on failure
         if: failure() && github.event_name == 'schedule'
@@ -219,43 +243,58 @@ jobs:
             exit 1
           fi
           SINCE_DATE="$(TZ=Asia/Shanghai date -d "${SINCE_DAYS} days ago" +%Y-%m-%d)"
-          echo "RUN_DATE=$(TZ=Asia/Shanghai date +%Y_%m_%d)" >> $GITHUB_ENV
+          echo "RUN_DATE=$(TZ=Asia/Shanghai date +%Y-%m-%d)" >> $GITHUB_ENV
+          echo "RUN_DIR=output/$(TZ=Asia/Shanghai date +%Y-%m-%d)" >> $GITHUB_ENV
           echo "SINCE_DAYS=${SINCE_DAYS}" >> $GITHUB_ENV
           echo "SINCE_DATE=${SINCE_DATE}" >> $GITHUB_ENV
 
       - name: Prepare output dir
-        run: mkdir -p output
+        run: mkdir -p "$RUN_DIR"
 
       - name: Gmail pipeline (${{ github.event.inputs.since_days || vars.SINCE_DAYS || '15' }} days)
         id: gmail
         shell: bash
         run: |
           START_TIME=$(date +%s)
-          uv run feedder-mcp fetch --source gmail --since "$SINCE_DATE" --output output/gmail_raw.json
-          GMAIL_RAW=$(python3 -c "import json; print(len(json.load(open('output/gmail_raw.json'))))" 2>/dev/null || echo "0")
+          RAW_PATH="$RUN_DIR/gmail_raw.json"
+          AI_FILTERED_PATH="$RUN_DIR/gmail_ai_filtered.json"
+          ENRICHED_PATH="$RUN_DIR/gmail_enriched.json"
+          FINAL_JSON_PATH="$RUN_DIR/gmail_final.json"
+          ZOTERO_PATH="$RUN_DIR/gmail_zotero.json"
+
+          uv run feedder-mcp fetch --source gmail --since "$SINCE_DATE" --output "$RAW_PATH"
+          GMAIL_RAW=$(python3 -c "import json; print(len(json.load(open('$RAW_PATH'))))" 2>/dev/null || echo "0")
 
           if [ "$GMAIL_RAW" -gt 0 ]; then
-            uv run feedder-mcp filter --input output/gmail_raw.json --output output/gmail_ai_filtered.json --ai
-            uv run feedder-mcp enrich --input output/gmail_ai_filtered.json --output output/gmail_enriched.json --source all --concurrency 5
+            uv run feedder-mcp filter --input "$RAW_PATH" --output "$AI_FILTERED_PATH" --ai
+            uv run feedder-mcp enrich --input "$AI_FILTERED_PATH" --output "$ENRICHED_PATH" --source all --concurrency 5
+            uv run feedder-mcp export --input "$ENRICHED_PATH" --output "$FINAL_JSON_PATH" --format json
             if [ -n "${TARGET_COLLECTION}" ]; then
-              uv run feedder-mcp export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL_ZOTERO.json" --format zotero --collection "${TARGET_COLLECTION}"
+              uv run feedder-mcp export --input "$ENRICHED_PATH" --output "$ZOTERO_PATH" --format zotero --collection "${TARGET_COLLECTION}"
             else
-              uv run feedder-mcp export --input output/gmail_enriched.json --output "output/${RUN_DATE}_GMAIL_ZOTERO.json" --format zotero
+              uv run feedder-mcp export --input "$ENRICHED_PATH" --output "$ZOTERO_PATH" --format zotero
             fi
           else
             echo "No Gmail papers fetched. Skipping filter/enrich/export."
-            echo "[]" > output/gmail_ai_filtered.json
-            echo "[]" > output/gmail_enriched.json
+            echo "[]" > "$AI_FILTERED_PATH"
+            echo "[]" > "$ENRICHED_PATH"
+            echo "[]" > "$FINAL_JSON_PATH"
           fi
           END_TIME=$(date +%s)
 
-          GMAIL_FILTERED=$(python3 -c "import json; print(len(json.load(open('output/gmail_ai_filtered.json'))))" 2>/dev/null || echo "0")
-          GMAIL_ENRICHED=$(python3 -c "import json; print(len(json.load(open('output/gmail_enriched.json'))))" 2>/dev/null || echo "0")
+          GMAIL_FILTERED=$(python3 -c "import json; print(len(json.load(open('$AI_FILTERED_PATH'))))" 2>/dev/null || echo "0")
+          GMAIL_ENRICHED=$(python3 -c "import json; print(len(json.load(open('$ENRICHED_PATH'))))" 2>/dev/null || echo "0")
+          GMAIL_ZOTERO_CREATED=$(python3 -c "import json; print(json.load(open('$ZOTERO_PATH')).get('success_count',0))" 2>/dev/null || echo "0")
+          GMAIL_ZOTERO_SKIPPED=$(python3 -c "import json; print(json.load(open('$ZOTERO_PATH')).get('skipped_count',0))" 2>/dev/null || echo "0")
+          GMAIL_ZOTERO_FAILED=$(python3 -c "import json; print(len(json.load(open('$ZOTERO_PATH')).get('failures',[])))" 2>/dev/null || echo "0")
 
           echo "duration=$((END_TIME - START_TIME))" >> $GITHUB_OUTPUT
           echo "raw=$GMAIL_RAW" >> $GITHUB_OUTPUT
           echo "filtered=$GMAIL_FILTERED" >> $GITHUB_OUTPUT
           echo "enriched=$GMAIL_ENRICHED" >> $GITHUB_OUTPUT
+          echo "zotero_created=$GMAIL_ZOTERO_CREATED" >> $GITHUB_OUTPUT
+          echo "zotero_skipped=$GMAIL_ZOTERO_SKIPPED" >> $GITHUB_OUTPUT
+          echo "zotero_failed=$GMAIL_ZOTERO_FAILED" >> $GITHUB_OUTPUT
 
       - name: Gmail Summary
         if: always()
@@ -267,6 +306,7 @@ jobs:
           echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Run | #${{ github.run_number }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Date | ${RUN_DATE} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Output dir | ${RUN_DIR} |" >> $GITHUB_STEP_SUMMARY
           echo "| Since days | ${SINCE_DAYS} |" >> $GITHUB_STEP_SUMMARY
           echo "| Since | ${SINCE_DATE} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -275,11 +315,19 @@ jobs:
           echo "| Fetched | ${{ steps.gmail.outputs.raw || '—' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| After filter | ${{ steps.gmail.outputs.filtered || '—' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Enriched | ${{ steps.gmail.outputs.enriched || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Zotero created | ${{ steps.gmail.outputs.zotero_created || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Zotero skipped | ${{ steps.gmail.outputs.zotero_skipped || '—' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Zotero failed | ${{ steps.gmail.outputs.zotero_failed || '—' }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Duration | ${{ steps.gmail.outputs.duration || '—' }}s |" >> $GITHUB_STEP_SUMMARY
 
-      - name: Clean output
+      - name: Upload Gmail artifacts
         if: always()
-        run: uv run feedder-mcp delete --output-dir output
+        uses: actions/upload-artifact@v4
+        with:
+          name: gmail-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ env.RUN_DIR }}
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Notify on failure
         if: failure() && github.event_name == 'schedule'

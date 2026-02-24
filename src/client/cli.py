@@ -52,6 +52,64 @@ def _save_papers(papers: List[PaperItem], path: str) -> None:
     )
 
 
+def _save_json(data: dict, path: str) -> None:
+    filepath = Path(path)
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+    filepath.write_text(
+        json.dumps(data, default=str, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+
+def _default_output_path(filename: str) -> str:
+    return str(Path("output") / date.today().isoformat() / filename)
+
+
+def _add_input_arg(parser: argparse.ArgumentParser, help_text: str = "输入 JSON 文件") -> None:
+    parser.add_argument(
+        "-i",
+        "--input",
+        required=True,
+        help=help_text,
+    )
+
+
+def _add_output_arg(
+    parser: argparse.ArgumentParser,
+    filename: str,
+    help_text: str,
+) -> None:
+    parser.add_argument(
+        "-o",
+        "--output",
+        default=_default_output_path(filename),
+        help=help_text,
+    )
+
+
+def _build_llm_client(enable_ai: bool):
+    if not enable_ai:
+        return None
+
+    from openai import OpenAI
+
+    config = get_openai_config()
+    api_key = config.get("api_key")
+    if not api_key:
+        print(
+            "Warning: AI filtering enabled but OPENAI_API_KEY not set. "
+            "Skipping AI filter.",
+            file=sys.stderr,
+        )
+        return None
+
+    kwargs = {"api_key": api_key}
+    base_url = config.get("base_url")
+    if base_url:
+        kwargs["base_url"] = base_url
+    return OpenAI(**kwargs)
+
+
 # -------------------- Handlers --------------------
 
 
@@ -127,24 +185,7 @@ async def _handle_filter(args: argparse.Namespace) -> None:
         has_pdf=args.has_pdf,
     )
 
-    llm_client = None
-    if args.ai:
-        from openai import OpenAI
-
-        config = get_openai_config()
-        api_key = config.get("api_key")
-        if api_key:
-            kwargs = {"api_key": api_key}
-            base_url = config.get("base_url")
-            if base_url:
-                kwargs["base_url"] = base_url
-            llm_client = OpenAI(**kwargs)
-        else:
-            print(
-                "Warning: AI filtering enabled but OPENAI_API_KEY not set. "
-                "Skipping AI filter.",
-                file=sys.stderr,
-            )
+    llm_client = _build_llm_client(args.ai)
 
     pipeline = FilterPipeline(llm_client=llm_client)
     result: FilterResult = await pipeline.filter(papers, criteria)
@@ -189,6 +230,17 @@ async def _handle_export(args: argparse.Namespace) -> None:
             library_type=zotero_config.get("library_type", "user"),
         )
         result = await adapter.export(papers, collection_id=collection_id)
+        _save_json(
+            {
+                "format": "zotero",
+                "input_file": args.input,
+                "output_file": args.output,
+                "collection": collection_id or "root",
+                "total": len(papers),
+                **result,
+            },
+            args.output,
+        )
         print(
             "Zotero export stats: "
             f"created={result.get('success_count', 0)}, "
@@ -203,7 +255,10 @@ async def _handle_export(args: argparse.Namespace) -> None:
         )
         sys.exit(1)
 
-    print(f"Exported {len(papers)} papers ({args.format}) -> {args.output}")
+    if args.format == "json":
+        print(f"Exported {len(papers)} papers ({args.format}) -> {args.output}")
+    else:
+        print(f"Exported {len(papers)} papers ({args.format}) -> {args.output}")
 
 
 async def _handle_enrich(args: argparse.Namespace) -> None:
@@ -343,27 +398,20 @@ def _build_parser() -> argparse.ArgumentParser:
         default=default_since,
         help="仅抓取自此日期之后（YYYY-MM-DD，默认近15天）",
     )
-    fetch_parser.add_argument(
-        "-o",
-        "--output",
-        required=True,
-        help="输出 JSON 文件路径",
+    _add_output_arg(
+        fetch_parser,
+        "raw.json",
+        "输出 JSON 文件路径（默认：output/YYYY-MM-DD/raw.json）",
     )
 
     filter_parser = subparsers.add_parser(
         "filter", help="按条件过滤论文"
     )
-    filter_parser.add_argument(
-        "-i",
-        "--input",
-        required=True,
-        help="输入 JSON 文件",
-    )
-    filter_parser.add_argument(
-        "-o",
-        "--output",
-        required=True,
-        help="输出 JSON 文件路径",
+    _add_input_arg(filter_parser)
+    _add_output_arg(
+        filter_parser,
+        "filtered.json",
+        "输出 JSON 文件路径（默认：output/YYYY-MM-DD/filtered.json）",
     )
     filter_parser.add_argument(
         "-k",
@@ -420,12 +468,7 @@ def _build_parser() -> argparse.ArgumentParser:
     export_parser = subparsers.add_parser(
         "export", help="导出论文到指定格式"
     )
-    export_parser.add_argument(
-        "-i",
-        "--input",
-        required=True,
-        help="输入 JSON 文件",
-    )
+    _add_input_arg(export_parser)
     export_parser.add_argument(
         "-f",
         "--format",
@@ -433,11 +476,10 @@ def _build_parser() -> argparse.ArgumentParser:
         default="json",
         help="导出格式（默认：json）",
     )
-    export_parser.add_argument(
-        "-o",
-        "--output",
-        required=True,
-        help="输出文件路径",
+    _add_output_arg(
+        export_parser,
+        "export.json",
+        "输出文件路径（默认：output/YYYY-MM-DD/export.json）",
     )
     export_parser.add_argument(
         "--collection",
@@ -467,17 +509,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "enrich",
         help="使用 CrossRef/OpenAlex 补充元数据",
     )
-    enrich_parser.add_argument(
-        "-i",
-        "--input",
-        required=True,
-        help="输入 JSON 文件",
-    )
-    enrich_parser.add_argument(
-        "-o",
-        "--output",
-        required=True,
-        help="输出 JSON 文件路径",
+    _add_input_arg(enrich_parser)
+    _add_output_arg(
+        enrich_parser,
+        "enriched.json",
+        "输出 JSON 文件路径（默认：output/YYYY-MM-DD/enriched.json）",
     )
     enrich_parser.add_argument(
         "--api",

@@ -206,6 +206,40 @@ class TestZoteroAdapter:
         assert zotero_item["creators"] == []
         assert "accessDate" in zotero_item
 
+    def test_paper_to_zotero_item_preprint_removes_journal_fields(self):
+        """Preprint should not include journalArticle-only fields."""
+        if not zotero_available:
+            pytest.skip("zotero-mcp not available")
+
+        paper = PaperItem(
+            title="Preprint Paper",
+            publication_title="SSRN",
+            journal_abbreviation="J. Test",
+            issn="1234-5678",
+            volume="1",
+            issue="2",
+            pages="3-4",
+            item_type="preprint",
+            source="Test",
+            source_type="rss",
+        )
+
+        adapter = ZoteroAdapter(
+            library_id="test",
+            api_key="test",
+        )
+        zotero_item = adapter._paper_to_zotero_item(paper)
+
+        assert zotero_item["itemType"] == "preprint"
+        assert zotero_item.get("repository") == "SSRN"
+        assert "publicationTitle" not in zotero_item
+        assert "journalAbbreviation" not in zotero_item
+        assert "ISSN" not in zotero_item
+        assert "volume" not in zotero_item
+        assert "issue" not in zotero_item
+        assert "pages" not in zotero_item
+        assert "publisher" not in zotero_item
+
     @pytest.mark.asyncio
     async def test_zotero_adapter_init_requires_core(self):
         """Test that adapter initialization fails gracefully without zotero-mcp."""
@@ -260,7 +294,9 @@ class TestZoteroAdapter:
                 }
             ]
         )
-        adapter._item_service.create_item = AsyncMock()
+        adapter._item_service.create_item = AsyncMock(
+            return_value={"created": [{}], "skipped_duplicates": [], "failed": []}
+        )
         adapter._logger = zotero_module.logging.getLogger("test.zotero")
 
         papers = [
@@ -304,7 +340,9 @@ class TestZoteroAdapter:
                 }
             ]
         )
-        adapter._item_service.create_item = AsyncMock()
+        adapter._item_service.create_item = AsyncMock(
+            return_value={"created": [{}], "skipped_duplicates": [], "failed": []}
+        )
         adapter._logger = zotero_module.logging.getLogger("test.zotero")
 
         papers = [
@@ -359,6 +397,164 @@ class TestZoteroAdapter:
         assert result["success_count"] == 0
         assert result["skipped_count"] == 1
         assert result["skipped_by_key"]["doi"] == 1
+
+    @pytest.mark.asyncio
+    async def test_zotero_export_continues_when_preload_fails(self, monkeypatch):
+        """Export should continue even if preloading existing items fails."""
+        monkeypatch.setattr(zotero_module, "zotero_available", True)
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._item_service = AsyncMock()
+        adapter._api_client = AsyncMock()
+        adapter._load_existing_identity_keys = AsyncMock(
+            side_effect=RuntimeError("preload failed")
+        )
+        adapter._item_service.create_item = AsyncMock(
+            return_value={"created": [{"key": "X"}], "skipped_duplicates": [], "failed": []}
+        )
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+
+        papers = [
+            PaperItem(
+                title="Paper After Preload Failure",
+                doi="10.5555/preload",
+                source="Test",
+                source_type="rss",
+            )
+        ]
+
+        result = await adapter.export(papers)
+
+        assert result["success_count"] == 1
+        assert result["skipped_count"] == 0
+        assert result["failures"] == []
+        adapter._item_service.create_item.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_zotero_export_does_not_infer_success_for_unknown_result_shape(
+        self, monkeypatch
+    ):
+        """Unknown create_item result shape should not be counted as success."""
+        monkeypatch.setattr(zotero_module, "zotero_available", True)
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._item_service = AsyncMock()
+        adapter._api_client = AsyncMock()
+        adapter._item_service.list_items = AsyncMock(return_value=[])
+        adapter._item_service.create_item = AsyncMock(return_value={"ok": True})
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+
+        papers = [
+            PaperItem(
+                title="Unknown Result Shape Paper",
+                doi="10.8888/unknown-shape",
+                source="Test",
+                source_type="rss",
+            )
+        ]
+
+        result = await adapter.export(papers)
+
+        assert result["success_count"] == 0
+        assert result["skipped_count"] == 0
+        assert result["failures"] == []
+
+    @pytest.mark.asyncio
+    async def test_zotero_list_existing_items_supports_start_pagination(
+        self, monkeypatch
+    ):
+        """Preload should paginate when list_items supports start/limit."""
+        monkeypatch.setattr(zotero_module, "zotero_available", True)
+
+        class _PagedService:
+            def __init__(self):
+                self.calls = []
+
+            async def list_items(self, limit=1000, start=0):
+                self.calls.append({"limit": limit, "start": start})
+                if start == 0:
+                    return [{"data": {"title": f"Paper {i}"}} for i in range(1000)]
+                return [{"data": {"title": "Paper 1000"}}]
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._item_service = _PagedService()
+        adapter._api_client = AsyncMock()
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+
+        items = await adapter._list_existing_items()
+
+        assert len(items) == 1001
+        assert adapter._item_service.calls == [
+            {"limit": 1000, "start": 0},
+            {"limit": 1000, "start": 1000},
+        ]
+
+    @pytest.mark.asyncio
+    async def test_zotero_export_resolves_collection_name_to_key(self, monkeypatch):
+        """Collection name should be resolved to key before create_item."""
+        monkeypatch.setattr(zotero_module, "zotero_available", True)
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._item_service = AsyncMock()
+        adapter._api_client = AsyncMock()
+        adapter._api_client.get_collections = AsyncMock(
+            return_value=[{"key": "866TNWZ9", "data": {"name": "00_INBOXS"}}]
+        )
+        adapter._item_service.list_items = AsyncMock(return_value=[])
+        adapter._item_service.create_item = AsyncMock(
+            return_value={"created": [{}], "failed": {}, "skipped_duplicates": 0}
+        )
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+
+        papers = [
+            PaperItem(
+                title="Collection Name Resolution",
+                doi="10.7777/collection-name",
+                source="Test",
+                source_type="rss",
+            )
+        ]
+
+        result = await adapter.export(papers, collection_id="00_INBOXS")
+
+        assert result["success_count"] == 1
+        payload = adapter._item_service.create_item.await_args.args[0]
+        assert payload.get("collections") == ["866TNWZ9"]
+
+    @pytest.mark.asyncio
+    async def test_zotero_export_surfaces_failed_detail_message(self, monkeypatch):
+        """Failure message should include detail returned by create_item."""
+        monkeypatch.setattr(zotero_module, "zotero_available", True)
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._item_service = AsyncMock()
+        adapter._api_client = AsyncMock()
+        adapter._item_service.list_items = AsyncMock(return_value=[])
+        adapter._item_service.create_item = AsyncMock(
+            return_value={
+                "successful": {},
+                "failed": {"0": {"code": 400, "message": "invalid collection key"}},
+                "created": 0,
+                "failed_count": 1,
+                "skipped_duplicates": 0,
+            }
+        )
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+
+        papers = [
+            PaperItem(
+                title="Failure Detail Test",
+                doi="10.7777/failure-detail",
+                source="Test",
+                source_type="rss",
+            )
+        ]
+
+        result = await adapter.export(papers, collection_id="BADNAME")
+
+        assert result["success_count"] == 0
+        assert len(result["failures"]) == 1
+        assert "invalid collection key" in result["failures"][0]["error"]
 
     def test_normalize_item_list_result_supports_model_dump_items(self):
         """Adapter should normalize SearchResult-like objects from newer zotero-mcp."""
