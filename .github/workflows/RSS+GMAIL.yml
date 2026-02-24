@@ -347,18 +347,25 @@ jobs:
         with:
           ref: main
 
+      - name: Ensure output directory exists
+        shell: bash
+        run: |
+          if [ ! -d output ]; then
+            mkdir -p output
+          fi
+
       - name: Download output artifacts
         uses: actions/download-artifact@v4
         with:
           pattern: "*-${{ github.run_id }}-${{ github.run_attempt }}"
-          path: .
+          path: output
           merge-multiple: true
 
       - name: Commit output folder
         shell: bash
         run: |
-          if [ ! -d output ]; then
-            echo "No output folder found, skipping commit."
+          if [ -z "$(find output -type f -print -quit)" ]; then
+            echo "No output files found, skipping commit."
             exit 0
           fi
 
