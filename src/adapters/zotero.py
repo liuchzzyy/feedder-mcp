@@ -9,7 +9,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 from src.models.responses import ExportAdapter, PaperItem
-from src.utils.dedup import paper_export_identity_key, zotero_data_identity_keys
+from src.utils.dedup import paper_export_identity_keys, zotero_data_identity_keys
 
 try:
     from zotero_mcp.clients.zotero.api_client import ZoteroAPIClient
@@ -74,7 +74,7 @@ class ZoteroAdapter(ExportAdapter):
         success_count = 0
         failures = []
         skipped_count = 0
-        skipped_by_key = {"doi": 0, "title_year_author": 0}
+        skipped_by_key = {"doi": 0, "title_date": 0, "url": 0}
         resolved_collection_id = await self._resolve_collection_key(collection_id)
         collection_keys = [resolved_collection_id] if resolved_collection_id else None
         try:
@@ -89,11 +89,17 @@ class ZoteroAdapter(ExportAdapter):
 
         for paper in papers:
             try:
-                identity_key = paper_export_identity_key(paper)
-                if identity_key and identity_key in existing_key_set:
+                identity_keys = paper_export_identity_keys(paper)
+                matched_key: Optional[tuple[str, str]] = None
+                for identity_key in identity_keys:
+                    if identity_key in existing_key_set:
+                        matched_key = identity_key
+                        break
+
+                if matched_key:
                     skipped_count += 1
-                    skipped_by_key[identity_key[0]] = skipped_by_key.get(
-                        identity_key[0], 0
+                    skipped_by_key[matched_key[0]] = skipped_by_key.get(
+                        matched_key[0], 0
                     ) + 1
                     continue
 
@@ -107,9 +113,10 @@ class ZoteroAdapter(ExportAdapter):
 
                 success_count += created_n
                 skipped_count += skipped_n
-                if skipped_n > 0 and identity_key:
-                    skipped_by_key[identity_key[0]] = skipped_by_key.get(
-                        identity_key[0], 0
+                if skipped_n > 0 and identity_keys:
+                    key_kind = identity_keys[0][0]
+                    skipped_by_key[key_kind] = skipped_by_key.get(
+                        key_kind, 0
                     ) + skipped_n
 
                 if created_n > 0:

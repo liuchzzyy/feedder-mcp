@@ -53,7 +53,7 @@ jobs:
       ZOTERO_LIBRARY_ID: ${{ secrets.ZOTERO_LIBRARY_ID }}
       ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
       ZOTERO_LIBRARY_TYPE: user
-      TARGET_COLLECTION: ${{ secrets.TARGET_COLLECTION }}
+      TARGET_COLLECTION: ${{ secrets.TARGET_COLLECTION || '00_INBOXS_AA' }}
 
     steps:
       - name: Checkout
@@ -209,7 +209,7 @@ jobs:
       ZOTERO_LIBRARY_ID: ${{ secrets.ZOTERO_LIBRARY_ID }}
       ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
       ZOTERO_LIBRARY_TYPE: user
-      TARGET_COLLECTION: ${{ secrets.TARGET_COLLECTION }}
+      TARGET_COLLECTION: ${{ secrets.TARGET_COLLECTION || '00_INBOXS_AA' }}
 
     steps:
       - name: Checkout

@@ -6,6 +6,7 @@ from src.utils.dedup import (
     normalize_doi,
     normalize_title,
     normalize_url,
+    paper_export_identity_keys,
     paper_export_identity_key,
     zotero_data_identity_keys,
 )
@@ -21,6 +22,7 @@ __all__ = [
     "normalize_url",
     "identity_keys_for_paper",
     "deduplicate_papers",
+    "paper_export_identity_keys",
     "paper_export_identity_key",
     "zotero_data_identity_keys",
 ]

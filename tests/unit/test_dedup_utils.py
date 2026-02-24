@@ -8,6 +8,7 @@ from src.utils.dedup import (
     normalize_doi,
     normalize_title,
     normalize_url,
+    paper_export_identity_keys,
     paper_export_identity_key,
     zotero_data_identity_keys,
 )
@@ -71,24 +72,37 @@ def test_deduplicate_papers_by_doi_url_and_title():
     assert stats["duplicates_by_key"]["url"] == 1
 
 
-def test_paper_export_identity_key_prefers_doi_then_composite():
+def test_paper_export_identity_key_prefers_doi_then_title_date_then_url():
     with_doi = _paper(
         title="Same Paper",
         doi="10.2000/xyz",
         published_date=date(2025, 1, 1),
-        authors=["Alice"],
+        url="https://example.org/with-doi",
     )
     no_doi = _paper(
         title="Same Paper",
         published_date=date(2025, 1, 1),
-        authors=["Alice"],
+        url="https://example.org/no-doi",
+    )
+    no_doi_no_date = _paper(
+        title="URL Only Paper",
+        url="https://example.org/url-only?utm_source=a",
     )
 
     assert paper_export_identity_key(with_doi) == ("doi", "10.2000/xyz")
     assert paper_export_identity_key(no_doi) == (
-        "title_year_author",
-        "same paper|2025|alice",
+        "title_date",
+        "same paper|2025-01-01",
     )
+    assert paper_export_identity_key(no_doi_no_date) == (
+        "url",
+        "https://example.org/url-only",
+    )
+
+    assert paper_export_identity_keys(no_doi) == [
+        ("title_date", "same paper|2025-01-01"),
+        ("url", "https://example.org/no-doi"),
+    ]
 
 
 def test_zotero_data_identity_keys_from_wrapped_payload():
@@ -98,10 +112,12 @@ def test_zotero_data_identity_keys_from_wrapped_payload():
             "title": "Sample Paper",
             "DOI": "doi:10.3000/kkk",
             "date": "2024-05-01",
+            "url": "https://example.org/sample?utm_source=alert",
             "creators": [{"creatorType": "author", "name": "Jane Doe"}],
         },
     }
 
     keys = set(zotero_data_identity_keys(item))
     assert ("doi", "10.3000/kkk") in keys
-    assert ("title_year_author", "sample paper|2024|jane doe") in keys
+    assert ("title_date", "sample paper|2024-05-01") in keys
+    assert ("url", "https://example.org/sample") in keys

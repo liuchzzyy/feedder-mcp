@@ -164,53 +164,65 @@ def deduplicate_papers(
     return unique, stats
 
 
-def _normalize_person(value: Optional[str]) -> str:
-    if not value:
-        return ""
-    return re.sub(r"\s+", " ", value.strip().lower())
-
-
-def _extract_year(value: Any) -> Optional[str]:
+def _normalize_date_text(value: Any) -> Optional[str]:
     if value is None:
         return None
     if isinstance(value, date):
-        return str(value.year)
+        return value.isoformat()
 
     text = str(value).strip()
     if not text:
         return None
-    match = re.search(r"\b(19|20)\d{2}\b", text)
-    return match.group(0) if match else None
+
+    normalized = re.sub(r"[./]", "-", text)
+
+    ymd_match = re.search(r"\b((?:19|20)\d{2})-(\d{1,2})-(\d{1,2})\b", normalized)
+    if ymd_match:
+        year, month, day = ymd_match.groups()
+        return f"{year}-{int(month):02d}-{int(day):02d}"
+
+    ym_match = re.search(r"\b((?:19|20)\d{2})-(\d{1,2})\b", normalized)
+    if ym_match:
+        year, month = ym_match.groups()
+        return f"{year}-{int(month):02d}"
+
+    year_match = re.search(r"\b((?:19|20)\d{2})\b", normalized)
+    if year_match:
+        return year_match.group(1)
+
+    return None
 
 
-def title_year_author_key(
-    title: Optional[str], year: Optional[str], first_author: Optional[str]
-) -> Optional[str]:
+def title_date_key(title: Optional[str], when: Any) -> Optional[str]:
     normalized_title = normalize_title(title)
-    if not normalized_title:
+    normalized_date = _normalize_date_text(when)
+    if not normalized_title or not normalized_date:
         return None
+    return f"{normalized_title}|{normalized_date}"
 
-    normalized_author = _normalize_person(first_author)
-    normalized_year = (year or "").strip()
 
-    if not normalized_year and not normalized_author:
-        return None
+def paper_export_identity_keys(paper: PaperItem) -> List[Tuple[str, str]]:
+    """Priority keys for Zotero export dedup: DOI -> title+date -> URL."""
+    doi = normalize_doi(paper.doi)
+    if doi:
+        return [("doi", doi)]
 
-    return f"{normalized_title}|{normalized_year}|{normalized_author}"
+    keys: List[Tuple[str, str]] = []
+    title_date = title_date_key(paper.title, paper.published_date)
+    if title_date:
+        keys.append(("title_date", title_date))
+
+    url = normalize_url(paper.url)
+    if url:
+        keys.append(("url", url))
+
+    return keys
 
 
 def paper_export_identity_key(paper: PaperItem) -> Optional[Tuple[str, str]]:
-    """Key used for Zotero export duplicate check."""
-    doi = normalize_doi(paper.doi)
-    if doi:
-        return ("doi", doi)
-
-    year = str(paper.published_date.year) if paper.published_date else None
-    first_author = paper.authors[0] if paper.authors else None
-    key = title_year_author_key(paper.title, year, first_author)
-    if key:
-        return ("title_year_author", key)
-    return None
+    """Backward-compatible single-key helper for Zotero export dedup."""
+    keys = paper_export_identity_keys(paper)
+    return keys[0] if keys else None
 
 
 def zotero_data_identity_keys(raw_item: Dict[str, Any]) -> List[Tuple[str, str]]:
@@ -225,18 +237,12 @@ def zotero_data_identity_keys(raw_item: Dict[str, Any]) -> List[Tuple[str, str]]
     if doi:
         keys.append(("doi", doi))
 
-    creators = data.get("creators")
-    first_author = None
-    if isinstance(creators, list) and creators:
-        first = creators[0]
-        if isinstance(first, dict):
-            first_author = first.get("name") or first.get("lastName") or first.get(
-                "firstName"
-            )
+    title_date = title_date_key(data.get("title"), data.get("date"))
+    if title_date:
+        keys.append(("title_date", title_date))
 
-    year = _extract_year(data.get("date"))
-    composite = title_year_author_key(data.get("title"), year, first_author)
-    if composite:
-        keys.append(("title_year_author", composite))
+    url = normalize_url(data.get("url"))
+    if url:
+        keys.append(("url", url))
 
     return keys

@@ -322,8 +322,8 @@ class TestZoteroAdapter:
         adapter._item_service.create_item.assert_awaited_once()
 
     @pytest.mark.asyncio
-    async def test_zotero_export_skips_existing_by_title_year_author(self, monkeypatch):
-        """When DOI is missing, export falls back to title+year+first_author."""
+    async def test_zotero_export_skips_existing_by_title_date(self, monkeypatch):
+        """When DOI is missing, export falls back to title+date."""
         monkeypatch.setattr(zotero_module, "zotero_available", True)
 
         adapter = ZoteroAdapter.__new__(ZoteroAdapter)
@@ -335,7 +335,6 @@ class TestZoteroAdapter:
                     "data": {
                         "title": "A New Framework for Batteries",
                         "date": "2025-03-08",
-                        "creators": [{"lastName": "Wang"}],
                     }
                 }
             ]
@@ -348,14 +347,12 @@ class TestZoteroAdapter:
         papers = [
             PaperItem(
                 title="A New Framework for Batteries",
-                authors=["Wang"],
                 published_date=date(2025, 3, 8),
                 source="Test",
                 source_type="rss",
             ),
             PaperItem(
                 title="Another Fresh Paper",
-                authors=["Wang"],
                 published_date=date(2025, 3, 8),
                 source="Test",
                 source_type="rss",
@@ -366,8 +363,49 @@ class TestZoteroAdapter:
 
         assert result["success_count"] == 1
         assert result["skipped_count"] == 1
-        assert result["skipped_by_key"]["title_year_author"] == 1
+        assert result["skipped_by_key"]["title_date"] == 1
         adapter._item_service.create_item.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_zotero_export_without_doi_falls_back_to_url(self, monkeypatch):
+        """When DOI is missing and title+date does not match, URL should be used."""
+        monkeypatch.setattr(zotero_module, "zotero_available", True)
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._item_service = AsyncMock()
+        adapter._api_client = AsyncMock()
+        adapter._item_service.get_items = AsyncMock(
+            return_value=[
+                {
+                    "data": {
+                        "title": "Old Title",
+                        "date": "2025-03-01",
+                        "url": "https://example.com/paper-abc?utm_source=mail",
+                    }
+                }
+            ]
+        )
+        adapter._item_service.create_item = AsyncMock(
+            return_value={"created": [{}], "skipped_duplicates": [], "failed": []}
+        )
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+
+        papers = [
+            PaperItem(
+                title="Completely Different Title",
+                published_date=date(2025, 3, 8),
+                url="https://example.com/paper-abc",
+                source="Test",
+                source_type="rss",
+            )
+        ]
+
+        result = await adapter.export(papers)
+
+        assert result["success_count"] == 0
+        assert result["skipped_count"] == 1
+        assert result["skipped_by_key"]["url"] == 1
+        adapter._item_service.create_item.assert_not_awaited()
 
     @pytest.mark.asyncio
     async def test_zotero_export_counts_runtime_skipped_duplicates(self, monkeypatch):
