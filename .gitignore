@@ -36,19 +36,6 @@ Thumbs.db
 keywords_cache.json
 cache/
 
-# Output (pipeline results)
-output/
-raw.json
-filtered.json
-ai_filtered.json
-enriched.json
-export.json
-final.json
-gmail.json
-zotero.json
-keyword_filtered.json
-step*_*.json
-
 # OAuth2 tokens (sensitive)
 token.json
 credentials.json
