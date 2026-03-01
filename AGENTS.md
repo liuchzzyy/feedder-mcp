@@ -13,6 +13,12 @@ Repository-level collaboration notes for contributors and coding agents.
 - Keep `.env` local only; use `.env.example` for placeholders.
 - For GitHub Actions, store credentials in repository secrets (not in workflow YAML).
 
+## GitHub Actions Dependency Pinning
+
+- For external repositories checked out in workflows (for example `zotero-mcp`), pin a known-good commit SHA by default.
+- Do not default critical workflow dependencies to moving refs like `main`.
+- Only update pinned SHAs after validating the new revision in CI/local smoke tests.
+
 ## CLI Workflow Conventions
 
 - Recommended order: `fetch -> filter -> enrich -> export`.

@@ -17,7 +17,7 @@ on:
       zotero_mcp_ref:
         description: "zotero-mcp branch/tag/SHA"
         required: false
-        default: "main"
+        default: "0d482463905332a7534cd0eaed55c6f6a762b196"
 
 permissions:
   contents: write
@@ -63,7 +63,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ github.event.inputs.zotero_mcp_repo || vars.ZOTERO_MCP_REPO || 'liuchzzyy/zotero-mcp' }}
-          ref: ${{ github.event.inputs.zotero_mcp_ref || vars.ZOTERO_MCP_REF || 'main' }}
+          ref: ${{ github.event.inputs.zotero_mcp_ref || vars.ZOTERO_MCP_REF || '0d482463905332a7534cd0eaed55c6f6a762b196' }}
           path: zotero-mcp
 
       - name: Set up Python
@@ -219,7 +219,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: ${{ github.event.inputs.zotero_mcp_repo || vars.ZOTERO_MCP_REPO || 'liuchzzyy/zotero-mcp' }}
-          ref: ${{ github.event.inputs.zotero_mcp_ref || vars.ZOTERO_MCP_REF || 'main' }}
+          ref: ${{ github.event.inputs.zotero_mcp_ref || vars.ZOTERO_MCP_REF || '0d482463905332a7534cd0eaed55c6f6a762b196' }}
           path: zotero-mcp
 
       - name: Set up Python
