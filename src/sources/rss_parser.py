@@ -3,7 +3,7 @@
 import logging
 import re
 import time
-from datetime import date, datetime
+from datetime import date
 from typing import Any, Dict, List, Optional
 
 from src.models.responses import PaperItem
@@ -121,17 +121,23 @@ class RSSParser:
         published_parsed = self._get_field(entry, "published_parsed")
         if published_parsed and isinstance(published_parsed, time.struct_time):
             try:
-                dt = datetime.fromtimestamp(time.mktime(published_parsed))
-                return dt.date()
-            except (ValueError, OSError):
+                return date(
+                    published_parsed.tm_year,
+                    published_parsed.tm_mon,
+                    published_parsed.tm_mday,
+                )
+            except ValueError:
                 pass
 
         updated_parsed = self._get_field(entry, "updated_parsed")
         if updated_parsed and isinstance(updated_parsed, time.struct_time):
             try:
-                dt = datetime.fromtimestamp(time.mktime(updated_parsed))
-                return dt.date()
-            except (ValueError, OSError):
+                return date(
+                    updated_parsed.tm_year,
+                    updated_parsed.tm_mon,
+                    updated_parsed.tm_mday,
+                )
+            except ValueError:
                 pass
 
         return None

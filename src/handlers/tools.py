@@ -121,7 +121,7 @@ class ToolHandler:
         self,
         name: str,
         arguments: Optional[Dict[str, Any]] = None,
-    ) -> str:
+    ) -> tuple[str, bool]:
         args = arguments or {}
 
         try:
@@ -132,7 +132,7 @@ class ToolHandler:
                     limit=payload.limit,
                     since=payload.since,
                 )
-                return _ok(_papers_payload(papers))
+                return _ok(_papers_payload(papers)), False
 
             if name == ToolName.FETCH_GMAIL.value:
                 payload = FetchGmailInput.model_validate(args)
@@ -141,7 +141,7 @@ class ToolHandler:
                     limit=payload.limit,
                     since=payload.since,
                 )
-                return _ok(_papers_payload(papers))
+                return _ok(_papers_payload(papers)), False
 
             if name == ToolName.FILTER_KEYWORDS.value:
                 payload = FilterKeywordsInput.model_validate(args)
@@ -161,7 +161,7 @@ class ToolHandler:
                         "rejected_count": result.rejected_count,
                         "filter_stats": result.filter_stats,
                     }
-                )
+                ), False
 
             if name == ToolName.FILTER_AI.value:
                 payload = FilterAIInput.model_validate(args)
@@ -177,15 +177,17 @@ class ToolHandler:
                         "rejected_count": result.rejected_count,
                         "filter_stats": result.filter_stats,
                     }
-                )
+                ), False
 
             if name == ToolName.ENRICH.value:
                 payload = EnrichInput.model_validate(args)
                 papers = _parse_papers_json(payload.papers_json)
                 enriched = await self.enrich_service.enrich(
-                    papers, provider=payload.provider
+                    papers,
+                    provider=payload.provider,
+                    concurrency=payload.concurrency,
                 )
-                return _ok(_papers_payload(enriched))
+                return _ok(_papers_payload(enriched)), False
 
             if name == ToolName.EXPORT_JSON.value:
                 payload = ExportJSONInput.model_validate(args)
@@ -200,14 +202,14 @@ class ToolHandler:
                         "exported_count": len(papers),
                         "filepath": payload.filepath,
                     }
-                )
+                ), False
 
             if name == ToolName.GENERATE_KEYWORDS.value:
                 payload = GenerateKeywordsInput.model_validate(args)
                 keywords = await self.filter_service.generate_keywords(
                     research_prompt=payload.research_prompt
                 )
-                return _ok({"keywords": keywords})
+                return _ok({"keywords": keywords}), False
 
             if name == ToolName.SEARCH_CROSSREF.value:
                 payload = SearchCrossrefInput.model_validate(args)
@@ -220,7 +222,7 @@ class ToolHandler:
                         ],
                         "count": len(works),
                     }
-                )
+                ), False
 
             if name == ToolName.SEARCH_OPENALEX.value:
                 payload = SearchOpenalexInput.model_validate(args)
@@ -233,10 +235,10 @@ class ToolHandler:
                         ],
                         "count": len(works),
                     }
-                )
+                ), False
 
             raise ValueError(f"Unknown tool: {name}")
 
         except Exception as exc:
-            return _err(format_error(exc))
+            return _err(format_error(exc)), True
 

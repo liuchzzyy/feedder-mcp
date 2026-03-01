@@ -105,6 +105,16 @@ def test_paper_export_identity_key_prefers_doi_then_title_date_then_url():
     ]
 
 
+def test_deduplicate_keeps_same_title_when_dois_differ():
+    p1 = _paper(title="Same Title", doi="10.1000/a")
+    p2 = _paper(title="Same Title", doi="10.1000/b")
+
+    unique, stats = deduplicate_papers([p1, p2])
+
+    assert len(unique) == 2
+    assert stats["duplicates_by_key"]["title"] == 0
+
+
 def test_zotero_data_identity_keys_from_wrapped_payload():
     item = {
         "key": "ABC123",

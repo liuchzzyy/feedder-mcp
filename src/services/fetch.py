@@ -17,6 +17,8 @@ class FetchService:
         limit: Optional[int] = None,
         since: Optional[date] = None,
     ) -> List[PaperItem]:
+        if limit is not None and limit < 1:
+            raise ValueError("limit must be >= 1")
         source = RSSSource(opml_path=opml_path)
         return await source.fetch_papers(limit=limit, since=since)
 
@@ -26,5 +28,7 @@ class FetchService:
         limit: Optional[int] = None,
         since: Optional[date] = None,
     ) -> List[PaperItem]:
+        if limit is not None and limit < 1:
+            raise ValueError("limit must be >= 1")
         source = GmailSource(query=query)
         return await source.fetch_papers(limit=limit, since=since)

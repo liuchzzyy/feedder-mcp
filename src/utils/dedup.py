@@ -113,7 +113,7 @@ def identity_keys_for_paper(paper: PaperItem) -> List[Tuple[str, str]]:
         keys.append(("url", url))
 
     title = normalize_title(paper.title)
-    if title:
+    if title and not doi:
         keys.append(("title", title))
 
     return keys

@@ -588,11 +588,57 @@ class TestZoteroAdapter:
             )
         ]
 
-        result = await adapter.export(papers, collection_id="BADNAME")
+        result = await adapter.export(papers, collection_id="BADNAME1")
 
         assert result["success_count"] == 0
         assert len(result["failures"]) == 1
         assert "invalid collection key" in result["failures"][0]["error"]
+
+    @pytest.mark.asyncio
+    async def test_zotero_export_counts_successful_map_shape(self, monkeypatch):
+        """Result shape with 'successful' map should count as created."""
+        monkeypatch.setattr(zotero_module, "zotero_available", True)
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._item_service = AsyncMock()
+        adapter._api_client = AsyncMock()
+        adapter._item_service.list_items = AsyncMock(return_value=[])
+        adapter._item_service.create_item = AsyncMock(
+            return_value={
+                "successful": {"0": {"key": "ABCD1234"}},
+                "created": 0,
+                "failed": {},
+                "skipped_duplicates": 0,
+            }
+        )
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+
+        papers = [
+            PaperItem(
+                title="Successful Map Shape",
+                doi="10.1111/successful-shape",
+                source="Test",
+                source_type="rss",
+            )
+        ]
+
+        result = await adapter.export(papers, collection_id="ABCD1234")
+
+        assert result["success_count"] == 1
+        assert result["skipped_count"] == 0
+
+    @pytest.mark.asyncio
+    async def test_zotero_export_collection_name_requires_resolution(self, monkeypatch):
+        """Collection names should fail if client cannot resolve names to keys."""
+        monkeypatch.setattr(zotero_module, "zotero_available", True)
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._item_service = AsyncMock()
+        adapter._api_client = object()  # no get_collections method
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+
+        with pytest.raises(ValueError):
+            await adapter._resolve_collection_key("00_INBOXS_AA")
 
     def test_normalize_item_list_result_supports_model_dump_items(self):
         """Adapter should normalize SearchResult-like objects from newer zotero-mcp."""

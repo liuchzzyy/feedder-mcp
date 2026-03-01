@@ -211,7 +211,7 @@ def reload_config() -> PaperFeedSettings:
     global _dotenv_loaded
     _dotenv_loaded = False
     _ensure_dotenv()
-    settings = PaperFeedSettings()
+    settings = PaperFeedSettings(_env_file=None)
     return settings
 
 

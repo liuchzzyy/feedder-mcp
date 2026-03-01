@@ -74,7 +74,7 @@ class ZoteroAdapter(ExportAdapter):
         success_count = 0
         failures = []
         skipped_count = 0
-        skipped_by_key = {"doi": 0, "title_date": 0, "url": 0}
+        skipped_by_key = {"doi": 0, "title_date": 0, "url": 0, "runtime_duplicate": 0}
         resolved_collection_id = await self._resolve_collection_key(collection_id)
         collection_keys = [resolved_collection_id] if resolved_collection_id else None
         try:
@@ -113,11 +113,12 @@ class ZoteroAdapter(ExportAdapter):
 
                 success_count += created_n
                 skipped_count += skipped_n
-                if skipped_n > 0 and identity_keys:
-                    key_kind = identity_keys[0][0]
-                    skipped_by_key[key_kind] = skipped_by_key.get(
-                        key_kind, 0
-                    ) + skipped_n
+                if skipped_n > 0:
+                    if len(identity_keys) == 1:
+                        key_kind = identity_keys[0][0]
+                    else:
+                        key_kind = "runtime_duplicate"
+                    skipped_by_key[key_kind] = skipped_by_key.get(key_kind, 0) + skipped_n
 
                 if created_n > 0:
                     for k in zotero_data_identity_keys(zotero_item):
@@ -166,25 +167,23 @@ class ZoteroAdapter(ExportAdapter):
 
         get_collections = getattr(self._api_client, "get_collections", None)
         if not callable(get_collections):
-            self._logger.warning(
-                "Collection identifier '%s' does not look like a key; "
-                "collection name resolution is unavailable.",
-                value,
+            raise ValueError(
+                "Collection name resolution is unavailable in current zotero-mcp client; "
+                f"please provide collection key instead of name: {value}"
             )
-            return value
 
         try:
             raw_collections = await self._invoke_method(get_collections)
         except Exception as exc:
-            self._logger.warning(
-                "Failed to resolve collection name '%s'; using as-is: %s",
-                value,
-                exc,
+            raise ValueError(
+                f"Failed to resolve collection name '{value}' to key: {exc}"
             )
-            return value
 
         if not isinstance(raw_collections, list):
-            return value
+            raise ValueError(
+                f"Failed to resolve collection name '{value}': "
+                "unexpected collection list format"
+            )
 
         exact_match_key = None
         casefold_match_key = None
@@ -211,11 +210,9 @@ class ZoteroAdapter(ExportAdapter):
             )
             return resolved_key
 
-        self._logger.warning(
-            "Collection '%s' was not found by name; using as-is.",
-            value,
+        raise ValueError(
+            f"Collection '{value}' was not found by name in Zotero library."
         )
-        return value
 
     @staticmethod
     def _looks_like_collection_key(value: str) -> bool:
@@ -558,6 +555,7 @@ class ZoteroAdapter(ExportAdapter):
             return 0, 0, 0
 
         created = result.get("created")
+        successful = result.get("successful")
         skipped = result.get("skipped_duplicates")
         failed = result.get("failed")
         failures = result.get("failures")
@@ -572,6 +570,8 @@ class ZoteroAdapter(ExportAdapter):
             return 0
 
         created_n = _count(created)
+        if created_n == 0:
+            created_n = _count(successful)
         skipped_n = _count(skipped)
         failed_n = _count(failed)
         if failed_n == 0:

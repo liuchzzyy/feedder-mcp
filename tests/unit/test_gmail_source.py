@@ -99,6 +99,21 @@ def test_extract_html_body_direct():
     assert result == html
 
 
+def test_extract_html_body_handles_missing_padding():
+    """Decodes urlsafe base64 html even when padding is missing."""
+    html = "<p>Padded HTML</p>"
+    encoded = base64.urlsafe_b64encode(html.encode("utf-8")).decode("ascii").rstrip("=")
+    msg_obj = {
+        "payload": {
+            "mimeType": "text/html",
+            "body": {"data": encoded},
+            "headers": [{"name": "Content-Type", "value": "text/html; charset=utf-8"}],
+        }
+    }
+    result = _extract_html_body(msg_obj)
+    assert result == html
+
+
 def test_extract_html_body_empty():
     """Returns empty string when no HTML part found."""
     msg_obj = {
@@ -321,6 +336,36 @@ async def test_gmail_source_mark_as_read():
         await source.fetch_papers()
 
     mock_thread.markAsRead.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_gmail_source_does_not_trash_when_no_papers_extracted():
+    """Thread should not be trashed if no papers were extracted from it."""
+    source = GmailSource(query="test", source_name="Test")
+    source._initialized = True
+
+    mock_message = MagicMock()
+    mock_message.id = "msg_empty"
+    mock_message.subject = "No papers"
+    mock_message.timestamp = datetime(2024, 6, 15)
+    mock_message.body = "No DOI here"
+    mock_message.messageObj = _make_message_obj(
+        "<html><body><p>No article links in this message.</p></body></html>"
+    )
+
+    mock_thread = MagicMock()
+    mock_thread.id = "thread_empty"
+    mock_thread.messages = [mock_message]
+    mock_thread.trash = MagicMock()
+
+    mock_ezgmail = MagicMock()
+    mock_ezgmail.search.return_value = [mock_thread]
+
+    with patch.dict(sys.modules, {"ezgmail": mock_ezgmail}):
+        papers = await source.fetch_papers()
+
+    assert papers == []
+    mock_thread.trash.assert_not_called()
 
 
 @pytest.mark.asyncio

@@ -84,9 +84,10 @@ async def serve() -> None:
     @server.call_tool()
     async def _call_tool(request: Any) -> Any:
         name, arguments = _extract_name_and_args(request)
-        result_text = await tool_handler.handle_tool(name, arguments)
+        result_text, is_error = await tool_handler.handle_tool(name, arguments)
         return CallToolResult(
-            content=[TextContent(type="text", text=result_text)]
+            content=[TextContent(type="text", text=result_text)],
+            isError=is_error,
         )
 
     @server.list_prompts()

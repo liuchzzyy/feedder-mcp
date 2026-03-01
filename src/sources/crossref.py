@@ -1,9 +1,12 @@
 """CrossRef API client for academic metadata lookup and enrichment."""
 
+import asyncio
 import logging
 import re
+import time
 from dataclasses import dataclass, field
 from datetime import date
+from email.utils import parsedate_to_datetime
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
@@ -11,6 +14,7 @@ import httpx
 
 from src.config.settings import get_crossref_config
 from src.models.responses import PaperItem
+from src.utils.dedup import normalize_doi
 from src.utils.text import DOI_PATTERN, clean_abstract
 
 logger = logging.getLogger(__name__)
@@ -24,12 +28,9 @@ SELECT_FIELDS = (
 
 
 def _clean_doi(doi: str) -> str:
-    if doi.startswith("https://doi.org/"):
-        return doi[16:]
-    elif doi.startswith("http://doi.org/"):
-        return doi[15:]
-    elif doi.startswith("doi:"):
-        return doi[4:]
+    normalized = normalize_doi(doi)
+    if normalized:
+        return normalized
     return doi.strip()
 
 
@@ -198,15 +199,72 @@ class CrossrefClient:
             await self._client.aclose()
             self._client = None
 
+    @staticmethod
+    def _retry_delay_seconds(response: httpx.Response, attempt: int) -> float:
+        retry_after = response.headers.get("Retry-After")
+        if retry_after:
+            if retry_after.isdigit():
+                return float(retry_after)
+            try:
+                retry_dt = parsedate_to_datetime(retry_after)
+                return max(0.0, retry_dt.timestamp() - time.time())
+            except Exception:
+                pass
+        return min(4.0, 2 ** max(attempt - 1, 0))
+
+    async def _request_with_retry(
+        self,
+        method: str,
+        url: str,
+        *,
+        params: Optional[Dict[str, Any]] = None,
+    ) -> httpx.Response:
+        if method.upper() != "GET":
+            raise ValueError("CrossrefClient currently supports GET only")
+        client = await self._get_client()
+        max_attempts = 3
+        for attempt in range(1, max_attempts + 1):
+            try:
+                response = await client.get(url, params=params)
+                status_code = response.status_code
+                if status_code == 429 and attempt < max_attempts:
+                    delay = self._retry_delay_seconds(response, attempt)
+                    logger.warning("CrossRef rate limited (429). Sleeping %.2fs", delay)
+                    await asyncio.sleep(delay)
+                    continue
+                response.raise_for_status()
+                return response
+            except httpx.HTTPStatusError as exc:
+                if (
+                    exc.response.status_code >= 500
+                    and attempt < max_attempts
+                ):
+                    delay = self._retry_delay_seconds(exc.response, attempt)
+                    await asyncio.sleep(delay)
+                    continue
+                raise
+            except httpx.RequestError as exc:
+                if attempt < max_attempts:
+                    delay = min(4.0, 2 ** max(attempt - 1, 0))
+                    logger.warning(
+                        "CrossRef transport error (%s). Retrying in %.2fs",
+                        type(exc).__name__,
+                        delay,
+                    )
+                    await asyncio.sleep(delay)
+                    continue
+                raise
+
+        raise httpx.HTTPError("CrossRef request failed")
+
     async def search_by_title(
         self,
         title: str,
         rows: int = 5,
     ) -> List[CrossrefWork]:
-        client = await self._get_client()
-
         try:
-            response = await client.get(
+            response = await self._request_with_retry(
+                "GET",
                 "/works",
                 params={
                     "query.title": title,
@@ -214,7 +272,6 @@ class CrossrefClient:
                     "select": SELECT_FIELDS,
                 },
             )
-            response.raise_for_status()
             data = response.json()
 
             items = data.get("message", {}).get("items", [])
@@ -235,12 +292,13 @@ class CrossrefClient:
             return []
 
     async def get_by_doi(self, doi: str) -> Optional[CrossrefWork]:
-        client = await self._get_client()
         doi = _clean_doi(doi)
 
         try:
-            response = await client.get(f"/works/{quote(doi, safe='')}")
-            response.raise_for_status()
+            response = await self._request_with_retry(
+                "GET",
+                f"/works/{quote(doi, safe='')}",
+            )
             data = response.json()
 
             work_data = data.get("message", {})
@@ -290,7 +348,9 @@ class CrossrefClient:
             a = a.lower()
             a = re.sub(r"[^\w\s]", " ", a)
             a = re.sub(r"\s+", " ", a).strip()
-            return a
+            tokens = [t for t in a.split(" ") if t]
+            tokens.sort()
+            return " ".join(tokens)
 
         def _author_overlap(a1: List[str], a2: List[str]) -> float:
             if not a1 or not a2:

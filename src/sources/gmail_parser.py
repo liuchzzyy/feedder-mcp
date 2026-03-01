@@ -1,12 +1,12 @@
 """Gmail HTML email parser for extracting paper items."""
 
 import logging
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from bs4 import BeautifulSoup, Tag
 
 from src.models.responses import PaperItem
-from src.utils.dedup import deduplicate_papers
+from src.utils.dedup import deduplicate_papers, normalize_title
 from src.utils.text import DOI_PATTERN, clean_title
 
 logger = logging.getLogger(__name__)
@@ -14,6 +14,45 @@ logger = logging.getLogger(__name__)
 
 class GmailParser:
     """Parser for extracting paper items from HTML email content."""
+
+    @staticmethod
+    def _item_quality(item: PaperItem) -> int:
+        score = 0
+        if item.doi:
+            score += 4
+        if item.url:
+            score += 2
+        if item.abstract:
+            score += 1
+        score += min(len(item.authors), 3)
+        return score
+
+    def _deduplicate_by_title(
+        self,
+        items: List[PaperItem],
+    ) -> Tuple[List[PaperItem], int]:
+        title_to_index: dict[str, int] = {}
+        unique: List[PaperItem] = []
+        dropped = 0
+
+        for item in items:
+            title_key = normalize_title(item.title)
+            if not title_key:
+                unique.append(item)
+                continue
+
+            existing_index = title_to_index.get(title_key)
+            if existing_index is None:
+                title_to_index[title_key] = len(unique)
+                unique.append(item)
+                continue
+
+            dropped += 1
+            existing_item = unique[existing_index]
+            if self._item_quality(item) > self._item_quality(existing_item):
+                unique[existing_index] = item
+
+        return unique, dropped
 
     def parse(
         self,
@@ -38,26 +77,33 @@ class GmailParser:
                 if item:
                     items.append(item)
 
-        # Strategy 2: If no tables, look for article-like divs/sections
-        if not items:
-            items = self._extract_items_from_divs(
+        # Strategy 2: Look for article-like divs/sections
+        items.extend(
+            self._extract_items_from_divs(
                 soup, source_name, email_id, email_subject
             )
+        )
 
         # Strategy 3: Extract from plain links with surrounding text
-        if not items:
-            items = self._extract_items_from_links(
+        items.extend(
+            self._extract_items_from_links(
                 soup, source_name, email_id, email_subject
             )
+        )
 
-        unique_items, dedup_stats = deduplicate_papers(items)
+        identity_unique_items, dedup_stats = deduplicate_papers(items)
+        unique_items, title_dropped = self._deduplicate_by_title(identity_unique_items)
 
         logger.info(
-            "Extracted %d items from email %s (raw=%d, dropped=%d, by_key=%s)",
+            (
+                "Extracted %d items from email %s "
+                "(raw=%d, dropped_identity=%d, dropped_title=%d, by_key=%s)"
+            ),
             len(unique_items),
             email_id[:8] + "..." if email_id else "(no id)",
             dedup_stats["input_count"],
             dedup_stats["dropped_count"],
+            title_dropped,
             dedup_stats["duplicates_by_key"],
         )
         return unique_items

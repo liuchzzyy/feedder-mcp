@@ -24,6 +24,7 @@ FETCH_OUTPUT_FILENAME = "fetched_papers.json"
 FILTER_OUTPUT_FILENAME = "filtered_papers.json"
 ENRICH_OUTPUT_FILENAME = "enriched_papers.json"
 EXPORT_OUTPUT_FILENAME = "exported_papers.json"
+_PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 # -------------------- Helpers --------------------
@@ -68,6 +69,13 @@ def _save_json(data: dict, path: str) -> None:
 
 def _default_output_path(filename: str) -> str:
     return str(Path("output") / date.today().isoformat() / filename)
+
+
+def _positive_int(value: str) -> int:
+    parsed = int(value)
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be a positive integer (>= 1)")
+    return parsed
 
 
 def _add_input_arg(parser: argparse.ArgumentParser, help_text: str = "输入 JSON 文件") -> None:
@@ -159,7 +167,15 @@ async def _handle_filter(args: argparse.Namespace) -> None:
         min_date = date.fromisoformat(args.min_date)
 
     keywords = args.keywords or []
-    if not keywords:
+    auto_generate_keywords = not keywords and not any(
+        [
+            args.exclude,
+            args.authors,
+            args.min_date,
+            args.has_pdf,
+        ]
+    )
+    if auto_generate_keywords:
         from src.ai.keyword_generator import KeywordGenerator
 
         try:
@@ -181,6 +197,10 @@ async def _handle_filter(args: argparse.Namespace) -> None:
                 file=sys.stderr,
             )
             sys.exit(1)
+    elif not keywords:
+        print(
+            "No keywords provided; running with non-keyword filters only."
+        )
 
     criteria = FilterCriteria(
         keywords=keywords,
@@ -263,13 +283,14 @@ async def _handle_export(args: argparse.Namespace) -> None:
         )
         sys.exit(1)
 
-    if args.format == "json":
-        print(f"Exported {len(papers)} papers ({args.format}) -> {args.output}")
-    else:
-        print(f"Exported {len(papers)} papers ({args.format}) -> {args.output}")
+    print(f"Exported {len(papers)} papers ({args.format}) -> {args.output}")
 
 
 async def _handle_enrich(args: argparse.Namespace) -> None:
+    if args.concurrency < 1:
+        print("Error: --concurrency must be >= 1", file=sys.stderr)
+        sys.exit(1)
+
     papers = _load_papers(args.input)
 
     use_crossref = args.source in ("crossref", "all")
@@ -319,8 +340,27 @@ async def _handle_enrich(args: argparse.Namespace) -> None:
     print(f"Enriched {enriched_count}/{len(papers)} papers -> {args.output}")
 
 
-def _delete_output_dir(output_dir: str) -> None:
+def _delete_output_dir(output_dir: str, force: bool = False) -> None:
     output_dir_path = Path(output_dir)
+    try:
+        resolved_output = output_dir_path.resolve()
+    except Exception:
+        resolved_output = output_dir_path.absolute()
+
+    cwd = Path.cwd().resolve()
+    project_root = _PROJECT_ROOT.resolve()
+    dangerous_targets = {cwd, project_root}
+    if cwd.anchor:
+        dangerous_targets.add(Path(cwd.anchor).resolve())
+    if resolved_output in dangerous_targets:
+        raise ValueError(f"Refusing to delete dangerous path: {resolved_output}")
+
+    if resolved_output.name != "output" and not force:
+        raise ValueError(
+            "Refusing to delete non-default path without --force: "
+            f"{resolved_output}"
+        )
+
     removed_any = False
     if output_dir_path.exists() and output_dir_path.is_dir():
         shutil.rmtree(output_dir_path)
@@ -352,7 +392,7 @@ def _delete_output_dir(output_dir: str) -> None:
 
 
 async def _handle_delete(args: argparse.Namespace) -> None:
-    _delete_output_dir(args.output_dir)
+    _delete_output_dir(args.output_dir, force=args.force)
 
 
 # -------------------- CLI Setup --------------------
@@ -400,7 +440,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--limit",
         "--max-papers",
         dest="limit",
-        type=int,
+        type=_positive_int,
         help="最大抓取数量",
     )
     fetch_parser.add_argument(
@@ -546,7 +586,7 @@ def _build_parser() -> argparse.ArgumentParser:
         "--concurrency",
         "--parallel",
         dest="concurrency",
-        type=int,
+        type=_positive_int,
         default=5,
         help="最大并发数（默认：5）",
     )
@@ -559,6 +599,11 @@ def _build_parser() -> argparse.ArgumentParser:
         "--output-dir",
         default="output",
         help="要删除的输出目录（默认：output）",
+    )
+    delete_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="允许删除非默认 output 路径（高风险）",
     )
 
     return parser

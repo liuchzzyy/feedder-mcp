@@ -48,9 +48,9 @@ class OPMLParser:
         feeds = []
 
         xml_url = outline.get("xmlUrl")
-        outline_type = outline.get("type")
+        outline_type = (outline.get("type") or "").strip().lower()
 
-        if xml_url and outline_type == "rss":
+        if xml_url and (not outline_type or outline_type in {"rss", "atom"}):
             feed = {
                 "url": xml_url,
                 "title": outline.get("title", outline.get("text", "Unknown")),
@@ -59,10 +59,10 @@ class OPMLParser:
             if category:
                 feed["category"] = category
             feeds.append(feed)
-        else:
-            current_category = outline.get("title", outline.get("text", category))
-            for child in outline.findall("outline"):
-                feeds.extend(self._extract_feeds_from_outline(child, current_category))
+
+        current_category = outline.get("title", outline.get("text", category))
+        for child in outline.findall("outline"):
+            feeds.extend(self._extract_feeds_from_outline(child, current_category))
 
         return feeds
 

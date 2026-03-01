@@ -17,6 +17,13 @@ class EnrichService:
         provider: str = "all",
         concurrency: int = 5,
     ) -> List[PaperItem]:
+        if concurrency < 1:
+            raise ValueError("concurrency must be >= 1")
+        if provider not in {"crossref", "openalex", "all"}:
+            raise ValueError(
+                "provider must be one of: crossref, openalex, all"
+            )
+
         use_crossref = provider in ("crossref", "all")
         use_openalex = provider in ("openalex", "all")
 
@@ -55,7 +62,7 @@ class EnrichService:
     async def search_openalex(self, title: str) -> List[OpenAlexWork]:
         client = OpenAlexClient()
         try:
-            return await client.search_by_title(title, rows=5)
+            return await client.search_by_title(title, per_page=5)
         finally:
             await client.close()
 
@@ -82,8 +89,19 @@ class EnrichService:
 
     @staticmethod
     def openalex_work_to_dict(work: OpenAlexWork) -> Dict[str, Any]:
+        paper_id = work.raw_data.get("id") if isinstance(work.raw_data, dict) else None
+        pdf_url = None
+        publisher = None
+        if isinstance(work.raw_data, dict):
+            primary_location = work.raw_data.get("primary_location") or {}
+            if isinstance(primary_location, dict):
+                pdf_url = primary_location.get("pdf_url")
+                source = primary_location.get("source") or {}
+                if isinstance(source, dict):
+                    publisher = source.get("host_organization_name")
+
         return {
-            "id": work.id,
+            "id": paper_id,
             "doi": work.doi,
             "title": work.title,
             "authors": work.authors,
@@ -94,9 +112,9 @@ class EnrichService:
             "pages": work.pages,
             "abstract": work.abstract,
             "url": work.url,
-            "publisher": work.publisher,
+            "publisher": publisher,
             "item_type": work.item_type,
             "concepts": work.concepts,
             "cited_by_count": work.cited_by_count,
-            "pdf_url": work.pdf_url,
+            "pdf_url": pdf_url,
         }

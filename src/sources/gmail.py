@@ -12,7 +12,7 @@ from typing import Dict, List, Optional
 from src.config.settings import get_gmail_config
 from src.models.responses import PaperItem, PaperSource
 from src.sources.gmail_parser import GmailParser
-from src.utils.dedup import deduplicate_papers
+from src.utils.dedup import deduplicate_papers, identity_keys_for_paper
 from src.utils.text import DOI_PATTERN
 
 logger = logging.getLogger(__name__)
@@ -23,16 +23,49 @@ def _extract_html_body(message_obj: dict) -> str:
     return _find_html_in_payload(payload)
 
 
-def _find_html_in_payload(payload: dict) -> str:
-    mime_type = payload.get("mimeType", "").upper()
+def _extract_charset(payload: dict) -> str:
+    headers = payload.get("headers", [])
+    if not isinstance(headers, list):
+        return "utf-8"
 
-    if mime_type == "TEXT/HTML":
+    for header in headers:
+        if not isinstance(header, dict):
+            continue
+        name = str(header.get("name", "")).lower()
+        if name != "content-type":
+            continue
+        value = str(header.get("value", ""))
+        match = re.search(r"charset\s*=\s*['\"]?([^'\";\s]+)", value, re.IGNORECASE)
+        if match:
+            return match.group(1).strip()
+    return "utf-8"
+
+
+def _decode_body_data(body_data: str, charset: str) -> str:
+    if not body_data:
+        return ""
+    padded = body_data + "=" * (-len(body_data) % 4)
+    try:
+        raw_bytes = base64.urlsafe_b64decode(padded)
+    except Exception:
+        return ""
+
+    for enc in (charset, "utf-8", "latin-1"):
+        try:
+            return raw_bytes.decode(enc)
+        except Exception:
+            continue
+    return raw_bytes.decode("utf-8", errors="replace")
+
+
+def _find_html_in_payload(payload: dict) -> str:
+    mime_type = str(payload.get("mimeType", "")).lower()
+
+    if mime_type == "text/html":
         body_data = payload.get("body", {}).get("data", "")
         if body_data:
-            try:
-                return base64.urlsafe_b64decode(body_data).decode("utf-8")
-            except Exception:
-                return ""
+            charset = _extract_charset(payload)
+            return _decode_body_data(body_data, charset)
 
     parts = payload.get("parts", [])
     for part in parts:
@@ -237,9 +270,24 @@ class GmailSource(PaperSource):
     async def fetch_papers(
         self, limit: Optional[int] = None, since: Optional[date] = None
     ) -> List[PaperItem]:
+        if limit is not None and limit < 1:
+            raise ValueError("limit must be >= 1")
+
         import ezgmail
 
         papers: List[PaperItem] = []
+        seen_identity_keys: set[tuple[str, str]] = set()
+
+        def _append_unique(item: PaperItem) -> bool:
+            keys = identity_keys_for_paper(item)
+            if keys:
+                for key in keys:
+                    if key in seen_identity_keys:
+                        return False
+            papers.append(item)
+            for key in keys:
+                seen_identity_keys.add(key)
+            return True
 
         try:
             await asyncio.to_thread(self._ensure_init)
@@ -258,6 +306,7 @@ class GmailSource(PaperSource):
             for thread in threads:
                 try:
                     marked_as_read = False
+                    extracted_in_thread = 0
                     snippet = getattr(thread, "snippet", None)
                     if snippet:
                         logger.debug(
@@ -302,10 +351,11 @@ class GmailSource(PaperSource):
                                 message, effective_source
                             )
 
-                        papers.extend(items)
+                        for item in items:
+                            if _append_unique(item):
+                                extracted_in_thread += 1
 
                         if limit and len(papers) >= limit:
-                            papers = papers[:limit]
                             break
 
                     if self.mark_as_read:
@@ -325,7 +375,7 @@ class GmailSource(PaperSource):
                                 f"'{self.processed_label}': {label_err}"
                             )
 
-                    if self.trash_after_process:
+                    if self.trash_after_process and extracted_in_thread > 0:
                         try:
                             if hasattr(thread, "markAsRead") and not marked_as_read:
                                 await asyncio.to_thread(thread.markAsRead)
@@ -340,6 +390,11 @@ class GmailSource(PaperSource):
                             logger.warning(
                                 f"Failed to trash thread {thread.id}: {trash_err}"
                             )
+                    elif self.trash_after_process and extracted_in_thread == 0:
+                        logger.debug(
+                            "Skipping trash for thread %s: no papers extracted",
+                            thread.id,
+                        )
 
                 except Exception as e:
                     logger.error(
@@ -362,6 +417,8 @@ class GmailSource(PaperSource):
                     break
 
             papers, dedup_stats = deduplicate_papers(papers)
+            if limit and len(papers) > limit:
+                papers = papers[:limit]
             logger.info(
                 "Gmail fetch dedup stats: input=%d, unique=%d, dropped=%d, by_key=%s",
                 dedup_stats["input_count"],

@@ -1,7 +1,7 @@
 """Pydantic input models for MCP tool arguments."""
 
 from datetime import date
-from typing import List, Optional
+from typing import List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -12,7 +12,11 @@ class FetchRSSInput(BaseModel):
     opml_path: Optional[str] = Field(
         None, description="Path to OPML file with RSS feeds"
     )
-    limit: Optional[int] = Field(None, description="Maximum number of papers to fetch")
+    limit: Optional[int] = Field(
+        None,
+        ge=1,
+        description="Maximum number of papers to fetch",
+    )
     since: Optional[date] = Field(
         None, description="Only fetch papers published after this date (YYYY-MM-DD)"
     )
@@ -22,7 +26,11 @@ class FetchGmailInput(BaseModel):
     """Input for feedder-mcp_fetch_gmail tool."""
 
     query: Optional[str] = Field(None, description="Gmail search query")
-    limit: Optional[int] = Field(None, description="Maximum number of papers to fetch")
+    limit: Optional[int] = Field(
+        None,
+        ge=1,
+        description="Maximum number of papers to fetch",
+    )
     since: Optional[date] = Field(
         None, description="Only fetch papers from emails after this date"
     )
@@ -66,9 +74,14 @@ class EnrichInput(BaseModel):
     papers_json: str = Field(
         ..., description="JSON string of papers array to enrich"
     )
-    provider: str = Field(
+    provider: Literal["crossref", "openalex", "all"] = Field(
         "all",
         description="Enrichment provider: 'crossref', 'openalex', or 'all'",
+    )
+    concurrency: int = Field(
+        5,
+        ge=1,
+        description="Maximum concurrent enrichment jobs",
     )
 
 

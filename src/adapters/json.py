@@ -20,23 +20,23 @@ class JSONAdapter(ExportAdapter):
         **kwargs: Any,
     ) -> Dict[str, Any]:
         try:
-            papers_data = []
-            for paper in papers:
-                paper_dict = paper.model_dump(mode="json")
-
-                if not include_metadata:
-                    paper_dict.pop("extra", None)
-
-                papers_data.append(paper_dict)
-
             output_path = Path(filepath)
             output_path.parent.mkdir(parents=True, exist_ok=True)
 
             with output_path.open("w", encoding="utf-8") as f:
-                json.dump(papers_data, f, indent=2, ensure_ascii=False)
+                f.write("[\n")
+                for idx, paper in enumerate(papers):
+                    paper_dict = paper.model_dump(mode="json")
+                    if not include_metadata:
+                        paper_dict.pop("extra", None)
+                    if idx > 0:
+                        f.write(",\n")
+                    f.write("  ")
+                    json.dump(paper_dict, f, ensure_ascii=False)
+                f.write("\n]\n")
 
             return {
-                "count": len(papers_data),
+                "count": len(papers),
                 "filepath": str(output_path.absolute()),
                 "success": True,
             }

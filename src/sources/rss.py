@@ -73,6 +73,9 @@ class RSSSource(PaperSource):
         limit: Optional[int] = None,
         since: Optional[date] = None,
     ) -> List[PaperItem]:
+        if limit is not None and limit < 1:
+            raise ValueError("limit must be >= 1")
+
         semaphore = asyncio.Semaphore(self.max_concurrent)
 
         async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -134,9 +137,15 @@ class RSSSource(PaperSource):
                 follow_redirects=True,
             )
             response.raise_for_status()
-            feed_content = response.text
+            feed_content = response.content
+            parse_input: str | bytes
+            if isinstance(feed_content, (bytes, str)):
+                parse_input = feed_content
+            else:
+                response_text = getattr(response, "text", "")
+                parse_input = response_text if isinstance(response_text, str) else ""
 
-            feed = await asyncio.to_thread(feedparser.parse, feed_content)
+            feed = await asyncio.to_thread(feedparser.parse, parse_input)
 
             if hasattr(feed, "bozo") and feed.bozo:
                 logger.warning(

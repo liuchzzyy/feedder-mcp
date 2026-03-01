@@ -1,6 +1,7 @@
 """Unit tests for RSS source."""
 
 import os
+import time
 import pytest
 from unittest.mock import patch, AsyncMock, MagicMock
 
@@ -88,6 +89,40 @@ def test_opml_parser_skip_non_rss():
 
     for feed in feeds:
         assert feed["url"].startswith("http"), "Feed URL should be valid HTTP URL"
+
+
+def test_opml_parser_accepts_xmlurl_without_type(tmp_path):
+    opml = """<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <body>
+    <outline text="Feed No Type" xmlUrl="https://example.com/feed.xml" />
+  </body>
+</opml>
+"""
+    opml_path = tmp_path / "no_type.opml"
+    opml_path.write_text(opml, encoding="utf-8")
+
+    parser = OPMLParser(str(opml_path))
+    feeds = parser.parse()
+    assert len(feeds) == 1
+    assert feeds[0]["url"] == "https://example.com/feed.xml"
+
+
+def test_opml_parser_accepts_atom_type(tmp_path):
+    opml = """<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+  <body>
+    <outline text="Atom Feed" type="atom" xmlUrl="https://example.com/atom.xml" />
+  </body>
+</opml>
+"""
+    opml_path = tmp_path / "atom.opml"
+    opml_path.write_text(opml, encoding="utf-8")
+
+    parser = OPMLParser(str(opml_path))
+    feeds = parser.parse()
+    assert len(feeds) == 1
+    assert feeds[0]["url"] == "https://example.com/atom.xml"
 
 
 # ---------------------------------------------------------------------------
@@ -522,6 +557,19 @@ class TestRSSParserMetadata:
         paper = rss_parser.parse(entry, "TestSource")
         src = paper.extra.get("original_source", {})
         assert src.get("title") == "Original Feed"
+
+
+class TestRSSParserDateExtraction:
+    """Tests for stable date extraction from struct_time."""
+
+    def test_extract_published_date_from_struct_time(self, rss_parser):
+        entry = {
+            "title": "Date Paper",
+            "link": "https://example.com/date",
+            "published_parsed": time.strptime("2024-03-10", "%Y-%m-%d"),
+        }
+        paper = rss_parser.parse(entry, "TestSource")
+        assert str(paper.published_date) == "2024-03-10"
 
 
 class TestRSSSourceFeedMeta:

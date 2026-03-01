@@ -2,10 +2,13 @@
 
 import asyncio
 import logging
+import os
 import re
+import sys
 import time
 from dataclasses import dataclass, field
 from datetime import date
+from email.utils import parsedate_to_datetime
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
 
@@ -13,20 +16,19 @@ import httpx
 
 from src.config.settings import get_openalex_config
 from src.models.responses import PaperItem
+from src.utils.dedup import normalize_doi
 from src.utils.text import DOI_PATTERN, clean_abstract
-import os
-import sys
 
 logger = logging.getLogger(__name__)
+_DEFAULT_USER_AGENT = (
+    "feedder-mcp/2.0 (https://github.com/feedder-mcp; mailto:{email})"
+)
 
 
 def _clean_doi(doi: str) -> str:
-    if doi.startswith("https://doi.org/"):
-        return doi[16:]
-    elif doi.startswith("http://doi.org/"):
-        return doi[15:]
-    elif doi.startswith("doi:"):
-        return doi[4:]
+    normalized = normalize_doi(doi)
+    if normalized:
+        return normalized
     return doi.strip()
 
 
@@ -166,10 +168,13 @@ class OpenAlexClient:
         self._api_key: Optional[str] = config.get("api_key")
         self._api_base: str = config.get("api_base", "https://api.openalex.org")
         self._timeout: float = config.get("timeout", 45.0)
-        self._user_agent: str = config.get(
-            "user_agent",
-            "feedder-mcp/2.0 (https://github.com/feedder-mcp; mailto:{email})",
-        )
+        configured_user_agent = config.get("user_agent")
+        if not isinstance(configured_user_agent, str):
+            configured_user_agent = ""
+        configured_user_agent = configured_user_agent.strip()
+        if not configured_user_agent or configured_user_agent.isdigit():
+            configured_user_agent = _DEFAULT_USER_AGENT
+        self._user_agent_template = configured_user_agent
         self._max_rps: int = int(config.get("max_requests_per_second", 10) or 10)
         if self._api_key:
             logger.info("OpenAlex API key detected; requests will include api_key.")
@@ -187,7 +192,17 @@ class OpenAlexClient:
 
     @property
     def _headers(self) -> Dict[str, str]:
-        ua = self._user_agent.format(email=self.email or "noreply@example.com")
+        contact_email = self.email or "noreply@example.com"
+        try:
+            ua = self._user_agent_template.format(email=contact_email)
+        except Exception:
+            ua = _DEFAULT_USER_AGENT.format(email=contact_email)
+
+        if "feedder-mcp" not in ua.lower():
+            ua = f"feedder-mcp/2.0 {ua}".strip()
+        if "mailto:" not in ua.lower():
+            ua = f"{ua} (mailto:{contact_email})"
+
         headers = {"User-Agent": ua}
         if self.email:
             headers["mailto"] = self.email
@@ -218,8 +233,14 @@ class OpenAlexClient:
     @staticmethod
     def _retry_delay_seconds(response: httpx.Response, attempt: int) -> float:
         retry_after = response.headers.get("Retry-After")
-        if retry_after and retry_after.isdigit():
-            return float(retry_after)
+        if retry_after:
+            if retry_after.isdigit():
+                return float(retry_after)
+            try:
+                retry_dt = parsedate_to_datetime(retry_after)
+                return max(0.0, retry_dt.timestamp() - time.time())
+            except Exception:
+                pass
         reset = response.headers.get("X-RateLimit-Reset")
         if reset and reset.isdigit():
             reset_at = float(reset)
@@ -232,30 +253,39 @@ class OpenAlexClient:
             params = dict(params)
             params["api_key"] = self._api_key
 
-        last_exc: Optional[Exception] = None
         max_attempts = 3
         for attempt in range(1, max_attempts + 1):
-            await self._apply_rate_limit()
-            response = await client.get(url, params=params)
-            status_code = response.status_code
-            if isinstance(status_code, int) and status_code == 429:
-                delay = self._retry_delay_seconds(response, attempt)
-                logger.warning("OpenAlex rate limited (429). Sleeping %.2fs", delay)
-                await asyncio.sleep(delay)
-                continue
             try:
+                await self._apply_rate_limit()
+                response = await client.get(url, params=params)
+                status_code = response.status_code
+                if isinstance(status_code, int) and status_code == 429:
+                    if attempt == max_attempts:
+                        response.raise_for_status()
+                    delay = self._retry_delay_seconds(response, attempt)
+                    logger.warning("OpenAlex rate limited (429). Sleeping %.2fs", delay)
+                    await asyncio.sleep(delay)
+                    continue
                 response.raise_for_status()
                 return response
             except httpx.HTTPStatusError as exc:
-                last_exc = exc
                 if isinstance(status_code, int) and status_code >= 500 and attempt < max_attempts:
                     delay = self._retry_delay_seconds(response, attempt)
                     await asyncio.sleep(delay)
                     continue
                 raise
-        if last_exc:
-            raise last_exc
-        raise httpx.HTTPError("OpenAlex request failed without response")
+            except httpx.RequestError as exc:
+                if attempt < max_attempts:
+                    delay = min(4.0, 2 ** max(attempt - 1, 0))
+                    logger.warning(
+                        "OpenAlex transport error (%s). Retrying in %.2fs",
+                        type(exc).__name__,
+                        delay,
+                    )
+                    await asyncio.sleep(delay)
+                    continue
+                raise
+        raise httpx.HTTPError("OpenAlex request failed")
 
     async def search_by_title(
         self,
