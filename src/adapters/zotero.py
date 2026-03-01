@@ -35,6 +35,7 @@ class ZoteroAdapter(ExportAdapter):
         "list",
     )
     _ITEM_PAGE_SIZE = 100
+    _NON_PARENT_ITEM_TYPES = {"attachment", "note", "annotation"}
 
     def __init__(
         self,
@@ -317,15 +318,42 @@ class ZoteroAdapter(ExportAdapter):
     async def _load_existing_identity_keys(self) -> set[tuple[str, str]]:
         items = await self._list_existing_items()
         keys: set[tuple[str, str]] = set()
+        parent_items = 0
         for item in items:
-            if isinstance(item, dict):
-                keys.update(zotero_data_identity_keys(item))
+            if not isinstance(item, dict):
+                continue
+            if not self._is_parent_level_item(item):
+                continue
+            parent_items += 1
+            keys.update(zotero_data_identity_keys(item))
         self._logger.info(
-            "Loaded %d identity keys from %d existing Zotero items",
+            (
+                "Loaded %d identity keys from %d parent Zotero items "
+                "(out of %d total items)"
+            ),
             len(keys),
+            parent_items,
             len(items),
         )
         return keys
+
+    @classmethod
+    def _is_parent_level_item(cls, item: Dict[str, Any]) -> bool:
+        data = item.get("data") if isinstance(item.get("data"), dict) else item
+        if not isinstance(data, dict):
+            return False
+
+        parent_key = data.get("parentItem")
+        if isinstance(parent_key, str) and parent_key.strip():
+            return False
+
+        item_type = data.get("itemType")
+        if isinstance(item_type, str):
+            normalized = item_type.strip().lower()
+            if normalized in cls._NON_PARENT_ITEM_TYPES:
+                return False
+
+        return True
 
     async def _list_existing_items(self) -> List[Dict[str, Any]]:
         for target in (self._item_service, self._api_client):

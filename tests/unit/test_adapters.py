@@ -664,6 +664,73 @@ class TestZoteroAdapter:
         assert data["date"] == "2025"
         assert data["creators"][0]["name"] == "Wang"
 
+    def test_is_parent_level_item_filters_child_and_non_parent_types(self):
+        parent_item = {
+            "data": {
+                "itemType": "journalArticle",
+                "title": "Parent Item",
+            }
+        }
+        attachment_item = {
+            "data": {
+                "itemType": "attachment",
+                "parentItem": "AAAA1111",
+            }
+        }
+        note_item = {
+            "data": {
+                "itemType": "note",
+            }
+        }
+        child_article = {
+            "data": {
+                "itemType": "journalArticle",
+                "parentItem": "BBBB2222",
+            }
+        }
+
+        assert ZoteroAdapter._is_parent_level_item(parent_item) is True
+        assert ZoteroAdapter._is_parent_level_item(attachment_item) is False
+        assert ZoteroAdapter._is_parent_level_item(note_item) is False
+        assert ZoteroAdapter._is_parent_level_item(child_article) is False
+
+    @pytest.mark.asyncio
+    async def test_load_existing_identity_keys_uses_only_parent_items(self):
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+        adapter._list_existing_items = AsyncMock(
+            return_value=[
+                {
+                    "data": {
+                        "itemType": "journalArticle",
+                        "title": "Parent Paper",
+                        "DOI": "10.1234/parent",
+                        "date": "2025-01-01",
+                    }
+                },
+                {
+                    "data": {
+                        "itemType": "attachment",
+                        "title": "Parent Paper PDF",
+                        "parentItem": "AAAA1111",
+                        "url": "https://example.com/paper.pdf",
+                    }
+                },
+                {
+                    "data": {
+                        "itemType": "note",
+                        "title": "Child note",
+                        "parentItem": "AAAA1111",
+                    }
+                },
+            ]
+        )
+
+        keys = await adapter._load_existing_identity_keys()
+
+        assert ("doi", "10.1234/parent") in keys
+        assert ("url", "https://example.com/paper.pdf") not in keys
+
     @pytest.mark.asyncio
     async def test_zotero_export_skips_existing_from_get_all_items_models(
         self, monkeypatch
