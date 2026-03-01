@@ -2,7 +2,7 @@
 
 An MCP (Model Context Protocol) server for collecting, filtering, enriching, and exporting academic papers from RSS feeds and Gmail alerts.
 
-Version: 2.5.1.r2 (2026-02-24)
+Version: 2.5.2 (2026-03-01)
 
 ## Features
 
