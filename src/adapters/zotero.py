@@ -34,6 +34,7 @@ class ZoteroAdapter(ExportAdapter):
         "get_all_items",
         "list",
     )
+    _ITEM_PAGE_SIZE = 100
 
     def __init__(
         self,
@@ -354,7 +355,7 @@ class ZoteroAdapter(ExportAdapter):
         )
 
     async def _collect_items(self, method: Any) -> Optional[List[Dict[str, Any]]]:
-        page_size = 1000
+        page_size = self._ITEM_PAGE_SIZE
         page_cursor_key = None
         if self._method_accepts_param(method, "start"):
             page_cursor_key = "start"

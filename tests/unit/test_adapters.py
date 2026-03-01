@@ -508,11 +508,13 @@ class TestZoteroAdapter:
             def __init__(self):
                 self.calls = []
 
-            async def list_items(self, limit=1000, start=0):
+            async def list_items(self, limit=100, start=0):
                 self.calls.append({"limit": limit, "start": start})
-                if start == 0:
-                    return [{"data": {"title": f"Paper {i}"}} for i in range(1000)]
-                return [{"data": {"title": "Paper 1000"}}]
+                total = 251
+                if start >= total:
+                    return []
+                end = min(start + limit, total)
+                return [{"data": {"title": f"Paper {i}"}} for i in range(start, end)]
 
         adapter = ZoteroAdapter.__new__(ZoteroAdapter)
         adapter._item_service = _PagedService()
@@ -521,10 +523,11 @@ class TestZoteroAdapter:
 
         items = await adapter._list_existing_items()
 
-        assert len(items) == 1001
+        assert len(items) == 251
         assert adapter._item_service.calls == [
-            {"limit": 1000, "start": 0},
-            {"limit": 1000, "start": 1000},
+            {"limit": 100, "start": 0},
+            {"limit": 100, "start": 100},
+            {"limit": 100, "start": 200},
         ]
 
     @pytest.mark.asyncio
