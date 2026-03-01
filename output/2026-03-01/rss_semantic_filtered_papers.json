@@ -1,0 +1,1835 @@
+[
+  {
+    "title": "Molecular Polarity Attenuation Tailors Weak Solvation Structure with Accelerated Kinetics and Robust SEI for High‐Areal‐Capacity Large‐Format Pouch Zn‐Based Batteries",
+    "source": "Advanced Materials",
+    "source_type": "rss",
+    "authors": [
+      "Lidong Yu, \nKefeng Ouyang, \nJin Hu, \nYan Huang"
+    ],
+    "abstract": "This work introduces a molecular polarity attenuation strategy using salicin to construct an SO42−‐enriched weak solvation sheath, accelerating Zn2+ kinetics and inducing a robust ZnCO3/ZnO/ZnS‐rich hybrid SEI. As a result, the 100 cm2 Zn||I2 pouch cells achieve a long cycle life of ∼400 h at a high areal capacity of 9.8 mAh cm−2, demonstrating strong potential for practical zinc batteries.\n\n\n\n\n\n\n\n\nABSTRACT\nLarge‐format, high‐areal‐capacity aqueous Zn‐ion batteries are pivotal for practical energy storage but remain hindered by sluggish kinetics, heterogeneous local reactions, and drastic interfacial deformation. In this work, a molecular polarity‐weakening strategy of electrolyte additive is proposed to customize a rapid‐reaction‐kinetics solvation structure and a hybrid solid‐electrolyte interphase (SEI) for Zn metal pouch batteries. Leveraging this synergistic solvation‐SEI regulation, a 25 cm2 Zn||Zn pouch symmetric cell achieves unprecedent 352 h stable cycling at 40 mAh cm−2 (DOD = 68%, 10 mA cm−2). More importantly, a 100 cm2 Zn||I2 pouch full battery delivers a high areal capacity of 9.8 mAh cm−2 and sustains nearly 400 h of stable cycling.",
+    "published_date": "2026-02-27",
+    "doi": "10.1002/adma.202519996",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adma.202519996?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adma.202519996",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/15214095?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/15214095?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Redefining Separator Design and Water Activity for High‐Energy Zinc Batteries Using Covalent Organic Framework",
+    "source": "Advanced Materials",
+    "source_type": "rss",
+    "authors": [
+      "Kun Zhang, \nHongtian Liu, \nYiwei Zhao, \nYijia Yuan, \nShibo Xi, \nYaohua Zhao, \nLi Ma, \nChangan Lu, \nShuanglin Wu, \nXiaomei Huo, \nJia Liu, \nKeyu Xie, \nKian Ping Loh"
+    ],
+    "abstract": "Device‐level zinc batteries are energy‐limited by the mass/volume of inactive components, while lean‐electrolyte operation triggers interfacial water depletion and unstable kinetics. Here we elucidate lean‐failure mechanisms and develop a COF@PAN functional separator that regulates hydrogen‐bonding networks to manage water activity and accelerate infiltration, enabling high‐energy, durable Zn pouch cells.\n\n\n\n\n\n\n\n\nABSTRACT\nDespite zinc metal batteries offering attractions such as natural abundance, safety, and sustainability, their widespread adoption is hindered by a critical, underexplored limitation: intrinsically low device‐level energy density. While previous research has prioritized stabilizing zinc anodes to suppress dendrites, practical energy densities remain constrained by excessive inactive components (separators, electrolytes) that dominate device mass and volume. Conventional strategies, such as cell upscaling, exacerbate this issue by necessitating surplus electrolyte, leading to inflated electrolyte to capacity ratios (> 10 g Ah−1) and poor specific/volumetric energy metrics (e.g., ∼5 Wh kg−1). Current reporting practices, focusing on Ah or idealized active‐material metrics, further obscure true performance, masking the urgent need for holistic design innovations. Crucially, lean‐electrolyte operation, essential for high energy density, introduces unaddressed challenges like interfacial water depletion and activity mismanagement. This work bridges this gap by systematically unraveling failure mechanisms under lean conditions and pioneering a functional separator that optimizes water management and ion transport. By redefining hydrogen‐bonding networks to mitigate water consumption and enable rapid infiltration, the developed COF@PAN separator achieves unprecedented energy densities (54.0 Wh kg−1, 185.3 Wh L−1) and cycle stability (over 800 cycles) in practical pouch cells. These insights and designs advance Zn metal batteries beyond lab‐scale promises, positioning them as viable contenders for energy‐dense, real‐world applications.",
+    "published_date": "2026-02-21",
+    "doi": "10.1002/adma.202523580",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adma.202523580?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adma.202523580",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/15214095?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/15214095?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Hierarchical‐Heterogeneous Biogel Electrolytes Regulate Zinc Anode Interfacial Compatibility Towards Green and High‐Performance Solid‐State Hybrid Capacitors",
+    "source": "Advanced Materials",
+    "source_type": "rss",
+    "authors": [
+      "Zihao Wang, \nTianyu Zhu, \nChengsheng Gui, \nXushen Tan, \nLu Sun, \nChicheng Huang, \nXiaozhe Zhang, \nFuxiang Chu, \nJingya Nan, \nRiqing Chen, \nChunpeng Wang"
+    ],
+    "abstract": "A type of biogel electrolytes with a hierarchical‐heterogeneous structure is developed. Benefitting from the improved interfacial contact and enhanced toughness by heating treatment, this biogel electrolyte facilitates a Zn2+ 3D diffusion and suppresses dendrite Zn growth to regulate Zn anode interfacial compatibility, thereby achieving leading performance in hybrid capacitors and excellent outdoor applications.\n\n\n\n\n\n\n\n\nABSTRACT\nGel electrolytes are high‐priority materials for solid‐state Zn‐ion hybrid capacitors, characterized by high ionic conductivity and intrinsic mechanical flexibility. However, because the existing gel electrolytes are relatively soft and do not contact intimately with rigid Zn anodes, they have inferior interfacial compatibility with Zn anodes, leading to device degradation. Here we develop a class of biogel electrolytes by in situ crystallizing gelatin triple helix units from the alginate polymer domain to form a unique hierarchical‐heterogeneous structure. The biogel electrolyte demonstrates combined advantages of high toughness, temperature‐triggered adhesion, high Zn2+ transference number and temperature‐independent ionic conductivity. These notable features favor Zn2+ 3D diffusion and accommodate zinc anode volume changes, thus enabling the symmetric Zn||Zn cell to highlight a balance among high current density, high areal capacity and prolonged cycling life. Moreover, the assembled zinc||activated carbon hybrid capacitor performs exceptional capacitive behavior and stable operation across the temperature range from 25°C to –40°C, delivering competitive energy density of 125.5 Wh kg−1 with high capacity retention of 97.1% over 10 000 cycles even at −40°C. Finally, system‐level demonstration based on the resulting hybrid capacitors can power portable electronics in a power cable‐free manner, validating applicability for green power sources in outdoor activities.",
+    "published_date": "2026-02-20",
+    "doi": "10.1002/adma.202522394",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adma.202522394?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adma.202522394",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/15214095?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/15214095?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "MOF‐Derived High‐Entropy Biphasic Sulfides for Zn‐I2‐S Synergistic Batteries with Machine‐Learning‐Assisted Prediction and In Situ Synchrotron Spectroscopy",
+    "source": "Advanced Materials",
+    "source_type": "rss",
+    "authors": [
+      "Ziming Qiu, \nGuoqiang Yuan, \nXingye Lu, \nXinling Lv, \nXinyu Qin, \nWanchang Feng, \nShuai Cao, \nJin Yan, \nMohsen Shakouri, \nJianfei Huang, \nBin He, \nZheng Liu, \nYecan Pi, \nHuan Pang"
+    ],
+    "abstract": "The practical implementation of aqueous zinc batteries is hindered by intrinsic drawbacks of single‐component systems, namely shuttling in Zn‐I2 and sluggish kinetics in Zn─S. Herein, we report a Zn‐S‐I2 synergistic battery with a MOF‐derived biphasic HES catalyst. Exhibiting excellent performance, it employs ML to predict electrochemical behavior, while operando spectroscopy and theoretical calculations confirm the catalyst reduces reaction barriers and suppresses shuttling, offering new insights for high‐performance aqueous Zn batteries.\n\n\n\n\n\n\n\n\nABSTRACT\nThe practical application of aqueous zinc batteries remains constrained by the intrinsic limitations of monocomponent systems, such as the shuttle effect in Zn‐I2 batteries and the sluggish kinetics in Zn─S batteries. To overcome these limitations, we developed a Zn‐S‐I2 synergistic battery that synergistically exploits the complementary advantages of dual redox couples. A bifunctional high‐entropy sulfide (HES) catalyst anchored on N‐doped carbon nanosheets was engineered via a surfactant‐assisted metal‐organic framework (MOF) derivatization route. The entropy‐stabilized HES forms a unique wurtzite/zincblende biphasic structure, creating abundant grain boundaries and synergistic active sites. Electrochemical studies demonstrate that the synergistic battery exhibits outstanding electrochemical performance and cycling stability. Machine learning (ML) models were established to predict electrochemical behavior under various operating conditions. Operando synchrotron‐based spectroscopy combined with theoretical calculations revealed that the biphasic HES synergistically catalyzes multi‐step conversion reactions, simultaneously lowering energy barriers and suppressing shuttle effects. This work offers new insights into high‐entropy electrocatalysts for complex multi‐step energy storage reactions.",
+    "published_date": "2026-02-20",
+    "doi": "10.1002/adma.202523371",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adma.202523371?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adma.202523371",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/15214095?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/15214095?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Nucleophilic Substitution Enables Robust Fluorinated Interphase for Low N/P Ratio Zinc Battery",
+    "source": "Angewandte Chemie",
+    "source_type": "rss",
+    "authors": [
+      "Wuhai Yang, \nShu Zhang, \nJian Gao, \nRuijie Zhu, \nHaoyu Li, \nQingwei Zhang, \nDong Wang, \nHuijun Yang, \nFaming Gao, \nHaoshen Zhou"
+    ],
+    "abstract": "A chemical strategy involving nucleophilic ethoxide ions, generated via ethanol deprotonation, to induce defluorination of the trifluoromethanesulfonate anion was proposed. This approach facilitates the in situ formation of a fluorinated protective interphase on the Zn anode surface.\n\n\n\n\n\n\n\n\nAbstract\nAqueous zinc (Zn) batteries have garnered considerable interest as a promising, safe, and sustainable energy storage technology. Nevertheless, their widespread commercialization is hindered by critical challenges, particularly the limited Zn reversibility caused by persistent electrolyte decomposition and uncontrolled dendritic growth. In this study, we propose a chemical strategy involving nucleophilic ethoxide ions, generated via ethanol deprotonation, to induce defluorination of the trifluoromethanesulfonate anion. This approach facilitates the in situ formation of a fluorinated protective interphase on the Zn anode surface. The engineered interphase exhibits remarkable mechanical robustness, as demonstrated by substantially improved Zn Coulombic efficiency at both high and low current densities as well as high Zn utilization rates. Furthermore, this surface modification strategy enables the Zn0.25V2O5/Zn powder batteries to achieve unprecedented cycling stability, including prolonged operation under demanding low N/P ratio conditions (<2:1) and high areal capacity (>2 mAh cm−2).",
+    "published_date": "2026-02-24",
+    "doi": "10.1002/anie.202521414",
+    "url": "https://onlinelibrary.wiley.com/doi/10.1002/anie.202521414?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/anie.202521414",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Angewandte Chemie International Edition: Table of Contents",
+        "href": "https://onlinelibrary.wiley.com/journal/15213773?af=R",
+        "url": "https://onlinelibrary.wiley.com/journal/15213773?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Angewandte Chemie International Edition: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Angewandte Chemie International Edition. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Expediting Desolvation–Diffusion Kinetics by Self‐Cascade Catalysis for Durable Low‐Temperature Zinc Metal Batteries",
+    "source": "Angewandte Chemie",
+    "source_type": "rss",
+    "authors": [
+      "Xiaomin Cheng, \nWenbin Wang, \nZhiyong Tang, \nYongzheng Zhang, \nBixian Chen, \nJing Zhang, \nFangmin Ye, \nJing Dong, \nHao Li, \nJiqiang Jia, \nQingbo Xiao, \nHongzhen Lin, \nJian Wang"
+    ],
+    "abstract": "A novel self‐cascade catalytic strategy is proposed by designing an atomically dispersed Bi on deficient LaMnO3.15 perovskite (SABi/U‐LMO), serving as a promoter on subsequently lateral deposition of Zn enabled by interfacial electric field regulation. Consequently, the cells with SABi/U‐LMO exhibit long‐term duration and stabilize high‐capacity retention of nearly 100% under the low temperature of −20 °C.\n\n\n\n\n\n\n\n\nAbstract\nDendrite‐free Zn metal anodes with robust interface are highly desired for the practical application of aqueous zinc‐metal based batteries (AZMBs), while their stability is hindered by the untoward [Zn(H2O)6]2+ desolvation and succedent deposition with dissatisfactory kinetic barriers, especially under low‐temperature environment. Herein, a self‐cascade catalytic strategy on accelerating interfacial desolvation and optimizing diffusion is proposed by designing an atomically dispersed Bi within the deficient LaMnO3.15 perovskite (SABi/U‐LMO) layer on Zn anode. Theoretical calculations demonstrate that the d‐band center and nonbonding state near the Fermi level of SABi/U‐LMO alleviate the corrosion of H2O and accelerate the dissociation of Zn2+─H2O bond by promoting the rapid filling of the empty 4s orbital of the Zn2+, as revealed by electrochemical and spectroscopic results. Meanwhile, the redistribution of electric field with SABi/U‐LMO realizes the delocalization and lateral growth of Zn atoms. Consequently, the cells with SABi/U‐LMO render an impressive lifetime up to 5000 h at 1 mA cm−2 as well as a high Coulombic efficiency of 99.59% over 2000 cycles under 0 °C. Full cell also stabilizes the capacity retention of ∼100% after 900 cycles at 1 A g−1 under −20 °C, verifying the feasibility of self‐cascade catalysis in realizing high‐performance AZMBs.",
+    "published_date": "2026-02-24",
+    "doi": "10.1002/anie.202522417",
+    "url": "https://onlinelibrary.wiley.com/doi/10.1002/anie.202522417?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/anie.202522417",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Angewandte Chemie International Edition: Table of Contents",
+        "href": "https://onlinelibrary.wiley.com/journal/15213773?af=R",
+        "url": "https://onlinelibrary.wiley.com/journal/15213773?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Angewandte Chemie International Edition: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Angewandte Chemie International Edition. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Resolving the Anti‐freezing/Self‐healing Trade‐off in Zn‐Ion Batteries with a Zn2+‐Anchored Dynamic Quaternary Hydrogen‐Bond Network for Extreme‐Temperature Operation",
+    "source": "Advanced Energy Materials",
+    "source_type": "rss",
+    "authors": [
+      "Junye Zhang, \nLinlin Wang, \nQiuya Wang, \nJie Yang, \nChen Huang, \nTianchen Shen, \nShigang Lu, \nLing Zhang, \nLuyang Chen"
+    ],
+    "abstract": "A synergistic network featuring strong Zn2+ coordination anchors and flexible hydrogen‐bond bridges is designed to reconcile the intrinsic trade‐off between anti‐freezing and self‐healing properties in zinc‐ion batteries, while robust in situ interfacial polymerization ensures intimate electrode contact. The electrolyte remains unfrozen at −75°C, self‐heals within 10 min at −20°C, and suppresses parasitic reactions via Zn2+ solvation sheath reconstruction. Batteries exhibit 97.0% capacity retention after 1000 cycles at 5 A g−1 over an 80°C temperature range.\n\n\n\n\n\n\n\n\nABSTRACT\nThe commercialization of aqueous zinc‐ion batteries is hampered by a fundamental paradox: electrolytes with anti‐freezing properties typically lack self‐healing capability, and vice versa. Herein, we decouple this trade‐off through the ingenious design of a synergistic network within a eutectogel electrolyte. This network is governed by strong Zn2+ coordination acting as rigid anchors, coupled with a dynamic quaternary hydrogen‐bond (HB) network involving glycerol, ClO4−, water, and polyacrylamide serving as flexible bridges. In this configuration, the strong Zn2+ coordination and dense hydrogen bonds synergistically inhibit ice lattice formation to ensure anti‐freezing, while the reversible hydrogen bonds enable dynamic molecular reconfiguration for self‐healing. The resulting gel remains ice‐free at −75°C and self‐heals within 10 min even at −20°C. Concurrently, this unique structure reconstructs the Zn2+ solvation sheath, significantly reducing the water coordination number from 3.65 to 2.62, which effectively suppresses water‐induced parasitic reactions. Coupled with robust in situ interfacial engineering, the assembled battery exhibits a high specific capacity and exceptional cycling stability (97.0% capacity retention after 1000 cycles at 5 A g−1) over a wide temperature range of 80°C (−20°C–60°C). This work not only provides a high‐performance electrolyte for practical zinc batteries but also establishes an innovative design paradigm for resolving property conflicts in advanced functional materials.",
+    "published_date": "2026-02-21",
+    "doi": "10.1002/aenm.202506522",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/aenm.202506522?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/aenm.202506522",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Energy Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16146840?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16146840?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Energy Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Energy Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Hierarchical Fluorinated Polymer Separator Design Mitigating Bilateral Ionic Crosstalk in Aqueous Batteries",
+    "source": "Advanced Energy Materials",
+    "source_type": "rss",
+    "authors": [
+      "Mei Han, \nJian Zhi, \nZhongyi Liu, \nKaihang Yue, \nShaopeng Li, \nWeinan Zhao, \nKaiyang Ren, \nRui Zhu, \nPu Chen"
+    ],
+    "abstract": "Aqueous zinc‐ion batteries suffer from rapid decay under practical conditions due to bilateral Zn2+/Mn2+ ionic crosstalk, a system‐level failure mechanism. We develop a hierarchical fluorinated polymer separator that regulates ion fluxes and stabilizes both electrodes simultaneously. This strategy enables extended cycle life while maintaining capacity, establishing ion flux regulation as a key design principle for durable zinc‐based energy storage systems. \n\n\n\n\n\n\n\n\nABSTRACT\nAqueous Zn//MnO2 batteries hold significant promise for safe and cost‐effective large‐scale energy storage, yet their practical deployment is hindered by rapid performance degradation. Here, we identify bilateral ionic crosstalk, a previously overlooked failure mechanism driven by active ion, as a root cause of electrode degradation. We demonstrate that excess Zn2+ migrating from the anode induces irreversible phase transitions at the MnO2 cathode, forming electrochemically inert Znx(MnO2)y phase (ZMO sclerosis). Concurrently, dissolved Mn2+ from the cathode exacerbates corrosion and dendrite growth on the Zn anode. To mitigate this crosstalk, we design a hierarchical fluorinated polymer separator (HFPS). Such HFPS enables selective cation coordination and guides ion transport, achieving simultaneous regulation of Zn2+ and Mn2+ fluxes. This targeted regulation effectively mitigates ionic crosstalk and stabilizes both electrodes. Batteries employing the HFPS exhibit exceptional cycling stability, retaining 97% capacity after 1,000 cycles at 0.5 A g−1 with stable operation exceeding 500 h. This performance represents a 54% lifespan enhancement over state‐of‐the‐art aqueous counterparts. Our work provides a fundamental mechanistic understanding of active‐ion‐induced failure and establishes ion flux regulation as a universal design strategy for durable aqueous zinc‐ion batteries.",
+    "published_date": "2026-02-18",
+    "doi": "10.1002/aenm.202505800",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/aenm.202505800?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/aenm.202505800",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Energy Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16146840?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16146840?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Energy Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Energy Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Hygroscopic V‐MOF Layer Enabling Stable Zn‐Ion Batteries Under Fast and Deep Charging/Discharging",
+    "source": "Advanced Energy Materials",
+    "source_type": "rss",
+    "authors": [
+      "Abdelnaby M. Elshahawy, \nYong Gao, \nJipeng Chen, \nXimeng Liu"
+    ],
+    "abstract": "The Novel hygroscopic V‐MOF layer blocks active water species from the reactive interface, thereby suppressing HER, corrosion, and byproducts. It promotes uniform, crack‐resistant Zn deposition, enabling an unprecedented 85.5% DOD at 50 mA/cm2 and preventing short circuits. Full cells achieve 267 mAh/g, with outstanding life span at 5 A/g, while the pouch cell delivers 450 mAh/g at 2 A/g.\n\n\n\n\n\n\n\n\nABSTRACT\nAchieving stable Zn‐ion batteries operating under high charging–discharging rates and a high depth of discharge (DOD) remains challenging due to intensified dendrite growth and side reaction. This work introduces a novel hygroscopic vanadium metal–organic framework (V‐MOF) as a multifunctional protective layer to achieve an outstanding Zn anode. The as‐fabricated battery can remain stable and high performance with high DOD of 85.5% and fast discharging rate of 50 mAh/cm2. The hygroscopic V‐MOF nature removes solvated shells and captures water as bonded/iced water within its structure, significantly suppressing side reactions. In addition, the V‐MOF coating optimized the electrical field, inhibited the cracks, and reduced the Zn dendrite formation even at a high rate of 50 mAh/cm2, due to the construction of electrolyte‐philic and smooth surface. Consequently, the hygroscopic Zn/V‐MOF symmetrical cells achieve exceptional performance over 1000 h under 50 mA/cm2 (50 mAh/cm2) with 85.5% DOD. The Zn/V‐MOF||V2O3/NC cell shows a capacity of 267 mAh/g at 0.5 A/g with excellent rate capability (100 mAh/g @20 A/g). In addition, it achieves an outstanding lifetime over 3300 cycles @ 5 A/g. The results at high rates with high DOD highlight the magnificent potential of hygroscopic V‐MOF to achieve outstanding Zn anode and large‐scale aqueous batteries.",
+    "published_date": "2026-02-17",
+    "doi": "10.1002/aenm.202505767",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/aenm.202505767?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/aenm.202505767",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Energy Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16146840?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16146840?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Energy Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Energy Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "A Quantitative Water‐Speciation Identification Strategy Enables Efficient Four‐Electron Conversion in Aqueous Zn‐I2 Batteries",
+    "source": "Advanced Energy Materials",
+    "source_type": "rss",
+    "authors": [
+      "Xiao Zhang, \nLong Su, \nRui Xu, \nJiayi Li, \nFengjin Xie, \nXinming Xu, \nFei Lu, \nLiqiang Zheng, \nHansen Wang, \nChuying Ouyang, \nXinpei Gao"
+    ],
+    "abstract": "This paper proposes a quantitative water‐speciation strategy that unveils and regulates distinct molecular environments in electrolytes, establishing composition‐microstructure‐property relationships that guide rational solvent design. Precise tuning of water activity enables fast ion transport and stabilization of four‐electron redox pathways, thereby suppressing parasitic reactions and delivering high‐capacity, durable aqueous Zn‐I2 batteries.\n\n\n\n\n\n\n\n\nABSTRACT\nWater governs both reactivity and transport in aqueous batteries, yet the occurrence of distinct free, coordinated, and network‐bound states complicates electrolyte design. Here, a quantitative water‐speciation identification (QWSI) strategy is established to resolve and quantify water populations and to correlate composition with microstructure and function. Aqueous Zn‐I2 batteries are employed as a model system owing to the high sensitivity of capacity to water‐state distributions. Eliminating free water stabilizes electrophilic iodine species and activates the I2/2I+ couple to realize a four‐electron conversion that doubles capacity, whereas driving water content too low depletes coordinated and network‐bound water, slows ion transport, and ultimately compromises capacity. The QWSI strategy pinpoints a critical composition at which water resides within hydrogen‐bond networks and cation solvation shells, with no detectable bulk‐like free water. Electrolytes formulated at this composition sustain four‐electron conversion while maintaining high ionic conductivity, reconciling activation of four‐electron conversion with ion transport. Consequently, the Zn//I2 cells deliver distinct two‐plateau profiles and high reversibility, enabling an average Coulombic efficiency of 99.8% and a specific capacity of 309.1 mAh·g−1. These findings define molecular control of water‐state distributions as a design principle, while the QWSI strategy provides quantitative descriptors for predictive control of solvation and reactivity across aqueous electrochemistry.",
+    "published_date": "2026-02-17",
+    "doi": "10.1002/aenm.202505649",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/aenm.202505649?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/aenm.202505649",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Energy Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16146840?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16146840?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Energy Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Energy Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Dynamic pH Regulation and Interfacial Ion Redistribution via Molecular Buffering for Dendrite‐Free Zn Metal Anodes",
+    "source": "Advanced Functional Materials",
+    "source_type": "rss",
+    "authors": [
+      "Canglong Li, \nFangyan Liu, \nHaolong Yao, \nTiancheng You, \nLu Wang, \nShaozhen Huang, \nJiaqi Huang, \nHan Wang, \nYuejiao Chen, \nLibao Chen, \nGuanghui Li"
+    ],
+    "abstract": "Aqueous Zn‐ion batteries suffer irreversible anode degradation from HER‐driven alkalization and non‐uniform Zn deposition. A bifunctional buffer synergistically regulates pH (≈3) and induces Na⁺ adsorption for planar deposition, enabling full cells with NaV3O₈ cathodes to maintain 93% capacity after 3000 cycles at 10 A g−1, establishing a paradigm for grid storage.\n\n\n\n\n\n\n\n\nAbstract\nAqueous Zn ion batteries suffer from irreversible anode degradation caused by hydrogen evolution reaction (HER)‐driven electrolyte alkalization and non‐uniform Zn deposition. Here, a bi‐functional buffer additive is proposed that synergistically couples pH regulation and interfacial ion‐redistribution. The buffer additive maintains electrolyte with a self‐regulated pH (≈3) through proton donor‐acceptor equilibria, effectively scavenging hydroxyl ions to prevent Zn passivation, while inducing preferential Na⁺ adsorption at protrusions to enforce planar Zn deposition via charge screening effects. This dual mechanism enables an ultralow nucleation overpotential (24.5 mV) and an ultrahigh Coulombic efficiency (99.9% over 12 000 cycles) in Cu–Zn half cells. Full cells with NaV3O8 cathodes achieve 93% capacity retention after 3000 cycles at 10 A g−1, while pouch cells (20.89 mg cm−2 cathode) retain 81.6% capacity over 300 cycles at 1 A g−1. This work establishes a universal paradigm for stabilizing Zn anodes through coupled thermodynamic and kinetic regulation, positioning Zn‐ion batteries as viable candidates for grid‐scale energy storage.",
+    "published_date": "2026-02-26",
+    "doi": "10.1002/adfm.202514260",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adfm.202514260?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adfm.202514260",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Functional Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Interfacial Chemical Regulation of Zinc Anodes: Constructing Kinetic Repair Zones",
+    "source": "Advanced Functional Materials",
+    "source_type": "rss",
+    "authors": [
+      "Zong‐Lin Liu, \nBing‐Chen Liu, \nHai‐Qin Fang, \nQiong Xu, \nPeng‐Fei Wang, \nTing‐Feng Yi"
+    ],
+    "abstract": "This review aims to advance beyond the traditional problem‐strategy framework by introducing an integrative concept for the construction of kinetic repair zones at the interface. Stabilizing Zn anodes requires controlling the interfacial chemical environment to guide deposition kinetics, not altering zinc's thermodynamics. This review systematizes the mechanisms into ion flux, interface chemistry, and nucleation/growth, offering a coherent framework.\n\n\n\n\n\n\n\n\nABSTRACT\nAqueous zinc‐ion batteries are promising for large‐scale energy storage due to their safety and cost‐effectiveness. The industrial application of zinc metal anodes is impeded by challenges, including dendrite growth, hydrogen evolution reaction, and interfacial passivation. Current research, though abundant in strategies, lacks a unified scientific framework, leading to fragmented progress. This review examines strategies for managing the chemical environment at the interface. The failure of zinc anodes is due to thermodynamic instability, which is evident through side reactions, and kinetic heterogeneity, as demonstrated by the random growth of dendrites. This article provides a systematic review of the fundamental mechanisms of strategies across three principal dimensions: ion flux regulation, interfacial chemistry modulation, and nucleation/growth control. Examples include ion flow regulation for uniform Zn2+ transport and electric field uniformity, interface chemistry regulation to minimize water activity and side reactions, artificial solid electrolyte interphase construction, solvation structure reconstruction, and regulation of nucleation and growth for dense deposition through heterogeneous nucleation and interfacial energy optimization. This review highlights antagonistic effects in multi‐strategy synergy and critiques the materials‐first trap, along with the misleading nature of unrealistic experimental conditions. Finally, it offers an overview of essential avenues for practical application.",
+    "published_date": "2026-02-26",
+    "doi": "10.1002/adfm.74635",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adfm.74635?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adfm.74635",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Functional Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Regulating Single‐Plane Growth by Selective Self‐Assembly Shielding Molecule for Ultra‐High Areal Capacity Zn‐Metal Batteries",
+    "source": "Advanced Functional Materials",
+    "source_type": "rss",
+    "authors": [
+      "Kun Wang, \nChutao Wang, \nDaoqi Chen, \nQingyi Zheng, \nJingmin Fan, \nMingsen Zheng, \nRuming Yuan, \nQuanfeng Dong"
+    ],
+    "abstract": "Self‐assembled molecular monolayer to construct selective crystal plane shielding layer for (002) plane growth of zinc metal anode.\n\n\n\n\n\n\n\n\nABSTRACT\nThe dendrite‐free Zn anode is crucial for the commercialization of aqueous Zn‐metal batteries (ZMBs), but dendrite growth and thermodynamic instability are two major obstacles. Regulating the specific crystal plane growth of Zn can effectively address these issues. Here, we propose an in situ construction of a selective self‐assembled monolayer (S‐SAM) strategy to induce the growth of the (002) crystal plane (85%) and improve the interface properties. Specifically, 2,2'‐dithiobis(ethylamine) generated unsaturated ─S groups through the cleavage of S─S bonds, which selectively self‐assemble on the (100) and (101) planes to shield the nucleation process of these planes, leading to the single growth of (002) plane finally. Therefore, compared to the blank electrolyte, the S‐SAM anode with preferential exposure of the (002) crystal plane significantly improved cycling lifetime under conditions of high current density and large plating capacity, with a cumulative plating capacity exceeding 2.875 Ah cm−2. Furthermore, a Zn//V2O5 full battery with an areal capacity of over 11 mAh cm−2 achieved more than 128 stable cycles at 0.4 A g−1. This study enhances the understanding of SAM in crystal plane regulation and has universal value for constructing metal batteries with ultra‐high areal capacities.",
+    "published_date": "2026-02-24",
+    "doi": "10.1002/adfm.202532042",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adfm.202532042?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adfm.202532042",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Functional Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Hydrogen‐Bond‐Rich Supramolecular Multiblock Copolymers Facilitate Rapid Zn2+ Migration in Quasi‐Solid‐State Zinc‐Ion Batteries",
+    "source": "Advanced Functional Materials",
+    "source_type": "rss",
+    "authors": [
+      "Ruiqi Liu, \nChangding Wang, \nFu Wan, \nKaida Hu, \nDa Yang, \nYaoyang Xia, \nWenwei Yin, \nYupeng Lin, \nYuejiao Chen, \nShuhui Sun, \nWeigen Chen"
+    ],
+    "abstract": "The disordered growth of dendrites, corrosion, parasitic side reactions, slow de‐solvation kinetics, and inherent safety risks significantly hinder the practical deployment of conventional liquid electrolyte zinc‐ion batteries. In contrast, the novel PU‐EG+DMPA‐Zn polyurethane quasi‐solid‐state electrolyte, enriched with abundant polar functional groups, facilitates rapid de‐solvation and Zn2⁺ migration via hydrogen bond reconstruction.\n\n\n\n\n\n\n\n\nAbstract\nQuasi‐solid electrolytes (QSEs) have emerged as a highly promising solution to address key challenges in zinc‐ion batteries (ZIBs). However, QSEs often rely on a significant amount of water (H2O) to facilitate rapid Zn2+ migration, which can lead to undesirable side reactions at the Zn anode. Here, polyurethane supramolecular multiblock copolymers (PU‐EG+DMPA‐Zn) are synthesized from the perspective of polymer block structure design. Interactions between zinc salts and carboxyl groups in the chain extender enhance zinc salt solubility while disrupting the intrinsic hydrogen bond network within the polymer matrix. This modification extends the hydrogen bonds between the polymer and H2O, regulates the solvation structure of hydrated Zn2+, and suppresses side reactions at the anode interface. Additionally, the in situ forms gradient solid electrolyte interphase (SEI) during cycling provides a robust protective barrier that significantly enhances the reversibility of zinc anodes. The abundant hydrogen bond network endows the PU‐EG+DMPA‐Zn QSE with anti‐freezing properties, allowing the symmetric battery to maintain a stable plating/stripping process for 3000 h at −20 °C. The assembled Zn‐MnO2 battery demonstrates a capacity retention rate of 93.8% after 2000 cycles at 2 A g−1. Overall, this work provides a unique design strategy for developing high‐performance quasi‐solid electrolytes.",
+    "published_date": "2026-02-24",
+    "doi": "10.1002/adfm.202517166",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adfm.202517166?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adfm.202517166",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Functional Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Porous Organic Cage with 3D Interpenetrated Electronegative Channels as Artificial SEI for Highly Reversible Zinc Anode",
+    "source": "Advanced Functional Materials",
+    "source_type": "rss",
+    "authors": [
+      "Wenxia Su, \nZhongliang Li, \nWeimin Qin, \nLin Peng, \nRongke Yin, \nKang Li, \nYue‐Peng Cai, \nQifeng Zheng"
+    ],
+    "abstract": "A porous organic cage (i.e., CC3) is rationally proposed as an artificial solid electrolyte interphase (ASEI) to enable a highly reversible Zn‐metal anode. The resulting CC3‐ASEI with unique 3D interpenetrated electronegative channels and superior zincophilicity bestows rapid desolvation, fast Zn2+ migration, uniform Zn2+ flux, and oriented Zn deposition, which overcomes the long‐standing challenges of dendritic growth and parasitic reactions.\n\n\n\n\n\n\n\n\nAbstract\nAqueous zinc batteries (AZBs), as a newly emerging candidate for large‐scale energy storage, suffer from severe dendrite growth, hydrogen evolution, and Zn‐metal corrosion, posing a huge challenge for commercial application. Herein, a representative porous organic cage (POC), namely CC3, is proposed as an artificial solid electrolyte interphase (ASEI) through a facile electrospray technique. Owing to the characteristic internal cavities, 3D interpenetrated channels, partial disorder enhanced porosity, zincophilicity, and solution processability, the CC3‐ASEI is not only conducive to enable rapid desolvation and migration of Zn2+ through ASEI, but also affords uniform Zn2+ flux and oriented Zn deposition, thus effectively suppressing dendrite growth and parasitic reactions. As a result, the CC3‐ASEI bestows an outstanding Coulombic efficiency of 99.86% for 5000 cycles in the Zn||Ti asymmetric cell and remarkably stable Zn plating/stripping over 7100 h in the Zn||Zn symmetric cell. Besides, the implementation of this CC3‐ASEI also markedly improves the rate capability and cycling stability of AZBs with various cathodes, highlighting the great potential of employing POCs to promote the practical application of AZBs.",
+    "published_date": "2026-02-24",
+    "doi": "10.1002/adfm.202520442",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adfm.202520442?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adfm.202520442",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Functional Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Scalable Zn‐Alloy Anode for High‐Current‐Density Aqueous Zinc‐Ion Batteries",
+    "source": "Advanced Functional Materials",
+    "source_type": "rss",
+    "authors": [
+      "Zejia Zhao, \nYougeng Liao, \nShukui Li, \nBo Xu, \nQiang Liu, \nYanhua Zhang, \nYan Huang, \nJingwei Wang"
+    ],
+    "abstract": "The high‐current‐density stable Zn‐alloy anode is developed. The Sn alloy atoms preferentially segregate at heteroatom concentrated grain boundaries, enhancing corrosion capability and inhibiting dendrite growth.\n\n\n\n\n\n\n\n\nAbstract\nBoth coating on Zn foil anode and solid electrolyte interphases engineered via electrolyte modification still face stability challenges under high current densities for aqueous Zn‐ion batteries (AZIBs). Herein, high‐current‐density stable Zn‐alloy anode with a large electrode size of 200 × 200 × 0.1 mm3 is developed. The results indicate that Sn alloy atoms preferentially segregate at heteroatom‐concentrated grain boundaries and the alloy anode has a preferred orientation along the (002) plane during cycling, inhibiting dendrite growth and enhancing corrosion capability. These integrated merits enable a long lifespan for symmetric batteries even at 40 mA cm−2 with 20 mAh cm−2, and an excellent cycling stability for both coin‐ and pouch‐type batteries at 2 A g−1. This work provides an in‐depth understanding of the effect of alloy element on Zn anode stability and meanwhile paves the way for scalable production and practical application of AZIBs.",
+    "published_date": "2026-02-24",
+    "doi": "10.1002/adfm.202520763",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adfm.202520763?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adfm.202520763",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Functional Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Kinesin‐Mimetic Ion Director Enables Highly Oriented Zn Deposition in Aqueous Batteries",
+    "source": "Advanced Functional Materials",
+    "source_type": "rss",
+    "authors": [
+      "Ang Li, \nZeyu Xu, \nSuet Wing Lo, \nXinyu Zhang, \nHaoran Jiang, \nMaochun Wu"
+    ],
+    "abstract": "In this work, 3‐(amidinothio)‐1‐propanesulfonic acid are deployed as an additive to mimic the directional cargo delivery of kinesins. Specifically, the iso‐thiourea groups of the additive adsorb and anchor onto Zn(002) planes, while sulfonic acid groups are responsible for capturing Zn2+ ions to facilitate their deposition. The adaptive “anchor‐capture” mechanism results in a highly textured and reversible Zn anode.\n\n\n\n\n\n\n\n\nAbstract\nThe practical implementation of zinc (Zn) metal electrode in rechargeable aqueous batteries remains hindered by uncontrolled dendrite formation and parasitic side reactions, primarily stemming from unregulated ion transport and high water activity. Inspired by directional cargo‐transport function of kinesins, here a mimetic ion director, represented by 3‐(amidinothio)‐1‐propanesulfonic acid (APSA), is deployed to regulate Zn deposition and suppress side reactions. When added into the electrolyte, the iso‐thiourea groups of APSA selectively anchor to Zn(002) facets, mimicking microtubule‐binding domain of kinesin, while the sulfonic acid groups locally concentrate Zn2+ ions near the anchored sites, resembling cargo‐binding domains. This bio‐inspired “anchor‐capture” synergy enables dynamic, self‐adaptive regulation of Zn2+ ion flux, thereby guiding oriented Zn deposition and suppressing dendrite formation. Meanwhile, APSA reduces both interfacial and bulk water activity, thus mitigating side reactions. As a result, the novel bio‐inspired electrolyte dramatically extends the cycle life of aqueous Zn batteries. Remarkably, a Zn//NaV3O8·1.5H2O full battery comprising of an ultrathin Zn anode (20 µm) and a low N/P ratio (≈6) retains 93.40% of capacity after 400 cycles (over 600 h). This work provides a novel biomimetic ion transport regulation strategy that enables directional metal deposition, offering a transformative pathway toward highly stable and reversible metal batteries.",
+    "published_date": "2026-02-17",
+    "doi": "10.1002/adfm.202518964",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adfm.202518964?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adfm.202518964",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Functional Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Stable Zinc Deposition Enabled by Descriptor‐Guided Screening of Organic Electrolyte Additives Based on Molecular Polarizability and Surface Energy",
+    "source": "Advanced Functional Materials",
+    "source_type": "rss",
+    "authors": [
+      "Mingzhe Jin, \nMengyuan Zhou, \nWanqi Zhang, \nZhenghui Pan, \nYunhui Huang, \nJing Fu"
+    ],
+    "abstract": "A dual‐descriptor screening strategy based on molecular polarizability and surface energy is proposed to guide the rational design of organic electrolyte additives. Additives featuring low polarizability and surface energy matched to ZnSO4 induce a compact, water‐deficient electrical double layer, facilitating uniform Zn deposition and suppressing side reactions. Oxamide is identified as an optimal additive, enabling dendrite‐free and stable Zn cycling.\n\n\n\n\n\n\n\n\nAbstract\nOrganic electrolyte additives have emerged as a promising strategy to regulate interfacial reactions at the Zn anode in aqueous batteries, yet their design remains largely empirical owing to a lack of molecular‐level understanding. In this work, a dual‐descriptor framework based on molecular polarizability and surface energy to guide the rational screening of electrolyte additives for stable Zn deposition is introduced. Systematic evaluation reveals that lower polarizability promotes the formation of a compact, water‐deficient electrical double layer (EDL), which enhances Zn2+ desolvation and promotes rapid nucleation with oriented growth. Meanwhile, a moderately high surface energy, particularly when closely matched with that of the ZnSO4 electrolyte, ensures stable interfacial adsorption and synergizes with low polarizability to achieve uniform Zn deposition. In contrast, excessively high surface energy induces additive aggregation, weakens EDL compactness, and leads to uneven deposition and parasitic side reactions. Guided by this dual‐descriptor screening framework, oxamide is identified as a representative additive featuring low polarizability and well‐matched surface energy. Its incorporation improves Zn deposition morphology, enhances coulombic efficiency, and delivers superior cycling stability in both half‐cell and Zn‐MnO2 full‐cell configurations. This study demonstrates the effectiveness of descriptor‐guided additive design and offers a molecular‐level strategy for advancing stable and high‐performance aqueous Zn‐ion batteries.",
+    "published_date": "2026-02-17",
+    "doi": "10.1002/adfm.202518076",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adfm.202518076?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adfm.202518076",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Functional Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Dynamic Interhalogen Coupling Engineered by Multifunctional Ionic Liquid for High‐Energy Aqueous Zn‐I2 Batteries",
+    "source": "Advanced Functional Materials",
+    "source_type": "rss",
+    "authors": [
+      "Xuanrui Huang, \nShunshun Zhao, \nSinian Yang, \nXinwei Wang, \nLili Liu, \nShimou Chen"
+    ],
+    "abstract": "Utilizing a multifunctional ionic liquid Bmimbr to establish a dynamic interhalogen coupling between iodine and bromine species activates a six‐electron redox mechanism. Restructuring the inner Helmholtz plane enhances interfacial stability, and Ion–dipole interactions suppress the shuttle effect of polyiodide species. This approach enables Zn‐I2 battery with excellent capacity and high rate capabilities.\n\n\n\n\n\n\n\n\nAbstract\nAqueous Zn‐I2 batteries are promising for sustainable energy storage, exhibit excellent safety, low cost, and high energy density. However, their practical application is limited by the two‐electron I−/I⁰ redox reaction and the severe shuttle effect of polyiodide species. Here, a multifunctional ionic liquid, 1‐butyl‐3‐methylimidazolium bromide (BmimBr), is introduced to establish a dynamic interhalogen coupling between iodine and bromine species, which enables a six‐electron transfer pathway involving I−/I⁰/I⁺ and Br−/Br⁰. In situ characterizations and theoretical calculations show that Br− acts as a dynamic mediator, forming an [IBr2]− intermediate with iodine. This significantly lowers the energy barrier for oxidizing I⁰ to I⁺, thereby contributing additional capacity and accelerating kinetics. Simultaneously, Bmim⁺ provides dual interfacial functions: confining polyiodides at the cathode to suppress shuttling, and forming a protective layer on the zinc anode, which reduces interfacial water, inhibits dendrite growth and side reactions. Leveraging this synergistic design, the Zn‐I2 battery achieves a high specific capacity of 511 mAh g−1 at 1 A g−1 and retains 90.22% of its capacity after 30 000 cycles at 10 A g−1. The dynamic interhalogen coupling strategy offers a novel route to activate multielectron reactions and stabilize electrode interfaces in Zn‐I2 batteries.",
+    "published_date": "2026-02-17",
+    "doi": "10.1002/adfm.202519437",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/adfm.202519437?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/adfm.202519437",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/16163028?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Functional Materials: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Functional Materials. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Adhesive Tape‐Inspired Polymer Coatings Enable Record‐Stable Zinc Anodes for High‐Rate Aqueous Batteries",
+    "source": "Advanced Science",
+    "source_type": "rss",
+    "authors": [
+      "Shuo Zhao, \nShuyue Luo, \nYangming Zhang, \nRongyan Xie, \nZhen Liu, \nZhengyin Yao, \nXianru He, \nJiangbo Li, \nXiang Yao, \nZhou Zhou, \nDongbai Sun, \nPeng Zhang"
+    ],
+    "abstract": "An adhesive tape–inspired anode stabilization strategy is proposed by grafting poly(methyl methacrylate) onto natural rubber. The resulting copolymer coating exhibits elasticity, adhesion, and ion‐selective nanodomains, which lower Zn2+ desolvation barriers, guide deposition to the stable (002) facet, and ensure intimate interfacial contact, delivering over 32,000 stable cycles in symmetric Zn cells.\n\n\n\n\n\n\n\n\nAbstract\nThe development of stable zinc anodes is critical for advancing high‐rate, long‐life aqueous zinc batteries. Here a tape‐inspired anode modification is reported using a poly (methyl methacrylate)‐grafted natural rubber (NRAc) copolymer as a conformal protective coating. The microphase‐separated architecture integrates elastic, hydrophobic NR domains with Zn2+‐coordinating PMMA nanodomains, forming mechanically adaptive and ion‐selective channels. Density functional theory and microscopy reveal that Zn2+ preferentially binds to PMMA, lowering desolvation barriers and biasing deposition toward the stable (002) facet. This dual mechanical‐chemical regulation suppresses dendrite growth and parasitic hydrogen evolution, while maintaining intimate interfacial contact under dynamic cycling. As a result, NRAc@Zn symmetric cells achieve unprecedented cycling lifetimes exceeding 32,000 cycles, while Zn||V2O5 full cells deliver stable operation at current densities up to 10 A g−1. Scaling to a 1.5 Ah pouch cell demonstrates the practical feasibility of the approach. This work establishes polymer microphase engineering, inspired by the multifunctionality of adhesive tapes, as a versatile strategy to stabilize Zn anodes and advance the deployment of aqueous Zn batteries for large‐scale energy storage.",
+    "published_date": "2026-02-18",
+    "doi": "10.1002/advs.202520648",
+    "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/advs.202520648?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/advs.202520648",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Advanced Science: Table of Contents",
+        "href": "https://advanced.onlinelibrary.wiley.com/journal/21983844?af=R",
+        "url": "https://advanced.onlinelibrary.wiley.com/journal/21983844?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Advanced Science: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Advanced Science. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Multifunctional Hydrogel Electrolyte Synergizing with Free‐Standing Cathode Enables Robust Aqueous Zinc Metal Batteries",
+    "source": "Small",
+    "source_type": "rss",
+    "authors": [
+      "Peng Gong, \nShengjun Zhai, \nShuailei Liu, \nShibo Chai, \nNing Wang, \nYuanyuan Li, \nJinping Liu"
+    ],
+    "abstract": "A multifunctional hydrogel electrolyte is designed for aqueous zinc metal batteries (AZMBs). Benefitting from the synergistic effects of dimethyl sulfoxide and polyacrylamide chains, stable Zn plating/stripping and ultra‐low freezing point (−60 °C) are simultaneously achieved. By pairing with 3D infiltrated porous free‐standing α‐MnO2 cathode and Zn anode, a high‐performing, robust AZMB is further developed.\n\n\n\n\n\n\n\n\nAbstract\nAqueous zinc metal batteries (AZMBs) have attracted increasing attention due to their low cost and high energy density. However, their practical applications are constrained by Zn dendritic growth, self‐corrosion, and poor low‐temperature adaptability. Herein, a multi‐component hydrogel electrolyte is proposed to address these challenges. Specifically, dimethyl sulfoxide is added to substitute H2O in the Zn2+ solvation sheath and disrupt the intrinsic H─bond network, suppressing interfacial parasitic reactions induced by active water and achieving ultra‐low freezing point (−60 °C); while the acylamino groups on polyacrylamide chains are utilized to coordinate with Zn2+ and SO42−, leading to homogeneous Zn2+ flux and reduced by‐products accumulation. Benefitting from the synergistic effects, stable Zn plating/stripping with high average Coulombic efficiency of 99.5% for 1200 h at 0.5 mA cm−2 is achieved. To manifest the superiority of the hydrogel electrolyte, free‐standing α‐MnO2/single‐walled carbon nanotube film is designed as cathode. The resulting AZMB exhibits large specific capacity, prominent rate capability (157.5 mAh g−1 at 10 C), high cyclic stability, and good low‐temperature performance (68.8% capacity retention at −20 °C), which also demonstrates excellent safety under extreme conditions of hammering, cutting, burning, punching, and soaking. This work provides an inspired strategy to build robust, multi‐functional, inexpensive aqueous batteries.",
+    "published_date": "2026-02-25",
+    "doi": "10.1002/smll.202501089",
+    "url": "https://onlinelibrary.wiley.com/doi/10.1002/smll.202501089?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/smll.202501089",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Small: Table of Contents",
+        "href": "https://onlinelibrary.wiley.com/journal/16136829?af=R",
+        "url": "https://onlinelibrary.wiley.com/journal/16136829?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Small: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Small. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "A Hydrophilic Sulfonated Polyethersulfone Separator Enables Highly Reversible Zn Anode in Aqueous Zinc‐Ion Batteries",
+    "source": "Small",
+    "source_type": "rss",
+    "authors": [
+      "Mingmin Liao, \nHao Wu, \nHuanhuan Fan, \nBinchun Liu, \nPeng Xiao, \nQi Yang, \nGuangming Cai"
+    ],
+    "abstract": "We fabricate a hydrophilic sulfonated polyethersulfone separator via scalable electrospinning. The grafted ─SO3H groups form hydrogen‐bond networks to facilitate Zn2+ desolvation, dynamically release H+ to suppress side reactions and coordinate Zn2+ for uniform deposition, effectively inhibiting dendrite formation. This functional design enhances ionic conductivity and solvation stability in zinc‐ion batteries.\n\n\n\n\n\n\n\n\nABSTRACT\nThe uncontrolled Zn2+ deposition on the surface of Zn metal anode remains a critical challenge in the development of zinc‐ion batteries (ZIBs). Here, a novel separator featuring negatively charged sulfonic acid groups (─SO3H) and strong hydrophilicity is reported to promote ion conduction and solvation stability. Through systematic experimental investigations and density functional theory, it is demonstrated that the water‐retaining effect of the ─SO3H group effectively suppresses side reactions and reduces the desolvation energy barrier, thereby establishing a hydrogen‐bond‐mediated ion transport channel. As a result, the Zn/Zn symmetric cells with sulfonated polyethersulfone (SPES) nanofiber separator demonstrate a long‐term stability over 4400 h under stepwise current densities of 0.5/2.5/4 mA cm−2. Meanwhile, the Zn/V2O5 cells exhibit excellent long‐cycle life, maintaining 96.2% capacity retention after 2250 cycles at 1 A g−1. This work offers a new way to further reduce the cost and promote the industrial application of ZIBs.",
+    "published_date": "2026-02-17",
+    "doi": "10.1002/smll.202511240",
+    "url": "https://onlinelibrary.wiley.com/doi/10.1002/smll.202511240?af=R",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "10.1002/smll.202511240",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "original_source": {
+        "title": "Wiley: Small: Table of Contents",
+        "href": "https://onlinelibrary.wiley.com/journal/16136829?af=R",
+        "url": "https://onlinelibrary.wiley.com/journal/16136829?af=R"
+      },
+      "feed": {
+        "title": "Wiley: Small: Table of Contents",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Table of Contents for Small. List of articles from both the latest and EarlyView issues.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "[ASAP] Geometric Matching Effect of Tetrahedral Cation Adsorption Enables Reliable Interfacial Engineering toward Stable Aqueous Zinc-Ion Batteries",
+    "source": "ACS Nano",
+    "source_type": "rss",
+    "authors": [
+      "Xinming Xu, Long Su, Xiao Zhang, Lianwen He, Jiayi Li, Fei Lu, Liqiang Zheng, and Xinpei Gao"
+    ],
+    "abstract": "<p><img alt=\"TOC Graphic\" src=\"https://pubs.acs.org/cms/10.1021/acsnano.5c20170/asset/images/medium/nn5c20170_0008.gif\" /></p><div><cite>ACS Nano</cite></div><div>DOI: 10.1021/acsnano.5c20170</div>",
+    "published_date": "2026-02-18",
+    "doi": "10.1021/acsnano.5c20170",
+    "url": "http://dx.doi.org/10.1021/acsnano.5c20170",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "http://dx.doi.org/10.1021/acsnano.5c20170",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "feed": {
+        "title": "ACS Nano: Latest Articles (ACS Publications)",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Latest articles published in  ACS Nano.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "[ASAP] ZrO2-Functionalized Glass Fiber/Bacterial Cellulose Composite Separator for Dendrite-Free Zn Anode and Ultrastable Aqueous Zinc-Ion Batteries",
+    "source": "Applied Materials & Interfaces",
+    "source_type": "rss",
+    "authors": [
+      "Yanming Huang, Bin Wang, Peng Xie, Xinzhi Qiu, Juanyun Li, Zhihao He, Liya Liu, Xuefeng Wang, Peng Chen, and Ding Chen"
+    ],
+    "abstract": "<p><img alt=\"TOC Graphic\" src=\"https://pubs.acs.org/cms/10.1021/acsami.5c22576/asset/images/medium/am5c22576_0008.gif\" /></p><div><cite>ACS Applied Materials &amp; Interfaces</cite></div><div>DOI: 10.1021/acsami.5c22576</div>",
+    "published_date": "2026-02-26",
+    "doi": "10.1021/acsami.5c22576",
+    "url": "http://dx.doi.org/10.1021/acsami.5c22576",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "http://dx.doi.org/10.1021/acsami.5c22576",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "feed": {
+        "title": "ACS Applied Materials & Interfaces: Latest Articles (ACS Publications)",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Latest articles published in  ACS Applied Materials & Interfaces.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "[ASAP] Trivalent Indium Ion Enabling Chemically Stable Hydrated Vanadium Oxide Cathode for Durable Aqueous Zinc Batteries",
+    "source": "Applied Materials & Interfaces",
+    "source_type": "rss",
+    "authors": [
+      "Yiwen Xiao, Chaoqiong Zhu, Jiaqi Li, Yue Zou, Benhe Zhong, Fang Wan, and Xiaodong Guo"
+    ],
+    "abstract": "<p><img alt=\"TOC Graphic\" src=\"https://pubs.acs.org/cms/10.1021/acsami.5c22881/asset/images/medium/am5c22881_0006.gif\" /></p><div><cite>ACS Applied Materials &amp; Interfaces</cite></div><div>DOI: 10.1021/acsami.5c22881</div>",
+    "published_date": "2026-02-25",
+    "doi": "10.1021/acsami.5c22881",
+    "url": "http://dx.doi.org/10.1021/acsami.5c22881",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "http://dx.doi.org/10.1021/acsami.5c22881",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "feed": {
+        "title": "ACS Applied Materials & Interfaces: Latest Articles (ACS Publications)",
+        "language": "en-US",
+        "version": "rss20",
+        "subtitle": "Latest articles published in  ACS Applied Materials & Interfaces.",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Tailoring zinc-ion deep eutectic electrolytes through dual regulation of solvation shell volume and solvent polarity",
+    "source": "Energy & Environmental Science",
+    "source_type": "rss",
+    "authors": [
+      "Mingming Han",
+      "Yongxing  Ding",
+      "Jing  Lou",
+      "Jia  Wang",
+      "Minghan  Yang",
+      "Lutong  Shan",
+      "Chao Qiu",
+      "Zhenyue Xing",
+      "Zaowen Zhao",
+      "Xiaodong Shi"
+    ],
+    "abstract": "<div><i><b>Energy Environ. Sci.</b></i>, 2026, Accepted Manuscript<br /><b>DOI</b>: 10.1039/D6EE00073H, Paper</div><div>Mingming Han, Yongxing  Ding, Jing  Lou, Jia  Wang, Minghan  Yang, Lutong  Shan, Chao Qiu, Zhenyue Xing, Zaowen Zhao, Xiaodong Shi<br />The tunability of Lewis acid-base and hydrogen-bonding (HB) interactions in deep eutectic electrolytes (DEEs) is considered as effective platform for addressing vital challenges in zinc-ion batteries. However, in aqueous DEEs,...<br />The content of this RSS Feed (c) The Royal Society of Chemistry</div>",
+    "published_date": "2026-02-17",
+    "doi": "",
+    "url": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/EE/D6EE00073H",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/EE/D6EE00073H",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html",
+        "base": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/EE/D6EE00073H"
+      },
+      "feed": {
+        "title": "RSC - Energy Environ. Sci. latest articles",
+        "version": "rss20",
+        "subtitle": "RSC - Energy Environ. Sci. latest articles",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Theoretical investigation on the dendrite suppression and desolvation promotion effect of coating material on Zn metal anode for aqueous zinc-ion batteries: case study of oxide coating",
+    "source": "Journal of Materials Chemistry A",
+    "source_type": "rss",
+    "authors": [
+      "Kai Jin",
+      "Wangsheng Yuan",
+      "Mengyu Hu",
+      "Peng Han",
+      "Xinlei Wang",
+      "Xinke Wang",
+      "Yan Zhang",
+      "Lijun Fu"
+    ],
+    "abstract": "<div><i><b>J. Mater. Chem. A</b></i>, 2026, Accepted Manuscript<br /><b>DOI</b>: 10.1039/D5TA06106G, Paper</div><div>Kai Jin, Wangsheng Yuan, Mengyu Hu, Peng Han, Xinlei Wang, Xinke Wang, Yan Zhang, Lijun Fu<br />Interfacial engineering via oxide coatings offers a promising strategy to improve the electrochemical performance and cycling stability of aqueous zinc-ion batteries (AZIBs). Here, we develop a multiscale theoretical framework combining...<br />The content of this RSS Feed (c) The Royal Society of Chemistry</div>",
+    "published_date": "2026-02-27",
+    "doi": "",
+    "url": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/TA/D5TA06106G",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/TA/D5TA06106G",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html",
+        "base": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/TA/D5TA06106G"
+      },
+      "feed": {
+        "title": "RSC - J. Mater. Chem. A latest articles",
+        "version": "rss20",
+        "subtitle": "RSC - J. Mater. Chem. A latest articles",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Natural Mineral Engineering of Zinc Anode: Attapulgite-Based Interfacial Modification for Dendrite-Free Aqueous Zinc-Ion Batteries",
+    "source": "Journal of Materials Chemistry A",
+    "source_type": "rss",
+    "authors": [
+      "Wenjing Li",
+      "Li Sun",
+      "Hanqi Sun",
+      "Jiayang Li",
+      "Jiawen Cui",
+      "Yong Wang",
+      "Libing Liao"
+    ],
+    "abstract": "<div><i><b>J. Mater. Chem. A</b></i>, 2026, Accepted Manuscript<br /><b>DOI</b>: 10.1039/D5TA08687F, Paper</div><div>Wenjing Li, Li Sun, Hanqi Sun, Jiayang Li, Jiawen Cui, Yong Wang, Libing Liao<br />The zinc metal anode demonstrates advantageous characteristics including high theoretical specific capacity, low polarization, and favorable redox potential. However, its actual implementation is constrained by obstacles including dendrite formation and...<br />The content of this RSS Feed (c) The Royal Society of Chemistry</div>",
+    "published_date": "2026-02-24",
+    "doi": "",
+    "url": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/TA/D5TA08687F",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/TA/D5TA08687F",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html",
+        "base": "http://pubs.rsc.org/en/Content/ArticleLanding/2026/TA/D5TA08687F"
+      },
+      "feed": {
+        "title": "RSC - J. Mater. Chem. A latest articles",
+        "version": "rss20",
+        "subtitle": "RSC - J. Mater. Chem. A latest articles",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Synergistic solvation engineering of ionic liquid electrolytes enables highly reversible Zn anode under wide temperatures",
+    "source": "Nano Energy",
+    "source_type": "rss",
+    "authors": [],
+    "abstract": "<p>Publication date: April 2026</p><p><b>Source:</b> Nano Energy, Volume 150</p><p>Author(s): Zhibo Liu, Miaomiao Wu, Yong Guo, Qian Xiang, Lijuan Hai, Xiaoling Zhang, Zhiqiang Luo, Aikai Yang, Xingchao Wang</p>",
+    "published_date": null,
+    "doi": "",
+    "url": "https://www.sciencedirect.com/science/article/pii/S2211285526000923?dgcid=rss_sd_all",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "https://www.sciencedirect.com/science/article/pii/S2211285526000923",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "feed": {
+        "title": "ScienceDirect Publication: Nano Energy",
+        "version": "rss20",
+        "subtitle": "ScienceDirect RSS",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "ACS structure (Anode/Current collector/Separator) for zinc-ion batteries",
+    "source": "Energy Storage Materials",
+    "source_type": "rss",
+    "authors": [],
+    "abstract": "<p>Publication date: March 2026</p><p><b>Source:</b> Energy Storage Materials, Volume 86</p><p>Author(s): Hongfei Lu, Di Zhang, Zhiyi Du, Xinyao Yuan, Yuhang Song, Zili Zhang, Nawei Lyu, Xin Jiang, Yang Jin</p>",
+    "published_date": null,
+    "doi": "",
+    "url": "https://www.sciencedirect.com/science/article/pii/S2405829726000681?dgcid=rss_sd_all",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "https://www.sciencedirect.com/science/article/pii/S2405829726000681",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "feed": {
+        "title": "ScienceDirect Publication: Energy Storage Materials",
+        "version": "rss20",
+        "subtitle": "ScienceDirect RSS",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Gradient lignin-modified bamboo nanofiber separators for advanced aqueous zinc-ion batteries",
+    "source": "Chemical Engineering Journal",
+    "source_type": "rss",
+    "authors": [],
+    "abstract": "<p>Publication date: 15 March 2026</p><p><b>Source:</b> Chemical Engineering Journal, Volume 532</p><p>Author(s): Qi He, Wenjing Han, Zhengjun Shi, Hongkun Wang, Zhenglong Li</p>",
+    "published_date": null,
+    "doi": "",
+    "url": "https://www.sciencedirect.com/science/article/pii/S1385894726019017?dgcid=rss_sd_all",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "https://www.sciencedirect.com/science/article/pii/S1385894726019017",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "feed": {
+        "title": "ScienceDirect Publication: Chemical Engineering Journal",
+        "version": "rss20",
+        "subtitle": "ScienceDirect RSS",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Divalent cations synergistic doped V-based cathode towards high-performance aqueous zinc-ion batteries",
+    "source": "Chemical Engineering Journal",
+    "source_type": "rss",
+    "authors": [],
+    "abstract": "<p>Publication date: 15 March 2026</p><p><b>Source:</b> Chemical Engineering Journal, Volume 532</p><p>Author(s): Qiuyi Wu, Cuixian Hu, Jinrong Le, Yuhong Chen, Xiao Yang, Liangwei Liu, Yi Xiao, Houzhao Wan, Zhou Yang, Xiang Ding, Lili Han</p>",
+    "published_date": null,
+    "doi": "",
+    "url": "https://www.sciencedirect.com/science/article/pii/S1385894726019832?dgcid=rss_sd_all",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "https://www.sciencedirect.com/science/article/pii/S1385894726019832",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "feed": {
+        "title": "ScienceDirect Publication: Chemical Engineering Journal",
+        "version": "rss20",
+        "subtitle": "ScienceDirect RSS",
+        "encoding": "utf-8"
+      }
+    }
+  },
+  {
+    "title": "Decoupling Zn<sup>2+</sup>/H<sup>+</sup> co-insertion in VOMoO<sub>4</sub>/rGO heterostructure for dendrite-free symmetric zinc-ion batteries",
+    "source": "Chemical Engineering Journal",
+    "source_type": "rss",
+    "authors": [],
+    "abstract": "<p>Publication date: 15 March 2026</p><p><b>Source:</b> Chemical Engineering Journal, Volume 532</p><p>Author(s): Yexin Luo, Quan Kuang, Yunbo Li, Jianxin Zhan, Yunhua Cheng, Qinghua Fan, Youzhong Dong, Yanming Zhao</p>",
+    "published_date": null,
+    "doi": "",
+    "url": "https://www.sciencedirect.com/science/article/pii/S1385894726019169?dgcid=rss_sd_all",
+    "pdf_url": null,
+    "publication_title": null,
+    "journal_abbreviation": null,
+    "publisher": null,
+    "place": null,
+    "volume": null,
+    "issue": null,
+    "pages": null,
+    "section": null,
+    "part_number": null,
+    "part_title": null,
+    "series": null,
+    "series_title": null,
+    "series_text": null,
+    "citation_key": null,
+    "access_date": null,
+    "pmid": null,
+    "pmcid": null,
+    "issn": null,
+    "archive": null,
+    "archive_location": null,
+    "short_title": null,
+    "language": null,
+    "library_catalog": null,
+    "call_number": null,
+    "rights": null,
+    "item_type": "journalArticle",
+    "source_id": "https://www.sciencedirect.com/science/article/pii/S1385894726019169",
+    "extra": {
+      "summary_detail": {
+        "type": "text/html"
+      },
+      "feed": {
+        "title": "ScienceDirect Publication: Chemical Engineering Journal",
+        "version": "rss20",
+        "subtitle": "ScienceDirect RSS",
+        "encoding": "utf-8"
+      }
+    }
+  }
+]

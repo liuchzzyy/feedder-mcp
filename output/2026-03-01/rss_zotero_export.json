@@ -1,0 +1,16 @@
+{
+  "format": "zotero",
+  "input_file": "output/2026-03-01/rss_enriched_papers.json",
+  "output_file": "output/2026-03-01/rss_zotero_export.json",
+  "collection": "00_INBOXS_AA",
+  "total": 33,
+  "success_count": 0,
+  "skipped_count": 33,
+  "skipped_by_key": {
+    "doi": 32,
+    "title_date": 0,
+    "url": 1,
+    "runtime_duplicate": 0
+  },
+  "failures": []
+}
