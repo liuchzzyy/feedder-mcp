@@ -1,0 +1,16 @@
+{
+  "format": "zotero",
+  "input_file": "output/2026-03-01/gmail_enriched_papers.json",
+  "output_file": "output/2026-03-01/gmail_zotero_export.json",
+  "collection": "00_INBOXS_AA",
+  "total": 0,
+  "success_count": 0,
+  "skipped_count": 0,
+  "skipped_by_key": {
+    "doi": 0,
+    "title_date": 0,
+    "url": 0,
+    "runtime_duplicate": 0
+  },
+  "failures": []
+}
