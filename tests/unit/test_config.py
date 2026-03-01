@@ -247,7 +247,7 @@ class TestGetZoteroConfig:
                 assert config["library_id"] == ""
                 assert config["api_key"] == ""
                 assert config["library_type"] == "user"  # Default library type
-                assert config["target_collection"] is None
+                assert config["target_collection"] == "00_INBOXS_AA"
 
 
 class TestGetRssConfig:

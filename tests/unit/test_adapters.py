@@ -536,7 +536,7 @@ class TestZoteroAdapter:
         adapter._item_service = AsyncMock()
         adapter._api_client = AsyncMock()
         adapter._api_client.get_collections = AsyncMock(
-            return_value=[{"key": "866TNWZ9", "data": {"name": "00_INBOXS"}}]
+            return_value=[{"key": "866TNWZ9", "data": {"name": "00_INBOXS_AA"}}]
         )
         adapter._item_service.list_items = AsyncMock(return_value=[])
         adapter._item_service.create_item = AsyncMock(
@@ -553,7 +553,7 @@ class TestZoteroAdapter:
             )
         ]
 
-        result = await adapter.export(papers, collection_id="00_INBOXS")
+        result = await adapter.export(papers, collection_id="00_INBOXS_AA")
 
         assert result["success_count"] == 1
         payload = adapter._item_service.create_item.await_args.args[0]

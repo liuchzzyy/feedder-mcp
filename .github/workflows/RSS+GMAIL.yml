@@ -18,6 +18,10 @@ on:
         description: "zotero-mcp branch/tag/SHA"
         required: false
         default: "0d482463905332a7534cd0eaed55c6f6a762b196"
+      target_collection:
+        description: "Default Zotero collection key"
+        required: false
+        default: "00_INBOXS_AA"
 
 permissions:
   contents: write
@@ -53,7 +57,7 @@ jobs:
       ZOTERO_LIBRARY_ID: ${{ secrets.ZOTERO_LIBRARY_ID }}
       ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
       ZOTERO_LIBRARY_TYPE: user
-      TARGET_COLLECTION: ${{ secrets.TARGET_COLLECTION || '00_INBOXS_AA' }}
+      TARGET_COLLECTION: ${{ github.event.inputs.target_collection || secrets.TARGET_COLLECTION || '00_INBOXS_AA' }}
 
     steps:
       - name: Checkout
@@ -209,7 +213,7 @@ jobs:
       ZOTERO_LIBRARY_ID: ${{ secrets.ZOTERO_LIBRARY_ID }}
       ZOTERO_API_KEY: ${{ secrets.ZOTERO_API_KEY }}
       ZOTERO_LIBRARY_TYPE: user
-      TARGET_COLLECTION: ${{ secrets.TARGET_COLLECTION || '00_INBOXS_AA' }}
+      TARGET_COLLECTION: ${{ github.event.inputs.target_collection || secrets.TARGET_COLLECTION || '00_INBOXS_AA' }}
 
     steps:
       - name: Checkout

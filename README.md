@@ -99,7 +99,7 @@ Notes:
 - If `--keywords` is omitted, keywords will be auto-generated from `RESEARCH_PROMPT` using the AI keyword generator.
 - If keyword auto-generation fails and returns empty keywords, `filter` now exits with an error instead of silently passing all papers.
 - If OpenAlex returns `429`, set `OPENALEX_API_KEY`, lower `OPENALEX_MAX_REQUESTS_PER_SECOND`, and consider reducing `--concurrency`.
-- For Zotero exports, use `--collection <key>` or set `TARGET_COLLECTION` in `.env`/GitHub Secrets.
+- By default, Zotero exports use collection `00_INBOXS_AA`; use `--collection <key>` or `TARGET_COLLECTION` to override.
 
 ### Python API
 
@@ -151,7 +151,7 @@ Key settings:
 | `PAPER_FEEDDER_MCP_USER_AGENT` | Shared User-Agent for RSS/CrossRef/OpenAlex |
 | `OPENALEX_API_KEY` | OpenAlex API key (recommended to avoid rate limits) |
 | `OPENALEX_MAX_REQUESTS_PER_SECOND` | Client-side throttle for OpenAlex requests |
-| `TARGET_COLLECTION` | Default Zotero collection key used by `export --format zotero` |
+| `TARGET_COLLECTION` | Default Zotero collection key used by `export --format zotero` (default: `00_INBOXS_AA`) |
 | `ZOTERO_MCP_PATH` | Path to `zotero-mcp/src` (if not at default location) |
 
 See `.env.example` for all available options.
@@ -168,7 +168,7 @@ Workflow: `.github/workflows/RSS+GMAIL.yml`
   - Gmail: `fetch -> filter(--no-semantic-filter) -> filter(--semantic-filter) -> enrich -> export`
 - Behavior:
   - If fetched count is `0`, downstream steps are skipped safely for that source.
-  - If `TARGET_COLLECTION` is set, Zotero export writes into that collection.
+  - Zotero export writes into `TARGET_COLLECTION` (default fallback: `00_INBOXS_AA`).
 
 Recommended repository secrets:
 

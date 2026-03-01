@@ -102,7 +102,7 @@ class PaperFeedSettings(BaseSettings):
     zotero_library_id: str = ""
     zotero_api_key: str = ""
     zotero_library_type: str = "user"
-    target_collection: Optional[str] = None
+    target_collection: str = "00_INBOXS_AA"
 
     # ---- Derived accessors (compatibility with old config functions) ----
 

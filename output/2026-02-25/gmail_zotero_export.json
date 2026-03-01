@@ -2,7 +2,7 @@
   "format": "zotero",
   "input_file": "output/2026-02-25/gmail_enriched_papers.json",
   "output_file": "output/2026-02-25/gmail_zotero_export.json",
-  "collection": "00_INBOXS",
+  "collection": "00_INBOXS_AA",
   "total": 0,
   "success_count": 0,
   "skipped_count": 0,
