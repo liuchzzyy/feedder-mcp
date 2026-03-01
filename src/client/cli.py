@@ -181,8 +181,9 @@ async def _handle_filter(args: argparse.Namespace) -> None:
         try:
             keywords = await KeywordGenerator().extract_keywords()
             if keywords:
-                print(
-                    f"Auto-generated keywords from RESEARCH_PROMPT: {keywords}"
+                logger.info(
+                    "Auto-generated keywords from RESEARCH_PROMPT: %s",
+                    keywords,
                 )
             else:
                 print(
@@ -198,7 +199,7 @@ async def _handle_filter(args: argparse.Namespace) -> None:
             )
             sys.exit(1)
     elif not keywords:
-        print(
+        logger.info(
             "No keywords provided; running with non-keyword filters only."
         )
 
