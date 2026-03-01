@@ -664,6 +664,20 @@ class TestZoteroAdapter:
         assert data["date"] == "2025"
         assert data["creators"][0]["name"] == "Wang"
 
+    def test_normalize_item_list_result_preserves_item_type_from_model_dump(self):
+        class _FakeSearchResult:
+            def model_dump(self):
+                return {
+                    "title": "Attachment Entry",
+                    "item_type": "attachment",
+                    "doi": None,
+                }
+
+        normalized = ZoteroAdapter._normalize_item_list_result([_FakeSearchResult()])
+        assert isinstance(normalized, list)
+        assert len(normalized) == 1
+        assert normalized[0]["data"]["itemType"] == "attachment"
+
     def test_is_parent_level_item_filters_child_and_non_parent_types(self):
         parent_item = {
             "data": {
@@ -730,6 +744,37 @@ class TestZoteroAdapter:
 
         assert ("doi", "10.1234/parent") in keys
         assert ("url", "https://example.com/paper.pdf") not in keys
+
+    @pytest.mark.asyncio
+    async def test_load_existing_identity_keys_filters_non_parent_model_items(self):
+        class _FakeSearchResult:
+            def __init__(self, title, item_type, doi=None):
+                self.title = title
+                self.item_type = item_type
+                self.doi = doi
+
+            def model_dump(self):
+                return {
+                    "title": self.title,
+                    "item_type": self.item_type,
+                    "doi": self.doi,
+                }
+
+        adapter = ZoteroAdapter.__new__(ZoteroAdapter)
+        adapter._logger = zotero_module.logging.getLogger("test.zotero")
+        normalized = ZoteroAdapter._normalize_item_list_result(
+            [
+                _FakeSearchResult("Parent Paper", "journalArticle", "10.1000/parent"),
+                _FakeSearchResult("Attachment", "attachment", "10.1000/child"),
+                _FakeSearchResult("Note", "note", None),
+            ]
+        )
+        adapter._list_existing_items = AsyncMock(return_value=normalized or [])
+
+        keys = await adapter._load_existing_identity_keys()
+
+        assert ("doi", "10.1000/parent") in keys
+        assert ("doi", "10.1000/child") not in keys
 
     @pytest.mark.asyncio
     async def test_zotero_export_skips_existing_from_get_all_items_models(

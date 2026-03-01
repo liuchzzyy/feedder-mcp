@@ -543,6 +543,14 @@ class ZoteroAdapter(ExportAdapter):
         if url and "url" not in mapped:
             mapped["url"] = url
 
+        item_type = item.get("itemType") or item.get("item_type")
+        if isinstance(item_type, str) and item_type.strip() and "itemType" not in mapped:
+            mapped["itemType"] = item_type.strip()
+
+        parent_item = item.get("parentItem") or item.get("parent_item")
+        if isinstance(parent_item, str) and parent_item.strip():
+            mapped["parentItem"] = parent_item.strip()
+
         if mapped:
             return {"data": mapped}
         return item
